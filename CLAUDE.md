@@ -1,0 +1,61 @@
+# CLAUDE.md
+
+## Domain
+
+This is a code expert knowledge base for **Designing Data-Intensive Applications reference implementations**.
+
+**Target repository:** `/Users/ben/git/ddia-implementations`
+
+## Key Files
+
+| File | Purpose |
+|------|---------|
+| `entries/` | Chronological code exploration entries |
+| `beliefs.md` | Belief registry (read-only view, generated from reasons) |
+| `reasons.db` | Primary belief store (SQLite, gitignored) |
+| `network.json` | Portable export of reasons network (committed) |
+| `nogoods.md` | Tracked contradictions between beliefs |
+| `.code-expert/` | Tool state (topic queue, config) |
+
+## Workflow
+
+1. Scan the repo to identify key files (`code-expert scan`)
+2. Explore topics in the queue (`code-expert explore`)
+3. Explain specific files/functions as needed (`code-expert explain file ...`)
+4. Propose beliefs from accumulated entries (`code-expert propose-beliefs`)
+5. Review proposals for quality (`code-expert review-proposals`)
+6. Accept reviewed beliefs (`code-expert accept-beliefs`)
+7. Derive deeper reasoning chains (`code-expert derive --auto`)
+8. Check for stale beliefs periodically (`reasons check-stale`)
+
+For ongoing tracking, run `code-expert update --since-last` to do all of the above automatically and generate a morning summary.
+
+## Tools
+
+```bash
+# Code exploration
+code-expert scan
+code-expert explore
+code-expert explain file <path>
+code-expert explain function <file:symbol>
+code-expert explain repo
+code-expert topics
+
+# Belief pipeline
+code-expert propose-beliefs          # extract proposals
+code-expert propose-beliefs --auto   # auto-accept all (skip review)
+code-expert propose-beliefs --since 2026-04-01  # only recent entries
+code-expert review-proposals         # LLM quality filter
+code-expert accept-beliefs
+code-expert derive --auto            # single round
+code-expert derive --exhaust         # loop until no new derivations
+reasons check-stale
+reasons compact
+
+# Automated update pipeline
+code-expert update --since-last      # walk commits + propose + derive + summary
+code-expert generate-summary         # standalone morning summary
+
+# Status
+code-expert status
+```
