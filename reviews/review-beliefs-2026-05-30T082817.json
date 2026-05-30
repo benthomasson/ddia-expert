@@ -1,0 +1,904 @@
+{
+  "timestamp": "2026-05-30T08:28:17",
+  "status": "complete",
+  "model": "claude",
+  "timeout": 300,
+  "dry_run": false,
+  "filters": {
+    "belief_ids": null,
+    "min_depth": null,
+    "depends_on": null,
+    "namespace": null,
+    "sample": null,
+    "visible_to": null
+  },
+  "reviewed": 107,
+  "total_derived": 147,
+  "summary": {
+    "invalid": 7,
+    "insufficient": 8,
+    "unnecessary": 12
+  },
+  "results": [
+    {
+      "id": "2pc-has-design-implementation-gap",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "Each antecedent maps directly to one of the three claimed gaps (blocking window, timeout, recovery), supporting the 'systematic' characterization."
+    },
+    {
+      "id": "2pc-safety-gaps-compound-under-synchronous-simulation",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "The conjunction of known gaps with synchronous-only testing directly implies the crash-during-blocking-window scenario is untested."
+    },
+    {
+      "id": "anti-entropy-detects-but-cannot-fully-resolve-divergence",
+      "valid": true,
+      "sufficient": false,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "The inference that fragmented tombstone semantics *prevent* reconciliation requires the unstated assumption that anti-entropy repair must handle delete/tombstone resolution to be complete."
+    },
+    {
+      "id": "avro-encoding-prioritizes-compactness-over-self-description",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "Three distinct encoding choices (no metadata, zero-terminated blocks, negative-count skipping) each independently demonstrate the compactness-over-self-description tradeoff."
+    },
+    {
+      "id": "binary-formats-rigid-across-entire-storage-stack",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "Two independent storage layers (WAL and SSTable) each exhibiting format rigidity justifies the 'entire storage stack' generalization."
+    },
+    {
+      "id": "both-storage-paradigms-hit-scalability-walls",
+      "valid": false,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "The LSM scalability wall is an implementation bug (Bloom filter exists but is not wired in), not a 'fundamental' constraint \u2014 calling both issues 'fundamental' overstates the LSM case."
+    },
+    {
+      "id": "btree-delete-causes-monotonic-degradation",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "Three independent deletion defects (page leaks, dangling pointers, height growth) each contribute a distinct dimension to the monotonic degradation claim."
+    },
+    {
+      "id": "btree-durability-protects-data-not-structure",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "Fsync asymmetry (data durable, structure not) combined with silent structural erosion directly supports the claim that durability effort is misallocated."
+    },
+    {
+      "id": "btree-mutation-fsync-is-asymmetric",
+      "valid": true,
+      "sufficient": true,
+      "necessary": false,
+      "unnecessary_antecedents": [
+        "btree-single-file-avoids-dir-fsync-gap"
+      ],
+      "comment": "The single-file/dir-fsync observation provides background context but is not load-bearing for the data-vs-metadata fsync asymmetry claim, which follows from the double-fsync and no-metadata-fsync antecedents alone."
+    },
+    {
+      "id": "btree-page-io-has-no-defensive-checks",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "Three defects at distinct lifecycle stages (deserialize, navigate, write) independently establish the 'every stage' claim."
+    },
+    {
+      "id": "btree-sibling-chain-maintained-across-mutations",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "Split ordering, delete patching, and fixed-offset format each cover a distinct aspect of chain maintenance (creation, removal, readability)."
+    },
+    {
+      "id": "btree-structural-integrity-silently-erodes",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "Monotonic degradation plus absent validation directly yields 'silent erosion' \u2014 degradation happens and nothing detects it."
+    },
+    {
+      "id": "btree-traversal-is-forward-only",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "The forward-only sibling chain (structural) and left-spine descent (behavioral) independently constrain traversal to one direction."
+    },
+    {
+      "id": "cdc-backbone-both-heuristic-and-insufficient",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "Tombstones reported as None (from ant 1) directly undermines the old-value capture requirement (from ant 2), bridging the heuristic-to-insufficient inference."
+    },
+    {
+      "id": "cdc-event-semantics-depend-on-reconstruction-heuristics",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "Three distinct semantic dimensions (event type, deletion state, bootstrap origin) each use value-level conventions rather than explicit markers."
+    },
+    {
+      "id": "compaction-hazard-within-broken-durability-pipeline",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "The conjunction of compaction-specific hazards with infrastructure-level durability gaps establishes that the most dangerous operation has the weakest surrounding protection."
+    },
+    {
+      "id": "compaction-is-critical-data-lifecycle-hazard",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "Crash-unsafe compaction (data loss) plus fragmented tombstone semantics (inconsistent propagation) directly supports the claim that compaction corrupts what derived systems depend on."
+    },
+    {
+      "id": "compaction-is-unsalvageable-as-designed",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "Crash safety failures compounded by concurrent-access failures across independent paths justify 'unsalvageable as designed' \u2014 the missing mechanisms (synchronization, atomic file ops) are foundational, not patchable."
+    },
+    {
+      "id": "compaction-lacks-crash-safety-across-implementations",
+      "valid": true,
+      "sufficient": true,
+      "necessary": false,
+      "unnecessary_antecedents": [
+        "lsm-compact-no-atomic-rename"
+      ],
+      "comment": "The general claim 'no implementation uses write-temp/fsync/rename' (no-atomic-file-creation) already subsumes the LSM-specific observation, making the LSM antecedent redundant."
+    },
+    {
+      "id": "concurrency-unsafe-on-both-read-and-write-paths",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "Write-path unsafety (silent single-thread assumption) and read-path unsafety (no snapshot isolation) independently establish the 'both paths' claim."
+    },
+    {
+      "id": "concurrent-access-during-compaction-is-doubly-unsafe",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "The two antecedents establish two independent failure modes (concurrency unsafety and crash unsafety during compaction) and the conclusion correctly synthesizes them as compounding hazards."
+    },
+    {
+      "id": "conflict-resolution-architecture-is-split",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "The first antecedent establishes CRDTs as self-resolving and the second establishes the strategy enum excludes them with no integration, directly supporting the 'split architecture' conclusion."
+    },
+    {
+      "id": "consensus-and-membership-use-incompatible-convergence-models",
+      "valid": false,
+      "sufficient": false,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "The inference that gossip can misclassify a Raft leader as dead requires an unstated assumption that gossip failure detection governs Raft leader liveness, but the first antecedent specifically lists replication, read repair, and hinted handoff as dependents \u2014 not consensus elections."
+    },
+    {
+      "id": "consensus-architectures-are-inverse-optimizations",
+      "valid": false,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "The third antecedent explicitly states TOB runs full two-phase Paxos per slot with no state carrying between slots, meaning TOB is the un-optimized baseline \u2014 calling it an 'inverse optimization' contradicts rather than follows from the antecedents."
+    },
+    {
+      "id": "consensus-correctness-doubly-unverified",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "The synthesis that the testing methodology's blind spots coincide with the conditions differentiating the consensus variants follows soundly from the two antecedents, though the first already partially contains the async testing gap that the second elaborates."
+    },
+    {
+      "id": "consensus-safety-unverified-across-optimization-variants",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "Combining the architectural relationship (both are Paxos variants) with the testing limitation (synchronous-only validation) validly produces the conclusion that neither variant's safety is verified under its designed-for conditions."
+    },
+    {
+      "id": "convergence-rate-asymmetry-membership-vs-data",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "The O(log N) vs O(N) convergence rates from the two antecedents directly establish a growing window proportional to cluster size where membership is current but data remains stale."
+    },
+    {
+      "id": "correctness-gap-widens-under-failure",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "Unmet storage guarantees (first antecedent) producing divergence that repair mechanisms cannot fully reconcile (second antecedent) validly yields the conclusion that the correctness gap widens under failure."
+    },
+    {
+      "id": "correctness-unachievable-and-unfalsifiable",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "The combination of widening correctness gaps (unachievable) with testing that cannot detect them (unfalsifiable) is a sound epistemic synthesis \u2014 both antecedents are required for the compound conclusion."
+    },
+    {
+      "id": "corruption-is-terminal-across-all-readers",
+      "valid": true,
+      "sufficient": true,
+      "necessary": false,
+      "unnecessary_antecedents": [
+        "wal-no-resync-after-corruption"
+      ],
+      "comment": "The first antecedent already covers every binary reader including WAL as stopping at first error with no resync; the WAL-specific misframing mechanism adds explanatory detail but is subsumed by the universal claim."
+    },
+    {
+      "id": "corruption-propagates-through-all-data-pipelines",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "Three independent transformation steps (two Bitcask compaction implementations and hint file generation) each skipping CRC validation together establish that corruption survives every pipeline stage."
+    },
+    {
+      "id": "counting-bloom-trades-correctness-for-unneeded-capability",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "The 8x memory cost, false-negative risk from removal, and SSTables' immutability making deletion unnecessary are three independently necessary components of the tradeoff analysis."
+    },
+    {
+      "id": "crash-failure-paths-systematically-untested",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "Three independent test gaps across different modules (WAL, LSM compaction, SSI) establish a systematic pattern, though the write-skew gap is more about concurrency correctness than crash recovery specifically."
+    },
+    {
+      "id": "crash-recovery-both-broken-and-unverified",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "The self-reinforcing deficiency \u2014 recovery is unsafe AND tests cannot detect the unsafety \u2014 follows directly from the two antecedents covering implementation gaps and testing gaps respectively."
+    },
+    {
+      "id": "crdt-merge-algebra-satisfies-convergence-requirements",
+      "valid": false,
+      "sufficient": false,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "Strong eventual convergence requires merge to be commutative and associative in addition to idempotent; the antecedents only establish idempotency, semantic equality, and monotonic tombstones \u2014 two of the three required semilattice properties are missing."
+    },
+    {
+      "id": "crdt-mutation-api-is-non-defensive",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "In-place mutation creating aliasing risk and silent False returns creating invisible no-ops are two independent non-defensive patterns that together support the characterization."
+    },
+    {
+      "id": "critical-wal-operations-always-force-fsync",
+      "valid": true,
+      "sufficient": true,
+      "necessary": false,
+      "unnecessary_antecedents": [
+        "force-true-bypasses-sync-mode"
+      ],
+      "comment": "The first three antecedents independently establish that checkpoint, batch, and rotation each force fsync; the fourth merely explains the shared mechanism (force=True) which is already referenced in the first antecedent."
+    },
+    {
+      "id": "data-distribution-and-processing-hit-independent-scalability-ceilings",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "Partitioning limitations at the distribution layer and materialization barriers at the processing layer are correctly identified as independent scalability ceilings from two independently established antecedents."
+    },
+    {
+      "id": "degradation-is-irreversible",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "Monotonic degradation at every level combined with no viable recovery strategy at any tier directly yields irreversibility \u2014 neither antecedent alone suffices."
+    },
+    {
+      "id": "delete-semantics-fragmented-from-storage-to-derived-systems",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "Fragmented tombstone representations across layers undermining the flush-plus-old-value requirements for derived system consistency is a valid cross-cutting synthesis of the two antecedents."
+    },
+    {
+      "id": "event-sourcing-unreliable-in-persistence-and-addressing",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "Clean conjunction of two independent failure modes \u2014 each antecedent covers one of the two claimed levels of unreliability."
+    },
+    {
+      "id": "event-store-append-is-not-crash-consistent",
+      "valid": true,
+      "sufficient": true,
+      "necessary": false,
+      "unnecessary_antecedents": [
+        "persist-after-memory"
+      ],
+      "comment": "persist-after-memory states the same fact as event-store-memory-ahead-of-disk (in-memory append before disk write with no rollback) and is fully redundant."
+    },
+    {
+      "id": "format-and-structure-prevent-all-repair",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "Each antecedent covers one horn of the double bind \u2014 runtime inability to self-heal and format inability to evolve \u2014 and both are needed for the conclusion."
+    },
+    {
+      "id": "format-rigidity-prevents-evolutionary-repair",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "Format rigidity alone doesn't imply no defense-in-depth, and lack of defense-in-depth alone doesn't imply unevolvable formats \u2014 both are needed for the combined claim."
+    },
+    {
+      "id": "fsync-policy-inconsistent-across-critical-paths",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "Both sides of the inconsistency (WAL always-fsync vs B-tree never-fsync-metadata) are needed to establish the cross-component policy contradiction."
+    },
+    {
+      "id": "full-data-lifecycle-unsafe-from-write-through-read",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "One antecedent covers the write/maintenance side (compaction), the other covers the read side (SSTable through derived systems) \u2014 both halves of the lifecycle claim require their respective antecedent."
+    },
+    {
+      "id": "full-stack-restart-fragility",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "Each antecedent independently establishes restart fragility at a distinct layer (physical storage vs logical transactions), and both are needed for the full-stack claim."
+    },
+    {
+      "id": "gossip-bandwidth-scales-linearly-per-message",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "O(N) per-message payload times N messages per round (fanout-one) yields the O(N\u00b2) total bandwidth claim \u2014 both factors are required for the multiplication."
+    },
+    {
+      "id": "gossip-dead-node-lifecycle-is-comprehensive",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "The three antecedents map one-to-one to the three claimed safeguards (receive-time filtering, status-transition irreversibility, cleanup removal) \u2014 removing any one would leave a resurrection vector uncovered."
+    },
+    {
+      "id": "gossip-failure-detection-governs-cluster-correctness",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "The claim weaves all three antecedents into a single sentence \u2014 bottleneck role, timeout-driven mechanism, and cleanup bounding \u2014 and each is explicitly referenced."
+    },
+    {
+      "id": "gossip-failure-detection-lacks-adaptive-accuracy",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "The combined claim requires both the bottleneck status (from the first antecedent) and the missing arrival history (from the second) \u2014 neither alone establishes the 'critical AND permanently non-adaptive' conclusion."
+    },
+    {
+      "id": "hash-index-is-memory-bound-by-design",
+      "valid": true,
+      "sufficient": true,
+      "necessary": false,
+      "unnecessary_antecedents": [
+        "hash-index-keys-must-fit-in-ram"
+      ],
+      "comment": "hash-index-keys-must-fit-in-ram restates the same observation as hash-index-all-keys-in-memory (all keys in an in-memory dict, bounded by RAM) and is redundant."
+    },
+    {
+      "id": "input-validation-systematically-absent",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "The claim explicitly names four modules and each antecedent documents one; removing any would make the claim's enumeration factually incomplete."
+    },
+    {
+      "id": "integrity-checking-is-both-incomplete-and-unrecoverable",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "One antecedent establishes the detection gap (metadata unprotected) and the other establishes the recovery gap (no resync) \u2014 both halves of the 'incomplete AND unrecoverable' claim require their own antecedent."
+    },
+    {
+      "id": "integrity-degrades-along-storage-pipeline",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "The monotonic degradation claim requires both the WAL's partial coverage and the SSTable's zero coverage to establish the pipeline direction from partial to none."
+    },
+    {
+      "id": "live-projection-exactly-once-via-position-guard",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "Position-guard prevents duplicates, position-advance-without-handler prevents re-evaluation gaps, and catch-up-then-subscribe prevents missed events \u2014 removing any one breaks the exactly-once guarantee."
+    },
+    {
+      "id": "lsm-crash-recovery-impossible-without-manifest",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "No manifest means the SSTable list is lost and no WAL integrity means reconstruction is unreliable \u2014 both are needed to close off both recovery paths (manifest-based and WAL-based)."
+    },
+    {
+      "id": "lsm-miss-probes-all-due-to-no-bloom-integration",
+      "valid": true,
+      "sufficient": false,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "The core causal claim (scans all SSTables because bloom filter isn't integrated) follows, but the parenthetical assertion that the bloom filter is 'correctly implemented with textbook-optimal sizing' requires an unstated antecedent about bloom filter quality."
+    },
+    {
+      "id": "lsm-wal-strictly-weaker-than-standalone-wal",
+      "valid": false,
+      "sufficient": false,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "The antecedents describe only the LSM WAL's properties; the comparative claims ('vs per-record CRC32', 'vs careful record-by-record rewriting') require unstated antecedents characterizing the standalone WAL's behavior."
+    },
+    {
+      "id": "materialization-barriers-span-storage-and-processing",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "One antecedent covers the storage layer's unbounded materialization and the other covers the processing layer's barrier behavior \u2014 both layers are needed for the cross-cutting claim."
+    },
+    {
+      "id": "membership-correctness-masks-hint-data-loss",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "The combination of correct membership handling (antecedent 1) with silent data loss (antecedent 2) soundly supports the masking conclusion \u2014 the membership layer's success signal obscures the data layer's failure."
+    },
+    {
+      "id": "membership-detection-unreliable-in-accuracy-and-propagation",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "The two failure modes (miscalibrated detection and convergence rate asymmetry) genuinely interact destructively \u2014 bad decisions propagating faster than data can adjust is a sound inference from the antecedents."
+    },
+    {
+      "id": "merkle-diff-enables-targeted-key-range-repair",
+      "valid": true,
+      "sufficient": true,
+      "necessary": false,
+      "unnecessary_antecedents": [
+        "merkle-diff-order-is-ascending"
+      ],
+      "comment": "Ascending index order makes processing more convenient but is not required for the core claim \u2014 unsorted diff indices still map to key ranges when keys are sorted, enabling targeted repair regardless of index order."
+    },
+    {
+      "id": "multi-leader-sync-designed-for-safe-convergence",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "The three design properties (no intra-round cascading, idempotent merge, monotonic timestamps) are independent and complementary, each preventing a distinct convergence failure mode."
+    },
+    {
+      "id": "multiple-core-components-assume-single-thread-silently",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "Three independent modules exhibiting the same implicit assumption soundly supports the 'systematic pattern' conclusion, and each named component is load-bearing for the specific claim."
+    },
+    {
+      "id": "mvcc-three-layer-visibility-model",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "Each invariant addresses a distinct aspect of snapshot visibility (immutability, self-reads, symmetric deletion), and removing any one would leave a gap in the visibility model."
+    },
+    {
+      "id": "neither-partitioning-strategy-fully-reliable",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "Each antecedent establishes one strategy's weakness, and the complementary nature of the deficiencies (ordered-but-fragile vs robust-but-unordered) follows directly from their combination."
+    },
+    {
+      "id": "network-partitions-amplify-write-correctness-gaps",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "The interaction is genuinely multiplicative \u2014 partitions disable the failure detection that the already-weakened quorum semantics depend on, making the compounding characterization sound."
+    },
+    {
+      "id": "no-data-path-is-trustworthy",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "Valid given the implicit but reasonable assumption that compaction and event infrastructure represent the exhaustive set of data paths; both antecedents are needed to close off their respective paths."
+    },
+    {
+      "id": "no-defense-in-depth-against-corruption",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "The two antecedents cover opposite ends of the data lifecycle (entry and detection), and the 'one-way ratchet' conclusion follows soundly from permeability at entry combined with irrecoverability at detection."
+    },
+    {
+      "id": "no-operational-path-to-correctness",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "The conjunction of 'no stable state to converge toward' with 'no way to verify if converged' creates the claimed logical cul-de-sac, and each antecedent is independently necessary for the full claim."
+    },
+    {
+      "id": "no-safe-operating-mode-exists",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "Normal operation (concurrent access) and recovery (crash handling) are the two fundamental operating modes, and showing both are unsafe soundly closes both escape hatches."
+    },
+    {
+      "id": "no-storage-paradigm-is-both-scalable-and-self-healing",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "Scalability walls (antecedent 1) and absent self-healing (antecedent 2) address orthogonal dimensions, and both are needed to support the 'neither scalable NOR resilient' conclusion."
+    },
+    {
+      "id": "no-subsystem-has-viable-recovery-strategy",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "The contrasting failure modes (over-engineered but unused infrastructure vs never-built infrastructure) strengthen the conclusion by showing recovery fails for opposite structural reasons across tiers."
+    },
+    {
+      "id": "ordering-infrastructure-broken-at-every-layer",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "Three distinct ordering mechanisms at three different layers each failing in different ways (vestigial, conflated, volatile) soundly supports the 'systematic inability' conclusion, and all three are needed for the 'every layer' scope."
+    },
+    {
+      "id": "ordering-models-are-incompatible-across-modules",
+      "valid": true,
+      "sufficient": false,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "The antecedents establish that three ordering models coexist, but the 'incompatible' and 'no unifying framework' claims require an additional unstated premise \u2014 that no bridging abstraction exists in the codebase \u2014 which none of the antecedents address."
+    },
+    {
+      "id": "orset-tombstone-growth-unbounded-and-necessary",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "The tension between mandatory retention (for merge correctness) and monotonic growth (no compaction) directly yields the 'inherent resource leak' conclusion, and both antecedents are essential to establishing that tension."
+    },
+    {
+      "id": "page-manager-metadata-durability-gap",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "The structural durability gap exists at both lifecycle points, though the claim overstates by treating the creation-time gap (which the antecedent itself calls acceptable since no user data exists) as equivalent in severity to the update-time gap."
+    },
+    {
+      "id": "partition-failures-compound-across-membership-and-consensus",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "Gossip governing replication correctness (antecedent 1) combined with Raft's partition hazards (antecedent 2) soundly supports the cascading-failure conclusion, since Raft's safety depends on the membership accuracy that gossip provides."
+    },
+    {
+      "id": "payload-only-crc-leaves-metadata-unprotected",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "All three antecedents are load-bearing: the first two identify the specific unprotected routing fields (sequence numbers, page numbers) named in the claim, while the third establishes the 'all three implementations' scope that neither alone covers."
+    },
+    {
+      "id": "pbft-view-change-preserves-safety-and-liveness",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "Each antecedent directly supports one half of the claim (safety from quorum, liveness from request preservation), and together they cover both halves of the view-change correctness argument."
+    },
+    {
+      "id": "pipeline-stages-hide-materialization-barriers",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "Each antecedent contributes a distinct element (Count's barrier behavior, Sort's bounded spillover, the uniform tuple interface) and the conclusion that asymmetric resource profiles are hidden behind a uniform interface follows directly."
+    },
+    {
+      "id": "post-crash-compaction-produces-irrecoverable-corruption",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "The causal chain is sound: non-atomic compaction with pre-deletion creates crash windows where data is lost (ant 1), and terminal reader behavior means the resulting corruption cannot be recovered from (ant 2)."
+    },
+    {
+      "id": "protocol-safety-unfalsifiable-under-current-testing",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "Ant 1 provides the specific protocol gaps (2PC) and ant 2 provides the general testing limitation (sync-only), both of which the claim explicitly references; the 'unfalsifiable under current methodology' conclusion is properly scoped."
+    },
+    {
+      "id": "protocol-safety-validated-only-under-synchronous-model",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "Ant 1 establishes sync-only testing and ant 2 identifies the specific partition hazard; the unstated premise that partitions are inherently asynchronous is basic distributed-systems domain knowledge, not a reasoning gap."
+    },
+    {
+      "id": "quorum-guarantees-weakened-at-two-levels",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "Each antecedent maps to one weakening mechanism (hint inflation and advisory-only safety check), and the conclusion that they stack to allow operation without intersection guarantees follows directly."
+    },
+    {
+      "id": "raft-partition-creates-dual-hazard",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "The two antecedents describe independent partition-related behaviors (silent write acceptance and forced re-election) that the claim correctly combines into a compound hazard scenario."
+    },
+    {
+      "id": "range-partitioning-routing-is-structurally-fragile",
+      "valid": true,
+      "sufficient": true,
+      "necessary": false,
+      "unnecessary_antecedents": [
+        "range-partition-split-at-median"
+      ],
+      "comment": "The median-split antecedent describes a partition balance concern, not an unverified lockstep invariant \u2014 it does not support the claim's core thesis about routing fragility from desynchronized parallel data structures."
+    },
+    {
+      "id": "range-scan-lacks-safety-guarantees",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "Three independent observations each map to one failure mode in the claim (inconsistent reads, infinite traversal, unbounded memory), and all three are required for the 'three independent failure modes' characterization."
+    },
+    {
+      "id": "read-path-unreliable-from-storage-through-derived-systems",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "Ant 1 covers the storage layer deficiencies and ant 2 covers the CDC/derived-systems layer; together they support the claim that the complete read path is unreliable at every stage."
+    },
+    {
+      "id": "recovery-destroys-both-durability-and-isolation",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "Each antecedent addresses one independent axis of the claim (durability tiers lost at recovery, isolation metadata lost at restart), and the 'simultaneously destroys both' conclusion follows from their conjunction."
+    },
+    {
+      "id": "recovery-simultaneously-over-and-under-engineered",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "Ant 1 directly supports 'over-engineered' (complete but unused infrastructure) and ant 2 directly supports 'under-implemented' (unsafe actual recovery paths); the paradox framing is a valid characterization of their coexistence."
+    },
+    {
+      "id": "replay-lacks-batch-atomicity-across-implementations",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "Both antecedents are required for the 'across implementations' claim \u2014 each independently confirms the same gap in a different WAL implementation, supporting the conclusion of a systematic rather than isolated deficiency."
+    },
+    {
+      "id": "ring-topology-convergence-is-linear-in-node-count",
+      "valid": true,
+      "sufficient": true,
+      "necessary": false,
+      "unnecessary_antecedents": [
+        "ring-topology-needs-multiple-sync-rounds"
+      ],
+      "comment": "The 3-node example (ant 2) is a specific instance already subsumed by the general N-1 bound (ant 1); the O(N) convergence claim follows from ant 1 (the bound) and ant 3 (the store-and-forward mechanism) alone."
+    },
+    {
+      "id": "silent-data-loss-is-default-operational-mode",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "Undetected corruption propagation (ant 1) combined with structurally invisible durability bugs (ant 2) validly supports the conclusion of continuous silent data degradation with no feedback signal."
+    },
+    {
+      "id": "ssi-serializability-through-layered-invariants",
+      "valid": false,
+      "sufficient": false,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "The three antecedents describe valid properties of the SSI implementation, but 'achieves serializability' requires the core conflict detection mechanism (read-set/write-set tracking, abort on conflict) which is entirely absent from the antecedents."
+    },
+    {
+      "id": "sstable-format-lacks-integrity-and-efficiency-mechanisms",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "Three independent observations (no checksums, no index skip for range scans, unverified entry count) each directly support one of the three gaps asserted in the claim."
+    },
+    {
+      "id": "sstable-layer-compounds-integrity-and-performance-deficiencies",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "The 'mutually reinforcing' characterization is valid: missing checksums create silent corruption (ant 1) and missing Bloom filter integration maximizes scan exposure to that corruption (ant 2), and each antecedent is required for the interaction to hold."
+    },
+    {
+      "id": "sstable-write-path-has-dual-fragility",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "Each antecedent maps to one independent fragility point (unenforced sort order, placeholder-then-patch header), and both are required for the 'dual fragility' characterization."
+    },
+    {
+      "id": "storage-crash-recovery-has-no-safe-path",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "The three antecedents form a compounding chain \u2014 corruption enters via unprotected metadata (ant 3), persists through non-atomic compaction (ant 1), and survives batch-unaware replay (ant 2) \u2014 and all three links are required for the 'no safe path' conclusion."
+    },
+    {
+      "id": "wal-recovery-contract-is-valid-prefix",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "Both antecedents cover distinct failure modes (corruption vs. partial write) and together establish that replay stops cleanly in both cases, returning only preceding valid records \u2014 the valid-prefix characterization follows directly."
+    },
+    {
+      "id": "wal-recovery-infrastructure-is-vestigial",
+      "valid": false,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "The factual claims (seq nums unused, checkpoints ignored) follow from antecedents, but the characterization as 'a coherent recovery protocol that was implemented but never wired up' imputes designer intent \u2014 the antecedents establish non-use, not that these features were designed as parts of a single coherent protocol."
+    },
+    {
+      "id": "wal-seq-nums-are-vestigial",
+      "valid": true,
+      "sufficient": true,
+      "necessary": false,
+      "unnecessary_antecedents": [
+        "wal-seq-num-global-monotonic"
+      ],
+      "comment": "wal-seq-nums-strictly-monotonic subsumes wal-seq-num-global-monotonic (both establish monotonicity, but the latter adds under-lock and recovery scanning details that directly support the claim's 'computed under lock' and 'parsed during recovery' language); the global-monotonic antecedent adds only the 'never resets across rotation' detail which the conclusion does not reference."
+    },
+    {
+      "id": "wal-thread-safety-stranded-by-callers",
+      "valid": true,
+      "sufficient": false,
+      "necessary": false,
+      "unnecessary_antecedents": [
+        "lsm-no-synchronization"
+      ],
+      "comment": "The conclusion says 'both callers' but the antecedents identify only one caller (LSMTree); lsm-sstables-unprotected-mutation is a specific instance of lsm-no-synchronization making the broader antecedent unnecessary, and a missing antecedent identifying the second caller is needed for the 'both callers' claim."
+    },
+    {
+      "id": "wal-truncation-is-multi-failure-hazard",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "Each antecedent maps cleanly to one of the three claimed failure modes (blocking, data loss on corruption, crash-unsafety), and the synthesis that these are independent and co-present in a single operation follows directly."
+    },
+    {
+      "id": "wal-two-tier-durability-model",
+      "valid": true,
+      "sufficient": true,
+      "necessary": false,
+      "unnecessary_antecedents": [
+        "force-true-bypasses-sync-mode"
+      ],
+      "comment": "force-true-bypasses-sync-mode explains the mechanism by which batch fsync works, but the conclusion only requires that batches always fsync (wal-batch-always-fsyncs) and that individual writes may not (sync-mode-none-skips-per-write-fsync) \u2014 the mechanism is explanatory, not load-bearing."
+    },
+    {
+      "id": "write-time-durability-engineering-abandoned-at-recovery",
+      "valid": true,
+      "sufficient": true,
+      "necessary": true,
+      "unnecessary_antecedents": [],
+      "comment": "Antecedent 1 establishes that durability tiers are invisible to recovery, antecedent 2 establishes that recovery is broken and untested \u2014 together they support the conclusion that write-time durability engineering provides no value at crash time, which is when it matters most."
+    }
+  ]
+}
