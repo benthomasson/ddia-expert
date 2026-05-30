@@ -1,0 +1,925 @@
+{
+  "timestamp": "2026-05-30T06:44:02",
+  "status": "complete",
+  "model": "claude",
+  "timeout": 600,
+  "exhaust": true,
+  "filters": {
+    "domain": null,
+    "topic": null,
+    "min_depth": null,
+    "max_depth": null,
+    "premises": false,
+    "has_dependents": false,
+    "budget": 300,
+    "sample": true,
+    "cluster": false,
+    "intra_cluster": false,
+    "embedding_model": null,
+    "n_clusters": null,
+    "prompt_file": null
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "network_stats": {
+        "total_in": 1224,
+        "total_derived": 0,
+        "max_depth": 0,
+        "agents": 0,
+        "agent_names": [],
+        "budget": 300,
+        "sample": true
+      },
+      "proposals_found": 28,
+      "valid": 28,
+      "skipped": [],
+      "applied": [
+        {
+          "id": "payload-only-crc-leaves-metadata-unprotected",
+          "truth_value": "IN"
+        },
+        {
+          "id": "replay-lacks-batch-atomicity-across-implementations",
+          "truth_value": "IN"
+        },
+        {
+          "id": "btree-page-io-has-no-defensive-checks",
+          "truth_value": "IN"
+        },
+        {
+          "id": "compaction-lacks-crash-safety-across-implementations",
+          "truth_value": "IN"
+        },
+        {
+          "id": "critical-wal-operations-always-force-fsync",
+          "truth_value": "IN"
+        },
+        {
+          "id": "wal-two-tier-durability-model",
+          "truth_value": "IN"
+        },
+        {
+          "id": "btree-delete-causes-monotonic-degradation",
+          "truth_value": "IN"
+        },
+        {
+          "id": "lsm-miss-probes-all-due-to-no-bloom-integration",
+          "truth_value": "IN"
+        },
+        {
+          "id": "raft-partition-creates-dual-hazard",
+          "truth_value": "IN"
+        },
+        {
+          "id": "pbft-view-change-preserves-safety-and-liveness",
+          "truth_value": "IN"
+        },
+        {
+          "id": "quorum-guarantees-weakened-at-two-levels",
+          "truth_value": "IN"
+        },
+        {
+          "id": "ring-topology-convergence-is-linear-in-node-count",
+          "truth_value": "IN"
+        },
+        {
+          "id": "merkle-diff-enables-targeted-key-range-repair",
+          "truth_value": "IN"
+        },
+        {
+          "id": "multiple-core-components-assume-single-thread-silently",
+          "truth_value": "IN"
+        },
+        {
+          "id": "tombstone-lifecycle-fragmented-across-modules",
+          "truth_value": "IN"
+        },
+        {
+          "id": "mvcc-three-layer-visibility-model",
+          "truth_value": "IN"
+        },
+        {
+          "id": "ssi-serializability-through-layered-invariants",
+          "truth_value": "IN"
+        },
+        {
+          "id": "es-snapshots-incomplete-for-production-use",
+          "truth_value": "IN"
+        },
+        {
+          "id": "derived-system-consistency-requires-flush-and-old-values",
+          "truth_value": "IN"
+        },
+        {
+          "id": "conflict-resolution-architecture-is-split",
+          "truth_value": "IN"
+        },
+        {
+          "id": "event-graph-correctness-via-dual-invariant",
+          "truth_value": "IN"
+        },
+        {
+          "id": "wal-is-reliable-source-of-truth",
+          "truth_value": "OUT"
+        },
+        {
+          "id": "btree-splits-are-crash-safe",
+          "truth_value": "OUT"
+        },
+        {
+          "id": "bitcask-compaction-preserves-state",
+          "truth_value": "OUT"
+        },
+        {
+          "id": "bloom-filter-sizing-is-production-ready",
+          "truth_value": "OUT"
+        },
+        {
+          "id": "btree-page-alignment-enables-corruption-recovery",
+          "truth_value": "OUT"
+        },
+        {
+          "id": "hinted-handoff-ensures-write-availability",
+          "truth_value": "OUT"
+        },
+        {
+          "id": "lsm-wal-provides-crash-recovery",
+          "truth_value": "OUT"
+        }
+      ],
+      "added": 28
+    },
+    {
+      "round": 2,
+      "network_stats": {
+        "total_in": 1245,
+        "total_derived": 28,
+        "max_depth": 1,
+        "agents": 0,
+        "agent_names": [],
+        "budget": 300,
+        "sample": true
+      },
+      "proposals_found": 20,
+      "valid": 20,
+      "skipped": [],
+      "applied": [
+        {
+          "id": "storage-crash-recovery-has-no-safe-path",
+          "truth_value": "IN"
+        },
+        {
+          "id": "btree-structural-integrity-silently-erodes",
+          "truth_value": "IN"
+        },
+        {
+          "id": "transaction-isolation-composes-two-invariant-layers",
+          "truth_value": "IN"
+        },
+        {
+          "id": "distributed-correctness-undermined-at-both-layers",
+          "truth_value": "IN"
+        },
+        {
+          "id": "anti-entropy-detects-but-cannot-fully-resolve-divergence",
+          "truth_value": "IN"
+        },
+        {
+          "id": "distributed-writes-have-compounding-correctness-gaps",
+          "truth_value": "IN"
+        },
+        {
+          "id": "wal-seq-nums-are-vestigial",
+          "truth_value": "IN"
+        },
+        {
+          "id": "hash-index-is-memory-bound-by-design",
+          "truth_value": "IN"
+        },
+        {
+          "id": "range-scan-lacks-safety-guarantees",
+          "truth_value": "IN"
+        },
+        {
+          "id": "event-store-append-is-not-crash-consistent",
+          "truth_value": "IN"
+        },
+        {
+          "id": "gossip-failure-detection-governs-cluster-correctness",
+          "truth_value": "IN"
+        },
+        {
+          "id": "2pc-has-design-implementation-gap",
+          "truth_value": "IN"
+        },
+        {
+          "id": "avro-encoding-prioritizes-compactness-over-self-description",
+          "truth_value": "IN"
+        },
+        {
+          "id": "btree-mutation-fsync-is-asymmetric",
+          "truth_value": "IN"
+        },
+        {
+          "id": "multi-leader-sync-designed-for-safe-convergence",
+          "truth_value": "IN"
+        },
+        {
+          "id": "corruption-is-terminal-across-all-readers",
+          "truth_value": "IN"
+        },
+        {
+          "id": "event-sourcing-conflates-two-id-spaces",
+          "truth_value": "IN"
+        },
+        {
+          "id": "wal-batch-replay-provides-atomicity",
+          "truth_value": "OUT"
+        },
+        {
+          "id": "hash-index-survives-restart",
+          "truth_value": "OUT"
+        },
+        {
+          "id": "lsm-read-path-correct-across-flushes",
+          "truth_value": "OUT"
+        }
+      ],
+      "added": 20
+    },
+    {
+      "round": 3,
+      "network_stats": {
+        "total_in": 1262,
+        "total_derived": 48,
+        "max_depth": 2,
+        "agents": 0,
+        "agent_names": [],
+        "budget": 300,
+        "sample": true
+      },
+      "proposals_found": 16,
+      "valid": 16,
+      "skipped": [],
+      "applied": [
+        {
+          "id": "storage-has-no-self-healing-at-any-layer",
+          "truth_value": "IN"
+        },
+        {
+          "id": "end-to-end-correctness-requires-unmet-storage-guarantees",
+          "truth_value": "IN"
+        },
+        {
+          "id": "distributed-divergence-accumulates-without-bound",
+          "truth_value": "IN"
+        },
+        {
+          "id": "integrity-checking-is-both-incomplete-and-unrecoverable",
+          "truth_value": "IN"
+        },
+        {
+          "id": "event-sourcing-lacks-any-durable-recovery-path",
+          "truth_value": "IN"
+        },
+        {
+          "id": "delete-semantics-fragmented-from-storage-to-derived-systems",
+          "truth_value": "IN"
+        },
+        {
+          "id": "post-crash-compaction-produces-irrecoverable-corruption",
+          "truth_value": "IN"
+        },
+        {
+          "id": "both-storage-paradigms-hit-scalability-walls",
+          "truth_value": "IN"
+        },
+        {
+          "id": "partition-failures-compound-across-membership-and-consensus",
+          "truth_value": "IN"
+        },
+        {
+          "id": "fsync-policy-inconsistent-across-critical-paths",
+          "truth_value": "IN"
+        },
+        {
+          "id": "sstable-format-lacks-integrity-and-efficiency-mechanisms",
+          "truth_value": "IN"
+        },
+        {
+          "id": "distributed-protocols-simulate-synchronous-delivery",
+          "truth_value": "IN"
+        },
+        {
+          "id": "crdt-merge-algebra-satisfies-convergence-requirements",
+          "truth_value": "IN"
+        },
+        {
+          "id": "wal-sequence-numbers-enable-ordered-recovery",
+          "truth_value": "OUT"
+        },
+        {
+          "id": "event-sourcing-state-is-fully-reconstructible",
+          "truth_value": "OUT"
+        },
+        {
+          "id": "lsm-compaction-output-is-correct",
+          "truth_value": "OUT"
+        }
+      ],
+      "added": 16
+    },
+    {
+      "round": 4,
+      "network_stats": {
+        "total_in": 1275,
+        "total_derived": 64,
+        "max_depth": 3,
+        "agents": 0,
+        "agent_names": [],
+        "budget": 300,
+        "sample": true
+      },
+      "proposals_found": 16,
+      "valid": 16,
+      "skipped": [],
+      "applied": [
+        {
+          "id": "system-degrades-monotonically-at-every-abstraction-level",
+          "truth_value": "IN"
+        },
+        {
+          "id": "correctness-gap-widens-under-failure",
+          "truth_value": "IN"
+        },
+        {
+          "id": "no-storage-paradigm-is-both-scalable-and-self-healing",
+          "truth_value": "IN"
+        },
+        {
+          "id": "compaction-is-critical-data-lifecycle-hazard",
+          "truth_value": "IN"
+        },
+        {
+          "id": "durability-pipeline-broken-at-both-ends",
+          "truth_value": "IN"
+        },
+        {
+          "id": "event-sourcing-unreliable-in-persistence-and-addressing",
+          "truth_value": "IN"
+        },
+        {
+          "id": "network-partitions-amplify-write-correctness-gaps",
+          "truth_value": "IN"
+        },
+        {
+          "id": "wal-recovery-infrastructure-is-vestigial",
+          "truth_value": "IN"
+        },
+        {
+          "id": "two-incompatible-conflict-resolution-paradigms",
+          "truth_value": "IN"
+        },
+        {
+          "id": "protocol-safety-validated-only-under-synchronous-model",
+          "truth_value": "IN"
+        },
+        {
+          "id": "concurrency-unsafe-on-both-read-and-write-paths",
+          "truth_value": "IN"
+        },
+        {
+          "id": "sstable-layer-compounds-integrity-and-performance-deficiencies",
+          "truth_value": "IN"
+        },
+        {
+          "id": "consensus-and-membership-use-incompatible-convergence-models",
+          "truth_value": "IN"
+        },
+        {
+          "id": "2pc-safety-gaps-compound-under-synchronous-simulation",
+          "truth_value": "IN"
+        },
+        {
+          "id": "ssi-isolation-holds-under-single-thread",
+          "truth_value": "OUT"
+        },
+        {
+          "id": "pbft-view-change-safety-holds-with-stable-digests",
+          "truth_value": "OUT"
+        }
+      ],
+      "added": 16
+    },
+    {
+      "round": 5,
+      "network_stats": {
+        "total_in": 1289,
+        "total_derived": 80,
+        "max_depth": 4,
+        "agents": 0,
+        "agent_names": [],
+        "budget": 300,
+        "sample": true
+      },
+      "proposals_found": 17,
+      "valid": 17,
+      "skipped": [],
+      "applied": [
+        {
+          "id": "system-has-no-stable-operational-regime",
+          "truth_value": "IN"
+        },
+        {
+          "id": "compaction-hazard-within-broken-durability-pipeline",
+          "truth_value": "IN"
+        },
+        {
+          "id": "distributed-correctness-doubly-unachievable-under-partition",
+          "truth_value": "IN"
+        },
+        {
+          "id": "recovery-simultaneously-over-and-under-engineered",
+          "truth_value": "IN"
+        },
+        {
+          "id": "concurrent-access-during-compaction-is-doubly-unsafe",
+          "truth_value": "IN"
+        },
+        {
+          "id": "distributed-layer-has-three-incompatible-convergence-models",
+          "truth_value": "IN"
+        },
+        {
+          "id": "protocol-safety-unfalsifiable-under-current-testing",
+          "truth_value": "IN"
+        },
+        {
+          "id": "integrity-degrades-along-storage-pipeline",
+          "truth_value": "IN"
+        },
+        {
+          "id": "wal-durability-tiers-lost-during-recovery",
+          "truth_value": "IN"
+        },
+        {
+          "id": "topology-creates-divergence-window-not-correctness-gap",
+          "truth_value": "IN"
+        },
+        {
+          "id": "wal-binary-format-prevents-evolution-and-recovery",
+          "truth_value": "IN"
+        },
+        {
+          "id": "storage-operations-have-unbounded-memory-consumption",
+          "truth_value": "IN"
+        },
+        {
+          "id": "input-validation-systematically-absent",
+          "truth_value": "IN"
+        },
+        {
+          "id": "crash-failure-paths-systematically-untested",
+          "truth_value": "IN"
+        },
+        {
+          "id": "crdt-convergence-practically-sustainable",
+          "truth_value": "OUT"
+        },
+        {
+          "id": "dynamo-read-repair-ensures-replica-consistency",
+          "truth_value": "OUT"
+        },
+        {
+          "id": "2pc-recovery-reaches-terminal-state",
+          "truth_value": "OUT"
+        }
+      ],
+      "added": 17
+    },
+    {
+      "round": 6,
+      "network_stats": {
+        "total_in": 1303,
+        "total_derived": 97,
+        "max_depth": 5,
+        "agents": 0,
+        "agent_names": [],
+        "budget": 300,
+        "sample": true
+      },
+      "proposals_found": 15,
+      "valid": 15,
+      "skipped": [],
+      "applied": [
+        {
+          "id": "corruption-propagates-through-all-data-pipelines",
+          "truth_value": "IN"
+        },
+        {
+          "id": "no-defense-in-depth-against-corruption",
+          "truth_value": "IN"
+        },
+        {
+          "id": "binary-formats-rigid-across-entire-storage-stack",
+          "truth_value": "IN"
+        },
+        {
+          "id": "ordering-infrastructure-broken-at-every-layer",
+          "truth_value": "IN"
+        },
+        {
+          "id": "crash-recovery-both-broken-and-unverified",
+          "truth_value": "IN"
+        },
+        {
+          "id": "testing-covers-neither-crash-nor-async-failure-modes",
+          "truth_value": "IN"
+        },
+        {
+          "id": "derived-systems-depend-on-unreliable-event-infrastructure",
+          "truth_value": "IN"
+        },
+        {
+          "id": "durability-bugs-invisible-to-testing",
+          "truth_value": "IN"
+        },
+        {
+          "id": "distributed-protocols-rest-on-unverifiable-assumptions",
+          "truth_value": "IN"
+        },
+        {
+          "id": "no-subsystem-has-viable-recovery-strategy",
+          "truth_value": "IN"
+        },
+        {
+          "id": "correctness-unachievable-and-unfalsifiable",
+          "truth_value": "IN"
+        },
+        {
+          "id": "wal-durability-effective-on-standards-compliant-fsync",
+          "truth_value": "OUT"
+        },
+        {
+          "id": "multi-leader-convergence-reliable-across-topologies",
+          "truth_value": "OUT"
+        },
+        {
+          "id": "sstable-point-lookup-correct-under-sort-invariant",
+          "truth_value": "OUT"
+        },
+        {
+          "id": "avro-schema-evolution-handles-version-mismatch",
+          "truth_value": "OUT"
+        }
+      ],
+      "added": 15
+    },
+    {
+      "round": 7,
+      "network_stats": {
+        "total_in": 1314,
+        "total_derived": 112,
+        "max_depth": 5,
+        "agents": 0,
+        "agent_names": [],
+        "budget": 300,
+        "sample": true
+      },
+      "proposals_found": 21,
+      "valid": 21,
+      "skipped": [],
+      "applied": [
+        {
+          "id": "wal-truncation-is-multi-failure-hazard",
+          "truth_value": "IN"
+        },
+        {
+          "id": "consensus-architectures-are-inverse-optimizations",
+          "truth_value": "IN"
+        },
+        {
+          "id": "ordering-models-are-incompatible-across-modules",
+          "truth_value": "IN"
+        },
+        {
+          "id": "counting-bloom-trades-correctness-for-unneeded-capability",
+          "truth_value": "IN"
+        },
+        {
+          "id": "pipeline-stages-hide-materialization-barriers",
+          "truth_value": "IN"
+        },
+        {
+          "id": "transaction-recovery-has-no-crash-path",
+          "truth_value": "IN"
+        },
+        {
+          "id": "range-partitioning-routing-is-structurally-fragile",
+          "truth_value": "IN"
+        },
+        {
+          "id": "cdc-event-semantics-depend-on-reconstruction-heuristics",
+          "truth_value": "IN"
+        },
+        {
+          "id": "crdt-mutation-api-is-non-defensive",
+          "truth_value": "IN"
+        },
+        {
+          "id": "stream-join-correctness-depends-on-window-alignment",
+          "truth_value": "IN"
+        },
+        {
+          "id": "gossip-failure-detection-lacks-adaptive-accuracy",
+          "truth_value": "IN"
+        },
+        {
+          "id": "materialization-barriers-span-storage-and-processing",
+          "truth_value": "IN"
+        },
+        {
+          "id": "format-rigidity-prevents-evolutionary-repair",
+          "truth_value": "IN"
+        },
+        {
+          "id": "transaction-isolation-fragile-under-restart",
+          "truth_value": "IN"
+        },
+        {
+          "id": "degradation-is-irreversible",
+          "truth_value": "IN"
+        },
+        {
+          "id": "compaction-is-unsalvageable-as-designed",
+          "truth_value": "IN"
+        },
+        {
+          "id": "silent-data-loss-is-default-operational-mode",
+          "truth_value": "IN"
+        },
+        {
+          "id": "fencing-provides-linearizable-writes",
+          "truth_value": "OUT"
+        },
+        {
+          "id": "lamport-mutex-provides-mutual-exclusion",
+          "truth_value": "OUT"
+        },
+        {
+          "id": "unbundled-catchup-produces-consistent-derived-state",
+          "truth_value": "OUT"
+        },
+        {
+          "id": "tob-ordering-verified-under-real-failures",
+          "truth_value": "OUT"
+        }
+      ],
+      "added": 21
+    },
+    {
+      "round": 8,
+      "network_stats": {
+        "total_in": 1331,
+        "total_derived": 133,
+        "max_depth": 5,
+        "agents": 0,
+        "agent_names": [],
+        "budget": 300,
+        "sample": true
+      },
+      "proposals_found": 16,
+      "valid": 16,
+      "skipped": [],
+      "applied": [
+        {
+          "id": "system-failure-is-undetectable-and-irreversible",
+          "truth_value": "IN"
+        },
+        {
+          "id": "no-operational-path-to-correctness",
+          "truth_value": "IN"
+        },
+        {
+          "id": "event-infrastructure-unreliable-in-content-and-ordering",
+          "truth_value": "IN"
+        },
+        {
+          "id": "verification-impossible-at-every-layer",
+          "truth_value": "IN"
+        },
+        {
+          "id": "format-and-structure-prevent-all-repair",
+          "truth_value": "IN"
+        },
+        {
+          "id": "distributed-models-incompatible-at-convergence-and-ordering",
+          "truth_value": "IN"
+        },
+        {
+          "id": "consensus-safety-unverified-across-optimization-variants",
+          "truth_value": "IN"
+        },
+        {
+          "id": "btree-durability-protects-data-not-structure",
+          "truth_value": "IN"
+        },
+        {
+          "id": "cdc-backbone-both-heuristic-and-insufficient",
+          "truth_value": "IN"
+        },
+        {
+          "id": "neither-partitioning-strategy-fully-reliable",
+          "truth_value": "IN"
+        },
+        {
+          "id": "convergence-rate-asymmetry-membership-vs-data",
+          "truth_value": "IN"
+        },
+        {
+          "id": "wal-thread-safety-stranded-by-callers",
+          "truth_value": "IN"
+        },
+        {
+          "id": "consistent-hash-routing-correct-under-single-thread",
+          "truth_value": "OUT"
+        },
+        {
+          "id": "derived-systems-maintain-consistency-when-position-durable",
+          "truth_value": "OUT"
+        },
+        {
+          "id": "lsm-compaction-safely-reduces-read-amplification",
+          "truth_value": "OUT"
+        },
+        {
+          "id": "wal-truncation-safe-when-linear",
+          "truth_value": "OUT"
+        }
+      ],
+      "added": 16
+    },
+    {
+      "round": 9,
+      "network_stats": {
+        "total_in": 1343,
+        "total_derived": 149,
+        "max_depth": 6,
+        "agents": 0,
+        "agent_names": [],
+        "budget": 300,
+        "sample": true
+      },
+      "proposals_found": 14,
+      "valid": 14,
+      "skipped": [],
+      "applied": [
+        {
+          "id": "system-converges-on-permanent-dark-failure",
+          "truth_value": "IN"
+        },
+        {
+          "id": "no-data-path-is-trustworthy",
+          "truth_value": "IN"
+        },
+        {
+          "id": "system-neither-verifiable-nor-repairable",
+          "truth_value": "IN"
+        },
+        {
+          "id": "distributed-layer-incoherent-and-unachievable",
+          "truth_value": "IN"
+        },
+        {
+          "id": "consensus-correctness-doubly-unverified",
+          "truth_value": "IN"
+        },
+        {
+          "id": "full-stack-restart-fragility",
+          "truth_value": "IN"
+        },
+        {
+          "id": "write-time-durability-engineering-abandoned-at-recovery",
+          "truth_value": "IN"
+        },
+        {
+          "id": "membership-detection-unreliable-in-accuracy-and-propagation",
+          "truth_value": "IN"
+        },
+        {
+          "id": "read-path-unreliable-from-storage-through-derived-systems",
+          "truth_value": "IN"
+        },
+        {
+          "id": "data-distribution-and-processing-hit-independent-scalability-ceilings",
+          "truth_value": "IN"
+        },
+        {
+          "id": "gossip-dead-node-lifecycle-is-comprehensive",
+          "truth_value": "IN"
+        },
+        {
+          "id": "btree-sibling-chain-maintained-across-mutations",
+          "truth_value": "IN"
+        },
+        {
+          "id": "wal-file-size-managed-without-syscall-overhead",
+          "truth_value": "IN"
+        },
+        {
+          "id": "mvcc-isolation-survives-restart",
+          "truth_value": "OUT"
+        }
+      ],
+      "added": 14
+    },
+    {
+      "round": 10,
+      "network_stats": {
+        "total_in": 1356,
+        "total_derived": 163,
+        "max_depth": 7,
+        "agents": 0,
+        "agent_names": [],
+        "budget": 300,
+        "sample": true
+      },
+      "proposals_found": 17,
+      "valid": 17,
+      "skipped": [],
+      "applied": [
+        {
+          "id": "wal-recovery-contract-is-valid-prefix",
+          "truth_value": "IN"
+        },
+        {
+          "id": "page-manager-metadata-durability-gap",
+          "truth_value": "IN"
+        },
+        {
+          "id": "system-has-no-undo-at-any-layer",
+          "truth_value": "IN"
+        },
+        {
+          "id": "live-projection-exactly-once-via-position-guard",
+          "truth_value": "IN"
+        },
+        {
+          "id": "lsm-wal-strictly-weaker-than-standalone-wal",
+          "truth_value": "IN"
+        },
+        {
+          "id": "sstable-write-path-has-dual-fragility",
+          "truth_value": "IN"
+        },
+        {
+          "id": "gossip-bandwidth-scales-linearly-per-message",
+          "truth_value": "IN"
+        },
+        {
+          "id": "btree-traversal-is-forward-only",
+          "truth_value": "IN"
+        },
+        {
+          "id": "orset-tombstone-growth-unbounded-and-necessary",
+          "truth_value": "IN"
+        },
+        {
+          "id": "lsm-crash-recovery-impossible-without-manifest",
+          "truth_value": "IN"
+        },
+        {
+          "id": "membership-correctness-masks-hint-data-loss",
+          "truth_value": "IN"
+        },
+        {
+          "id": "wal-multi-segment-continuity-is-reliable",
+          "truth_value": "OUT"
+        },
+        {
+          "id": "btree-range-scan-provides-ordered-access",
+          "truth_value": "OUT"
+        },
+        {
+          "id": "no-safe-operating-mode-exists",
+          "truth_value": "IN"
+        },
+        {
+          "id": "full-data-lifecycle-unsafe-from-write-through-read",
+          "truth_value": "IN"
+        },
+        {
+          "id": "recovery-destroys-both-durability-and-isolation",
+          "truth_value": "IN"
+        },
+        {
+          "id": "distributed-cluster-lacks-reliable-infrastructure",
+          "truth_value": "IN"
+        }
+      ],
+      "added": 17
+    }
+  ],
+  "total_added": 180
+}
