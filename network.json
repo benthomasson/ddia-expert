@@ -3,7 +3,7 @@
     "schema_version": "1.0",
     "project_name": "reasons",
     "created_at": "2026-05-28T22:04:49+00:00",
-    "updated_at": "2026-05-30T13:35:06+00:00",
+    "updated_at": "2026-05-30T13:48:43+00:00",
     "node_count": 1405,
     "generator": "ftl-reasons/0.43.0"
   },
@@ -58,7 +58,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "if state == \"committing\":\n    for pid in pids:\n        if p.is_available() and p.get_transaction_state(tx_id) == \"prepared\":\n            p.commit(tx_id)"
+      }
     },
     "2pc-has-design-implementation-gap": {
       "text": "Two-phase commit has a systematic gap between its safety design and implementation: the coordinator has a known blocking window between logging and sending the decision, timeouts are accepted as a parameter but never enforced, and recovery requires all participants to be available \u2014 defeating the protocol's availability goals.",
@@ -114,7 +116,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "def commit(self, tx_id):\n    for op in operations:\n        self.locks.pop(op[\"key\"], None)  # release on commit\ndef abort(self, tx_id):\n    if self.locks.get(op[\"key\"]) == tx_id:\n        del self.locks[op[\"key\"]]  # release on abort"
+      }
     },
     "2pc-log-before-decision": {
       "text": "The coordinator appends `\"committing\"` or `\"aborting\"` to its log before broadcasting the decision to participants, enabling crash recovery via `recover()` to re-send decisions that were never delivered",
@@ -136,7 +140,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "def recover(self):\n    tx_states = {}\n    for entry in self.log:\n        tx_states[entry[\"tx_id\"]] = entry[\"state\"]\n    return [tx_id for tx_id, state in tx_states.items() if state == \"prepared\"]"
+      }
     },
     "2pc-recovery-reaches-terminal-state": {
       "text": "Two-phase commit recovery drives all interrupted transactions to a terminal state by replaying committed decisions to participants, with lock ownership guards preventing cross-transaction interference during the recovery process.",
@@ -178,7 +184,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "return {\"tx_id\": tx_id, \"outcome\": \"aborted\", \"votes\": votes, \"reason\": abort_reason}\n# no exceptions raised for unavailability or conflicts"
+      }
     },
     "2pc-safety-gaps-compound-under-synchronous-simulation": {
       "text": "Two-phase commit's design-implementation gaps (known blocking window with no timeout enforcement, recovery requiring participant availability) are validated only under synchronous simulation where messages arrive instantly, meaning the real-world impact of coordinator crashes during the blocking window \u2014 where participants hold locks indefinitely \u2014 remains untested.",
@@ -235,7 +243,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "self.locks = {}  # key -> tx_id\nfor op in operations:\n    key = op[\"key\"]\n    if key in self.locks and self.locks[key] != tx_id:\n        return {\"vote\": \"no\", \"reason\": f\"key locked by {self.locks[key]}\"}"
+      }
     },
     "abort-is-status-change-not-disk-rollback": {
       "text": "Aborting a transaction in both MVCC and SSI implementations sets a status flag (`_aborted` set or status marker); no disk writes are reversed because uncommitted data never reached disk",
@@ -245,7 +255,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "def abort(self, tx):\n    tx._status = \"aborted\"\n    self._aborted.add(tx.tx_id)\n    for v in self._versions[key]:\n        if v.deleted_by == tx.tx_id:\n            v.deleted_by = None  # unmark, no disk undo"
+      }
     },
     "aborted-writes-universally-invisible": {
       "text": "A version created by an aborted transaction is invisible to every transaction, and a deletion by an aborted transaction is ignored \u2014 aborted transactions' effects are completely erased from all snapshots.",
@@ -345,7 +357,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "if free_head != NO_SIBLING:\n    page_num = free_head  # reuse freed page\n    new_head = struct.unpack(\">I\", page_data[HEADER_SIZE:HEADER_SIZE+4])[0]\nelse:\n    page_num = next_free  # allocate at end"
+      }
     },
     "anti-entropy-counts-per-node-writes": {
       "text": "The repair count returned by `anti_entropy_repair()` reflects individual node writes, not unique keys repaired; one stale key across N nodes counts as N repairs",
@@ -518,7 +532,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "self._pending_updates.append((field, value, doc_id))\n# index not updated until flush/apply"
+      }
     },
     "auto-commit-not-default": {
       "text": "`Consumer` defaults to `auto_commit=False` (line 182), requiring explicit `commit()` calls; at-least-once semantics via auto-commit are opt-in, not the default behavior",
@@ -602,7 +618,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "if rf[\"name\"] not in writer_data:\n    if \"default\" not in rf:\n        raise SchemaCompatibilityError(\n            f\"Reader field {rf[\\\"name\\\"]} has no default\")"
+      }
     },
     "avro-negative-count-carries-byte-size": {
       "text": "A negative block count `-N` in Avro's spec means N elements follow, preceded by a byte-size long that enables O(1) skipping of the entire block without parsing elements",
@@ -622,7 +640,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "_NO_DEFAULT = object()\n# distinguishes \"no default\" from \"default is None\""
+      }
     },
     "avro-no-self-describing-format": {
       "text": "Avro binary encoding contains no type tags, field names, or schema metadata; decoding is impossible without the writer schema.",
@@ -632,7 +652,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "# no field names/types in wire format \u2014 just values in order\n# reader must have both writer and reader schema to decode"
+      }
     },
     "avro-promotions-one-directional": {
       "text": "Type promotion during schema resolution is strictly one-directional (int\u2192long\u2192float\u2192double, int\u2192float, int\u2192double, long\u2192double); reverse promotion (e.g., long\u2192int) is not supported and raises SchemaCompatibilityError.",
@@ -642,7 +664,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "PROMOTIONS = {\n    (\"int\", \"long\"), (\"int\", \"float\"), (\"int\", \"double\"),\n    (\"long\", \"float\"), (\"long\", \"double\"),\n    (\"float\", \"double\"),\n}  # int->long ok, long->int is SchemaCompatibilityError"
+      }
     },
     "avro-record-fields-wire-order": {
       "text": "Record fields are encoded and decoded in declaration order of the writer schema with no field names on the wire; reordering fields in the schema definition changes the binary format and breaks existing data.",
@@ -652,7 +676,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "for field in schema.fields:\n    write_datum(buf, field[\"type\"], record[field[\"name\"]])\n# fields written in declaration order, no field tags"
+      }
     },
     "avro-registry-4byte-schema-id": {
       "text": "SchemaRegistry prepends a 4-byte big-endian unsigned int schema ID (struct.pack('>I', id)) to encoded payloads, modeling Confluent's Schema Registry wire format; schema IDs are limited to [0, 2^32).",
@@ -662,7 +688,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "header = struct.pack(\">bI\", 0, schema_id)  # magic byte + 4-byte schema ID\nreturn header + encoded_data"
+      }
     },
     "avro-schema-canonical-equality": {
       "text": "`Schema(\"int\")` and `Schema({\"type\": \"int\"})` are equal and hash-equal, enabling consistent set/dict usage regardless of whether the schema was constructed from a string or dict form",
@@ -682,7 +710,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "class SchemaError(Exception):      # invalid schema definition\nclass SchemaCompatibilityError(Exception):  # schemas cannot be resolved"
+      }
     },
     "avro-schema-evolution-handles-version-mismatch": {
       "text": "Avro schema evolution correctly handles writer-reader version mismatches through mandatory dual-schema resolution (writer schema parses wire bytes, reader schema shapes output), with clean separation between structural schema errors at parse time and compatibility errors at resolution time.",
@@ -734,7 +764,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "seen = set()\nfor t in defn:\n    key = s.name if s.name else s.type_name\n    if key in seen:\n        raise SchemaError(f\"Duplicate type in union: {key}\")\n    seen.add(key)"
+      }
     },
     "avro-writer-reader-dual-schema-resolution": {
       "text": "AvroDecoder always requires both a writer schema (to parse the wire bytes) and a reader schema (to shape the output); this dual-schema resolution is Avro's core mechanism for schema evolution.",
@@ -744,7 +776,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "def _resolve_record(self, writer_schema, reader_schema, data):\n    # match fields by name, apply defaults for missing reader fields\n    for rf in reader_fields:\n        if rf[\"name\"] in writer_data:\n            result[rf[\"name\"]] = writer_data[rf[\"name\"]]\n        elif \"default\" in rf:\n            result[rf[\"name\"]] = rf[\"default\"]"
+      }
     },
     "batch-append-not-crash-safe": {
       "text": "`append_batch` can leave a partial batch on disk if the process crashes mid-write, since events are individually appended to the NDJSON file without a transaction marker or write-ahead log",
@@ -764,7 +798,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "elif self._sync_mode == \"batch\":\n    self._write_count += 1\n    if self._write_count >= self._batch_sync_count:\n        self._fd.flush()\n        os.fsync(self._fd.fileno())\n        self._write_count = 0"
+      }
     },
     "batch-notifies-after-all-stored": {
       "text": "`append_batch()` stores all events in the batch first, then notifies subscribers of each event sequentially, ensuring subscribers see a consistent state where all batch events exist",
@@ -919,7 +955,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "self._segment_counter += 1\nself._active_path = self._segment_path(self._segment_counter)\nself._active_file = open(self._active_path, \"ab\")"
+      }
     },
     "bitcask-crash-recovery-without-hints": {
       "text": "`BitcaskStore` can rebuild its in-memory index by scanning `.data` files alone when `.hint` files are missing, producing identical read results to a clean startup with hint files present.",
@@ -989,7 +1027,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "def put(self, key, value):\n    self._write_record(key, value)\n    if self._sync_writes:\n        self._active_file.flush()\n        os.fsync(self._active_file.fileno())"
+      }
     },
     "bitcask-get-missing-returns-none": {
       "text": "`BitcaskStore.get()` returns `None` for missing or deleted keys, never raises `KeyError`.",
@@ -1787,7 +1827,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "def free_page(self, page_num):\n    data = struct.pack(HEADER_FMT, 0, 0) + struct.pack(\">I\", free_head)\n    self.write_page(page_num, data)  # freed page stores next-free pointer\n    self.write_meta(..., new_head=page_num)"
+      }
     },
     "btree-free-page-bypasses-wal": {
       "text": "`pm.free_page()` called during deletion writes directly to the data file without WAL logging, creating a crash-consistency gap if the process fails between the free and the WAL commit",
@@ -2057,7 +2099,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "# Page 0: root_page(4B), height(4B), total_keys(4B), next_free(4B), free_head(4B)\nMETA_FMT = \">5I\"\nself._f.seek(0)\nself._f.write(struct.pack(META_FMT, root, height, total_keys, next_free, free_head))"
+      }
     },
     "btree-partial-split-replay-orphans-right-page": {
       "text": "If a crash occurs after the right page and left page are WAL-logged but before the parent update, recovery produces a consistent sibling chain but the right page is unreachable from tree descent \u2014 range scans find the keys but point lookups silently miss them",
@@ -2077,7 +2121,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "# _insert into leaf: if key exists, update value; else insert new\nidx = bisect_left(keys, key)\nif idx < len(keys) and keys[idx] == key:\n    values[idx] = value  # update\nelse:\n    keys.insert(idx, key); values.insert(idx, value)  # insert"
+      }
     },
     "btree-put-metadata-reread": {
       "text": "`put` must re-read metadata after `_insert` returns because `PageManager.allocate_page` mutates `next_free` and `free_head` as a side effect during splits, and those changes are not threaded back through the return value.",
@@ -2311,7 +2357,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "# WAL entry written before page modification\nwal_entry = struct.pack(\">II\", page_num, len(data)) + data\nself._wal_fd.write(wal_entry)\nos.fsync(self._wal_fd.fileno())\n# then write data page"
+      }
     },
     "btree-wal-checksum-excludes-page-num": {
       "text": "In `b-tree-storage-engine/btree.py`, the WAL entry checksum covers only `page_data`, so a corrupted `page_num` during recovery writes a valid page to the wrong disk location without detection \u2014 the most dangerous integrity gap in the codebase",
@@ -2491,7 +2539,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "if current_time - self._election_start_time >= self.election_timeout // 2:\n    if not self._got_alive:\n        messages.extend(self.declare_victory(current_time))"
+      }
     },
     "bully-cascade-causes-quadratic-messages": {
       "text": "Receiving an ELECTION from a lower-ID node triggers both an ALIVE response and a new `start_election` call, creating the O(n\u00b2) message cascade in worst-case elections",
@@ -2555,7 +2605,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "leaders = [nid for nid, node in self.nodes.items()\n           if node.is_available() and node.state == \"leader\"]\nif len(leaders) > 1:\n    highest = max(leaders)\n    for lid in leaders:\n        if lid != highest: node.start_election(current_time)"
+      }
     },
     "bully-synchronous-delivery": {
       "text": "All messages generated within a single `tick()` call are delivered and fully resolved (including cascading responses) in a `while all_messages` loop before the tick returns.",
@@ -2565,7 +2617,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "while all_messages:\n    next_messages = []\n    for msg in all_messages:\n        responses = receiver.receive_message(msg)\n        next_messages.extend(responses)\n    all_messages = next_messages  # deliver until quiescent"
+      }
     },
     "bully-tests-use-deterministic-simulation": {
       "text": "Leader election tests control time via an explicit `start_time` parameter to `run_until_leader()` rather than real timers or sleeps, making the entire test suite deterministic with no flaky timing",
@@ -3393,7 +3447,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "class CompactionManager:\n    def __init__(self, strategy=\"size_tiered\"):\n        # \"size_tiered\" or \"leveled\""
+      }
     },
     "compaction-not-atomic": {
       "text": "`LSMTree.compact()` performs a multi-step file swap (write new SSTable, update in-memory list, delete old files) with no mechanism to make the transition atomic across crashes",
@@ -4890,7 +4946,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "def search(self, field, value):\n    results = []\n    for partition in self._partitions:\n        results.extend(partition.search(field, value))\n    return results  # scatter-gather across all partitions"
+      }
     },
     "doc-partitioned-write-touches-one": {
       "text": "`DocumentPartitionedDB.put()` always touches exactly 1 partition regardless of how many fields are indexed, because the secondary index is co-located with the document on its home partition.",
@@ -6087,7 +6145,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "def garbage_collect(self):\n    min_active = min(tx.tx_id for tx in self._transactions.values() if tx.is_active)\n    # only remove versions invisible to all active transactions"
+      }
     },
     "gc-unconditionally-purges-aborted": {
       "text": "`garbage_collect()` removes all versions with `created_by` in `_aborted` as its first step, regardless of active transaction state \u2014 aborted versions are invisible to everyone and always safe to drop.",
@@ -6224,7 +6284,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "if nid not in self.membership:\n    if remote[\"status\"] == \"dead\":\n        continue  # never heard of this node AND its dead, skip"
+      }
     },
     "gossip-death-is-irreversible-via-gossip": {
       "text": "Once a node's status is `dead`, receiving a gossip message with `status: alive` for that node will never revert it \u2014 the merge logic at line 67 checks `local[\"status\"] != \"dead\"` before allowing exoneration",
@@ -6344,7 +6406,7 @@
       "source_hash": "",
       "date": "",
       "metadata": {
-        "example": "if remote[\"heartbeat_counter\"] > local[\"heartbeat_counter\"]:\n    local[\"heartbeat_counter\"] = remote[\"heartbeat_counter\"]\n    local[\"timestamp_last_updated\"] = current_time"
+        "example": "if remote[\"heartbeat_counter\"] > local[\"heartbeat_counter\"]:\n    local[\"heartbeat_counter\"] = remote[\"heartbeat_counter\"]\n    local[\"timestamp_last_updated\"] = current_time\n    if remote[\"status\"] == \"dead\":\n        local[\"status\"] = \"dead\""
       }
     },
     "gossip-no-arrival-history": {
@@ -6912,7 +6974,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "preferred = self.get_preferred_nodes(key)\nfor nid in preferred:  # only read from preferred replicas\n    if node.is_available():\n        results.append(node.get(key))"
+      }
     },
     "hinted-handoff-sloppy-quorum-counts-hints": {
       "text": "When `sloppy_quorum=True` (the default), stored hints count toward `write_quorum` the same as direct replica writes, trading consistency for write availability.",
@@ -6954,7 +7018,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "def put(self, key, value, current_time):\n    # time passed explicitly, not read from system clock"
+      }
     },
     "hinted-handoff-ttl-bounds-hint-lifetime": {
       "text": "Hints expire after `created_at + ttl` (checked via `Hint.is_expired`); a node that stays down longer than the TTL window will not receive those hinted writes and must rely on anti-entropy for convergence.",
@@ -6974,7 +7040,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "version = self.versions.get(key, 0) + 1\nself.versions[key] = version"
+      }
     },
     "index-is-volatile": {
       "text": "All three storage engines rebuild their in-memory index (`keydir`, `_index`) entirely from on-disk files at startup; inconsistent file state after a crash produces a silently incomplete index with no error",
@@ -8167,7 +8235,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "class SSTable:\n    def __init__(self, path, seq, sparse_index_interval=16):\n        self._interval = sparse_index_interval"
+      }
     },
     "lsm-sstables-unprotected-mutation": {
       "text": "`LSMTree._sstables` is mutated by both `_flush()` (append) and `compact()` (full replacement) with no synchronization, versioning, or ref counting, making concurrent reads unsafe if threading or async is added",
@@ -8197,7 +8267,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "TOMBSTONE = b\"\"\ndef delete(self, key):\n    self.put(key, TOMBSTONE)"
+      }
     },
     "lsm-tree-has-no-level-concept": {
       "text": "`LSMTree` in lsm.py maintains a flat list of SSTables ordered by sequence number with no level assignment; compaction merges all files into one rather than promoting between levels",
@@ -8227,7 +8299,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "from sortedcontainers import SortedDict\nself._memtable = SortedDict()"
+      }
     },
     "lsm-wal-before-memtable": {
       "text": "Every `put()` and `delete()` writes to the WAL before inserting into the memtable, ensuring no acknowledged write is lost on crash.",
@@ -8350,7 +8424,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "entries = self._wal.replay()\nfor key, value in entries:\n    self._memtable[key] = value"
+      }
     },
     "lsm-wal-strictly-weaker-than-standalone-wal": {
       "text": "The LSM tree's built-in WAL provides strictly weaker guarantees than the standalone WAL module along two independent axes: it has no CRC or checksum for integrity (vs per-record CRC32 in the standalone WAL), and its truncation zeroes the entire file instantly via wb mode (vs careful record-by-record rewriting), meaning corruption goes undetected and truncation is all-or-nothing rather than surgical.",
@@ -8989,7 +9065,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "import hashlib\ndef _hash(self, data):\n    return hashlib.sha256(data.encode()).hexdigest()"
+      }
     },
     "meta-page-fixed-20-byte-payload": {
       "text": "The metadata payload is exactly 20 bytes (5 big-endian uint32s packed as `'>5I'`), zero-padded to `page_size`; the format requires `page_size >= 20` but this is not enforced.",
@@ -9029,7 +9107,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "if self._combiner:\n    combined = self._combiner(key, values)\n    # applied after map, before shuffle to reduce"
+      }
     },
     "mr-fault-tolerant-silently-drops": {
       "text": "When `fault_tolerant=True`, mapper and reducer exceptions are caught and silently skipped with no logging or error reporting, producing partial results without any indication of data loss.",
@@ -9059,7 +9139,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "partition = hash(key) % num_reducers\npartitions[partition].append((key, value))"
+      }
     },
     "mr-intermediate-data-uses-json-files": {
       "text": "Intermediate shuffle data is serialized as JSON files in a temp directory with naming convention `map-{mapper_id}-part-{partition}.json`.",
@@ -9319,7 +9401,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "tx.active_at_start = {\n    tid for tid, t in self._transactions.items() if t.is_active}"
+      }
     },
     "mvcc-active-tx-not-recoverable": {
       "text": "Active (uncommitted) transactions cannot survive a process restart; the safe recovery strategy is to treat them as aborted, which is consistent with `_is_visible`'s existing handling of aborted transaction versions as invisible",
@@ -10350,7 +10434,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "# keyless messages (key=None) always kept during compaction\nif msg.key is None:\n    compacted.append(msg)"
+      }
     },
     "partitioned-log-key-routing-deterministic": {
       "text": "Messages with the same key always route to the same partition via `MD5(key) % num_partitions`, guaranteeing per-key ordering within a partition.",
@@ -10360,7 +10446,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "def _partition_for_key(self, key):\n    return hash(key) % self._num_partitions"
+      }
     },
     "partitioned-log-offset-monotonic": {
       "text": "Offsets within a partition are strictly increasing and never reused; `_base_offsets` only advances forward via `truncate` and `compact_partition`.",
@@ -11140,7 +11228,7 @@
       "source_hash": "",
       "date": "",
       "metadata": {
-        "example": "if self._state != \"leader\":\n    return {\"success\": False, \"entry\": None, \"error\": \"not leader\"}"
+        "example": "def client_request(self, command):\n    if self._state != \"leader\":\n        return {\"success\": False, \"error\": \"not leader\"}"
       }
     },
     "raft-no-prevote-or-lease": {
@@ -11248,7 +11336,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "def tick(self, elapsed_ms):\n    all_messages = []\n    for nid, node in self.nodes.items():\n        msgs = node.tick(elapsed_ms)\n        all_messages.extend(msgs)\n    for msg in all_messages:\n        # deliver all in same tick"
+      }
     },
     "raft-stale-leader-accepts-writes": {
       "text": "A partitioned leader continues accepting client requests (returning `success: True`) even though those entries can never commit and will be overwritten when the partition heals \u2014 the gap a leader lease would close",
@@ -11348,7 +11438,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "def get_partition(self, key):\n    idx = bisect.bisect_right(self._boundaries, key) - 1\n    return self._partitions[max(0, idx)]"
+      }
     },
     "range-partitioning-contiguous-half-open-coverage": {
       "text": "Partitions use half-open intervals `[start_key, end_key)` with the first partition starting at `\"\"` and the last having `end_key=None`, guaranteeing the entire string keyspace is covered with no gaps or overlaps.",
@@ -11422,7 +11514,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "mid = len(partition._data) // 2\nmedian_key = sorted_keys[mid]\n# split into [start, median) and [median, end)"
+      }
     },
     "range-scan-end-key-exclusive": {
       "text": "`range_scan(start_key, end_key)` treats `end_key` as an exclusive upper bound \u2014 `range_scan(\"k05\", \"k10\")` returns keys `k05` through `k09`",
@@ -11679,7 +11773,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "def anti_entropy_repair(self, key):\n    for r in available:\n        result = r.get(key)\n        if result is None or result[1] < best_version:\n            r.put(key, best_value, best_version)\n    # no tombstone check \u2014 deleted key gets re-written"
+      }
     },
     "read-repair-scope-is-quorum-only": {
       "text": "Read repair in `get()` only fixes replicas that were part of the read quorum, not all replicas; full-cluster repair requires a separate call to `anti_entropy_repair()`.",
@@ -11949,7 +12045,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "def renew(self, lock_name, client_id, current_time, ttl=10):\n    existing.issued_at = current_time\n    existing.ttl = ttl\n    return True  # same token number, extended TTL"
+      }
     },
     "replay-does-not-enforce-batch-atomicity": {
       "text": "Despite the docstring claiming replay \"skips uncommitted batches,\" the implementation returns all PUT/DELETE records regardless of whether a matching COMMIT record exists \u2014 a crash mid-batch will replay partial batch records",
@@ -12713,7 +12811,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "self._dependency_graph = {}  # tx_id -> set of tx_ids\n# on read:\nif writer_tx_id is not None:\n    self._dependency_graph[tx.tx_id].add(writer_tx_id)"
+      }
     },
     "ssi-isolation-holds-under-single-thread": {
       "text": "SSI's composed invariant layers provide correct serializable snapshot isolation: MVCC enforces visibility through append-only versions and symmetric deletion rules, and SSI validation ensures own-writes are checked before store consultation, preventing lost updates.",
@@ -13182,7 +13282,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "TOMBSTONE_FLAG = 0xFF\n# tombstone entries: key present, value = 0xFF marker"
+      }
     },
     "sstable-tombstone-is-null-value": {
       "text": "Tombstones are represented at the API level as `SSTableEntry` objects with `value=None`, not as a separate deletion record type.",
@@ -13491,7 +13593,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "def get_results(self):\n    results = list(self._results)\n    self._results.clear()\n    return results"
+      }
     },
     "stream-join-inner-requires-key-and-window-match": {
       "text": "Inner join only produces a `JoinResult` when both key equality and `|t_left - t_right| <= window_duration` hold; either condition failing alone prevents a match.",
@@ -13551,7 +13655,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "for buffered in opposite_buffer[key]:\n    if self._window.contains(event.timestamp, buffered.event.timestamp):\n        result = JoinResult(key, left_event, right_event, ...)\n        results.append(result)  # one event matches many"
+      }
     },
     "stream-join-process-event-returns-immediate-matches": {
       "text": "`process_event()` returns matches synchronously on each call (push-based) rather than batching to a flush boundary; results are available the instant a match is found.",
@@ -13746,7 +13852,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "partition = self._get_index_partition(field, value)\nreturn partition.lookup(field, value)  # single partition"
+      }
     },
     "term-partitioned-write-touches-multiple": {
       "text": "`TermPartitionedDB.put` touches 1 + N partitions where N depends on how many distinct index partitions the document's field values hash to, because index entries live on term-hashed partitions separate from the data partition.",
@@ -14495,7 +14603,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "def flush(self):\n    for event in self._pending_events:\n        for view in self._derived_views:\n            view.apply(event)\n    self._pending_events.clear()"
+      }
     },
     "unbundled-db-is-log-first-cdc-is-state-first": {
       "text": "The unbundled database writes to WAL before storage engine, while the CDC module writes to in-memory rows before appending the log \u2014 opposite ordering of the source-of-truth relationship",
@@ -14515,7 +14625,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "def put(self, key, value):\n    old = self._store.get(key)\n    self._store[key] = value\n    event = {\"type\": \"put\", \"key\": key, \"value\": value, \"old_value\": old}\n    return event"
+      }
     },
     "unbundled-db-rebuild-equals-live": {
       "text": "`rebuild_system()` must produce state identical to incremental live processing \u2014 this is a tested invariant verified by capturing `get_state()` before and after rebuild.",
@@ -14625,7 +14737,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "class UnfencedResourceServer:\n    def write(self, resource, key, value):\n        self._data[resource][key] = value\n        return {\"success\": True}  # no token check"
+      }
     },
     "unhandled-event-types-silently-skipped": {
       "text": "Events whose `event_type` has no entry in the handlers dict are skipped without warning in both `reconstruct_state` and `Projection.catch_up`",
@@ -14757,7 +14871,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "@staticmethod\ndef verify_proof(leaf_hash, proof, root_hash):\n    current = leaf_hash\n    for sibling_hash, direction in proof:\n        if direction == \"left\":\n            current = sha256(sibling_hash + current)\n        else:\n            current = sha256(current + sibling_hash)\n    return current == root_hash"
+      }
     },
     "verify-proof-root-trust": {
       "text": "`verify_proof` confirms data matches a given root hash but does not authenticate the root itself; callers must obtain a trusted root through an independent channel (e.g., a signed block header).",
@@ -15511,7 +15627,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "def _maybe_rotate(self):\n    if self._fd and self._fd.tell() >= self._max_file_size:\n        self._rotate()\n# checked AFTER write, so file can exceed limit"
+      }
     },
     "wal-max-file-size-is-soft-limit": {
       "text": "`_max_file_size` is a soft cap: the check triggers rotation for the *next* write, it does not prevent the current write from exceeding the limit.",
@@ -15914,7 +16032,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "self._current_file = os.path.join(self._dir, f\"{next_num:06d}.wal\")"
+      }
     },
     "wal-seq-num-global-monotonic": {
       "text": "`_seq_num` is a single in-memory counter that only increments via `+= 1`; all records across all WAL files share one monotonically increasing sequence space that never resets, even across file rotation.",
@@ -15979,7 +16099,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "with self._lock:\n    self._seq_num += 1\n    seq = self._seq_num"
+      }
     },
     "wal-seq-reset-on-commit": {
       "text": "The WAL sequence counter resets to 0 on every commit; sequence numbers are only meaningful within a single uncommitted transaction window",
@@ -16042,7 +16164,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "self._fd = open(self._current_file, \"ab\")\n# single file descriptor, all writes go through self._fd"
+      }
     },
     "wal-single-writer-thread-level": {
       "text": "The WAL enforces single-writer via `threading.Lock` but has no inter-process locking mechanism (no flock/PID file), so the single-writer invariant holds only within a single OS process",
@@ -16256,7 +16380,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "for path in self._wal_files():\n    kept = []\n    with open(path, \"rb\") as f:\n        while True:\n            rec = _read_record(f)\n            if rec is None: break\n            if rec.seq_num > up_to_seq:\n                kept.append(rec)\n    if not kept: os.remove(path)\n    else:\n        with open(path, \"wb\") as f:\n            for rec in kept: f.write(_encode_record(...))"
+      }
     },
     "wal-truncation-is-multi-failure-hazard": {
       "text": "WAL truncation combines three independent failure modes: it blocks all concurrent operations for its entire duration, silently discards all records after encountering corruption in a file, and is not crash-safe due to in-place file rewriting without atomic rename.",

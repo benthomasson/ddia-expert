@@ -1,7 +1,7 @@
 ---
 schema_version: "1.0"
 project_name: "reasons"
-updated_at: "2026-05-30T13:35:06+00:00"
+updated_at: "2026-05-30T13:48:43+00:00"
 node_count: 1405
 generator: ftl-reasons/0.43.0
 ---
