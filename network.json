@@ -3,9 +3,9 @@
     "schema_version": "1.0",
     "project_name": "reasons",
     "created_at": "2026-05-28T22:04:49+00:00",
-    "updated_at": "2026-05-30T13:09:55+00:00",
+    "updated_at": "2026-05-30T13:35:06+00:00",
     "node_count": 1405,
-    "generator": "ftl-reasons/0.42.0"
+    "generator": "ftl-reasons/0.43.0"
   },
   "nodes": {
     "2pc-abort-guarantees-no-side-effects": {
@@ -36,7 +36,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "for op in operations:\n    self.locks[op[\"key\"]] = tx_id  # locks held until commit() or abort()\nself.log.append({\"tx_id\": tx_id, \"state\": \"prepared\"})\nreturn {\"vote\": \"yes\"}"
+      }
     },
     "2pc-coordinator-recover-requires-liveness": {
       "text": "`Coordinator.recover()` can only re-send decisions to participants that are currently available (`is_available()` check), leaving unavailable participants still in-doubt with no resolution path",
@@ -90,7 +92,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "if self.locks.get(op[\"key\"]) == tx_id:\n    del self.locks[op[\"key\"]]"
+      }
     },
     "2pc-locks-held-during-in-doubt": {
       "text": "Locks acquired during `prepare()` are only released by `commit()` or `abort()`, meaning an in-doubt transaction blocks all subsequent transactions on the same keys indefinitely until the coordinator recovers",
@@ -120,7 +124,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "self.log.append({\"tx_id\": tx_id, \"state\": \"committing\"})\nfor pid in participant_operations:\n    p.commit(tx_id)"
+      }
     },
     "2pc-participant-recover-returns-in-doubt-only": {
       "text": "`Participant.recover()` identifies transactions stuck in `\"prepared\"` state but provides no mechanism to resolve them without the coordinator, making it a diagnostic tool rather than a recovery procedure",
@@ -205,7 +211,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "def __init__(self, participant_ids, timeout=5):\n    self.timeout = timeout  # stored but never referenced"
+      }
     },
     "2pc-unanimous-vote": {
       "text": "A transaction commits only if every participant in `participant_operations` votes `\"yes\"`; a single `\"no\"` vote triggers abort for all participants regardless of how many voted yes",
@@ -215,7 +223,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "all_yes = all(v == \"yes\" for v in votes.values())"
+      }
     },
     "2pc-uses-key-level-locking": {
       "text": "Participants lock at key granularity during `prepare()`; a second transaction touching a locked key receives a `\"no\"` vote and aborts rather than waiting or queuing",
@@ -1059,7 +1069,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "self._index: dict[str, tuple[str, int]] = {}  # key -> (filepath, offset)\n# all reads go through: filepath, offset = self._index[key]"
+      }
     },
     "bitcask-no-checksum-validation": {
       "text": "Records have no CRC or integrity checksum; the only corruption guard is the `assert read_key == key` in `get()`, which catches index/data mismatches but not bit-rot.",
@@ -1279,7 +1291,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "TOMBSTONE = b\"__BITCASK_TOMBSTONE__\"\ndef delete(self, key):\n    self._write_record(key, TOMBSTONE)"
+      }
     },
     "bitcask-tombstone-semantics": {
       "text": "`BitcaskStore.delete()` writes a tombstone record (`b\"__BITCASK_TOMBSTONE__\"`); `get()` returns `None` for tombstoned keys, and `compact()` removes both the original entry and the tombstone",
@@ -1329,7 +1343,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "def _hashes(self, item):\n    h1, h2 = hash(item), hash(item + \"_salt\")\n    return [(h1 + i * h2) % self._size for i in range(self._num_hashes)]"
+      }
     },
     "bloom-filter-deterministic-hashing": {
       "text": "The Bloom filter hash function is deterministic (not seeded with randomness), so two filters with identical parameters produce identical bit arrays for identical inputs \u2014 enabling equality comparison and reproducible serialization",
@@ -2515,7 +2531,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "higher_nodes = [nid for nid in self.all_node_ids if nid > self.node_id]\nif not higher_nodes:\n    return self.declare_victory(current_time)"
+      }
     },
     "bully-recovery-triggers-election": {
       "text": "When a failed node recovers via `recover_node`, it immediately starts an election, potentially preempting the current leader \u2014 this is the defining \"bully\" behavior.",
@@ -2525,7 +2543,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "def recover_node(self, node_id):\n    node.set_available(True)\n    msgs = node.start_election(self._current_time)  # immediately"
+      }
     },
     "bully-split-brain-resolved-post-hoc": {
       "text": "Split-brain is detected and resolved by `_resolve_split_brain` in the cluster harness after each tick (forcing lower-ID leaders to re-elect), not prevented by the node-level protocol alone.",
@@ -2882,7 +2902,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "def _hash(key):\n    return int(hashlib.md5(key.encode()).hexdigest(), 16) & 0xFFFFFFFF"
+      }
     },
     "ch-preference-list-skips-duplicates": {
       "text": "`get_nodes` walks clockwise past virtual nodes belonging to already-seen physical nodes, ensuring exactly `replication_factor` distinct physical nodes in the preference list",
@@ -2892,7 +2914,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "seen = set()\nresult = []\nwhile len(result) < self.replication_factor:\n    node = self._ring_nodes[idx % n]\n    if node not in seen:\n        seen.add(node)\n        result.append(node)\n    idx += 1"
+      }
     },
     "ch-ring-sorted-invariant": {
       "text": "`ConsistentHashRing._ring_positions` is maintained in sorted order at all times via `bisect`; all key lookups depend on this invariant",
@@ -2902,7 +2926,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "self._ring_positions: List[int] = []  # sorted hash positions\nidx = bisect.bisect_left(self._ring_positions, pos)\nself._ring_positions.insert(idx, pos)"
+      }
     },
     "ch-transfer-maps-are-descriptive": {
       "text": "`add_node` and `remove_node` return transfer map descriptions of which arcs move between nodes but do not move data themselves; the caller must act on the map",
@@ -2922,7 +2948,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "vnode_count = int(self.num_vnodes * weight)\nfor i in range(vnode_count):\n    pos = _hash(f\"{node_id}:{i}\")"
+      }
     },
     "chained-checksums-trade-random-access-for-log-integrity": {
       "text": "Chained frame checksums (as in SQLite's WAL) prevent mid-log splicing, deletion, and reordering but require sequential validation from the chain start, eliminating the ability to validate or replay a single record in isolation",
@@ -3455,7 +3483,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "def compare(self, other):\n    # Returns \"BEFORE\", \"AFTER\", \"EQUAL\", or \"CONCURRENT\"\n    if has_less and has_greater: return \"CONCURRENT\"\n    if has_less: return \"BEFORE\"\n    if has_greater: return \"AFTER\"\n    return \"EQUAL\""
+      }
     },
     "concurrency-check-is-pre-mutation": {
       "text": "The `expected_version` optimistic concurrency check in `append_batch` runs before any state mutation, so a `ConcurrencyConflict` exception is safe and leaves the store completely unchanged.",
@@ -3946,7 +3976,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "expected_crc = zlib.crc32(payload) & 0xFFFFFFFF\nif crc != expected_crc:\n    raise CorruptionError(f\"CRC mismatch\")\n# caller breaks on CorruptionError, losing remaining records"
+      }
     },
     "count-is-barrier": {
       "text": "`Count` stage materializes its entire input into a `defaultdict` before yielding any output, making it a pipeline barrier that forces all upstream stages to complete first",
@@ -4006,7 +4038,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "def remove(self, item):\n    for idx in self._hashes(item):\n        if self._counters[idx] > 0:\n            self._counters[idx] -= 1"
+      }
     },
     "counting-bloom-trades-correctness-for-unneeded-capability": {
       "text": "The counting Bloom filter pays 8x memory overhead and introduces false negatives through its removal operation for a capability (element deletion) that the primary use case \u2014 immutable SSTables \u2014 never needs, since SSTables are write-once and discarded whole during compaction.",
@@ -4212,7 +4246,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "def merge(self, other):  # GCounter\n    for rid, count in other.counts.items():\n        self.counts[rid] = max(self.counts.get(rid, 0), count)\n    return self  # max is idempotent"
+      }
     },
     "crdt-merge-is-idempotent-and-convergence-tested": {
       "text": "All four CRDT types demonstrate idempotent merge (re-merging produces no change), semantic equality comparison, and monotonic ORSet tombstones. The sync_all test confirms convergence after two rounds, consistent with merge being commutative and associative, though these properties are exercised by tests rather than proven by the antecedents alone.",
@@ -5127,7 +5163,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "for sub in self._subscribers:\n    sub(event)  # LiveProjection registered as subscriber"
+      }
     },
     "es-optimistic-concurrency-via-expected-version": {
       "text": "`append(..., expected_version=V)` succeeds only if the current stream version equals V; a stale version raises `ConcurrencyConflict`.",
@@ -5137,7 +5175,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "if expected_version is not None:\n    current = self.stream_version(stream_id)\n    if current != expected_version:\n        raise ConcurrencyConflict(...)"
+      }
     },
     "es-persistence-uses-jsonl": {
       "text": "EventStore disk persistence uses JSONL (newline-delimited JSON) format, loaded in full on construction to rebuild the in-memory state.",
@@ -5167,7 +5207,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "def save_snapshot(self, name, state, position):\n    self._snapshots[name] = {\n        \"state\": copy.deepcopy(state),\n        \"position\": position}"
+      }
     },
     "es-snapshots-are-in-memory-dicts": {
       "text": "Event sourcing snapshots on `store._snapshots` are plain Python dicts monkey-patched onto the store instance with no serialization; `getattr(self._store, '_snapshots', {})` defensively handles their absence",
@@ -5622,7 +5664,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "highest = self._highest_token.get(resource, 0)\nif fencing_token < highest:\n    return {\"success\": False, \"error\": f\"Token {fencing_token} is stale\"}\nself._highest_token[resource] = fencing_token"
+      }
     },
     "fencing-token-counter-is-global": {
       "text": "The fencing token counter is global across all locks, not per-lock; tokens issued for different locks are comparable and strictly ordered by acquisition time",
@@ -5642,7 +5686,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "token = FencingToken(self._counter, lock_name, client_id, current_time, ttl)\nself._counter += 1"
+      }
     },
     "fencing-token-tracking-is-per-resource": {
       "text": "Token high-water marks on `FencedResourceServer` are scoped per resource identifier, so a lower token can succeed on a different resource than the one that saw a higher token",
@@ -5712,7 +5758,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "for key in tx.write_set:\n    for other_id in self._committed:\n        other = self._transactions[other_id]\n        if key in other.write_set and other.tx_id > tx.start_timestamp:\n            tx._status = \"aborted\"\n            return False  # first committer wins"
+      }
     },
     "fixture-usage-is-sparse": {
       "text": "Only 3 of the `test_*.py` files use `@pytest.fixture` (`test_cdc`, `test_map_side_joins`, `test_bitcask`); most pytest files still use inline setup identical to their tester counterparts",
@@ -5752,7 +5800,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "seq = len(self._sstables) + 1\npath = os.path.join(self._dir, f\"sstable_{seq:06d}.sst\")\nsst = SSTable.write(path, seq, sorted(frozen.items()))\nself._sstables.append(sst)"
+      }
     },
     "flush-index-drains-pending": {
       "text": "`flush_index()` is the sole mechanism that materializes async index updates: it iterates `self._pending`, calls `_apply_index_op()` for each entry, and returns the count of operations applied",
@@ -6194,7 +6244,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "def send_gossip(self):\n    return copy.deepcopy(self.membership)\n# prevents shared-reference mutation between nodes"
+      }
     },
     "gossip-detect-failures-is-stateless": {
       "text": "`detect_failures` makes decisions using only `current_time - timestamp_last_updated`; it consults no historical distribution or sliding window, making it a pure point-in-time comparison rather than a statistical inference.",
@@ -6291,7 +6343,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "if remote[\"heartbeat_counter\"] > local[\"heartbeat_counter\"]:\n    local[\"heartbeat_counter\"] = remote[\"heartbeat_counter\"]\n    local[\"timestamp_last_updated\"] = current_time"
+      }
     },
     "gossip-no-arrival-history": {
       "text": "Each node stores only the most recent `timestamp_last_updated` per peer, discarding all inter-arrival time history that would be needed for probabilistic failure detection (e.g., phi accrual).",
@@ -6311,7 +6365,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "if elapsed > self.t_dead: info[\"status\"] = \"dead\"\nelif elapsed > self.t_suspect: info[\"status\"] = \"suspected\"\n# alive -> suspected -> dead -> removed (after t_cleanup)"
+      }
     },
     "gossip-suspicion-is-timeout-based": {
       "text": "Suspicion in the gossip protocol is triggered by elapsed time exceeding `t_suspect` since the last heartbeat update, not by failed probe responses as in the full SWIM paper's ping/indirect-ping protocol",
@@ -6361,7 +6417,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "def leave(self):\n    self.membership[self.node_id][\"status\"] = \"dead\"\n    self._leaving = True\n# cluster broadcasts to ALL peers before deactivating"
+      }
     },
     "handlers-must-mutate-state-in-place": {
       "text": "Both `reconstruct_state` and `Projection` expect handler functions to mutate the `state` dict in place rather than returning a new value; a handler that returns without mutating silently loses its changes",
@@ -6800,7 +6858,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "def remove_hints_for(self, target_node_id):\n    self.hints = [h for h in self.hints\n                  if h.target_node_id != target_node_id]"
+      }
     },
     "hinted-handoff-hint-loss-is-silent-data-loss": {
       "text": "If a hint node crashes and its hints are lost before handoff, the target node never receives the data and no error is raised \u2014 requiring anti-entropy repair (e.g., Merkle trees) to detect and fix.",
@@ -6840,7 +6900,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "for target_nid in unavailable_preferred:\n    for nid in non_preferred:\n        if node.is_available():\n            node.store_hint(hint)\n            break  # one hint node per target"
+      }
     },
     "hinted-handoff-reads-skip-non-preferred": {
       "text": "`get()` only queries preferred replicas, so data existing only as hints on non-preferred nodes is invisible to reads until handoff delivers it.",
@@ -6860,7 +6922,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "total_acks = len(replicas_written) + len(hints_stored)\nsuccess = total_acks >= self.write_quorum"
+      }
     },
     "hinted-handoff-sloppy-quorum-writes-to-non-preferred": {
       "text": "When sloppy quorum is enabled and preferred replicas are down, writes succeed by routing to non-preferred substitute nodes that store hints for later delivery.",
@@ -7161,7 +7225,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "def _reaches(source, target):\n    queue = deque([target])\n    while queue:\n        current = queue.popleft()\n        if current is source: return True\n        if current._parent: queue.append(current._parent)\n        if current._cause: queue.append(current._cause)\n    return False"
+      }
     },
     "lamport-mutex-lowest-timestamp-priority": {
       "text": "`LamportMutex` grants critical section access to the requesting node with the lowest timestamp, with other requesters waiting until the holder releases.",
@@ -7203,7 +7269,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "others = set(self._nodes.keys()) - {node.node_id}\nreturn others.issubset(self._acks.get(node.node_id, set()))"
+      }
     },
     "lamport-receive-tick-guarantees-causal-order": {
       "text": "`receive_tick` computes `max(local, received) + 1`, ensuring every receive event has a timestamp strictly greater than the corresponding send event, which is the core Lamport clock invariant.",
@@ -7213,7 +7281,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "def receive_tick(self, received_timestamp):\n    self._counter = max(self._counter, received_timestamp) + 1\n    return self._counter"
+      }
     },
     "lamport-receive-tick-max-merge": {
       "text": "`LamportClock.receive_tick(remote_ts)` computes `max(local, remote_ts) + 1`, ensuring the clock advances past both the local and remote state on every receive.",
@@ -7263,7 +7333,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "def total_order(events):\n    return sorted(events, key=lambda e: (e.timestamp, e.node_id))"
+      }
     },
     "lamport-total-order-tiebreak-by-node-id": {
       "text": "`total_order()` sorts events by `(timestamp, node_id)`, using the node identifier as a deterministic tiebreaker for concurrent events with equal timestamps.",
@@ -7797,7 +7869,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "def compact(self):\n    entries = {}\n    for sst in self._sstables:\n        for key, value in sst.scan():\n            entries[key] = value  # newer overwrites older\n    # write single new SSTable from merged entries"
+      }
     },
     "lsm-compaction-last-writer-wins": {
       "text": "Both LSM implementations resolve key conflicts during compaction by keeping only the newest value; older values are unconditionally discarded with no user-defined merge logic",
@@ -7954,7 +8028,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "if len(self._memtable) >= self._memtable_threshold:\n    self._flush()"
+      }
     },
     "lsm-miss-probes-all-due-to-no-bloom-integration": {
       "text": "The LSM tree scans every SSTable on negative lookups because the Bloom filter module \u2014 which is correctly implemented with textbook-optimal sizing \u2014 is never wired into the read path.",
@@ -7987,7 +8063,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "if key in self._memtable:\n    return self._memtable[key]  # check memtable first\nfor sst in reversed(self._sstables):  # newest SSTable first\n    val = sst.get(key)\n    if val is not None: return val"
+      }
     },
     "lsm-no-concurrency-control": {
       "text": "The LSM tree in `lsm.py` has no locking, reference counting, or Version snapshots; `compact()` mutates `self._sstables` in place, so concurrent readers could see inconsistent state or reference deleted SSTables",
@@ -8159,7 +8237,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "def put(self, key, value):\n    self._wal.append(key, val_bytes)  # WAL first\n    self._memtable[key] = val_bytes   # then memtable"
+      }
     },
     "lsm-wal-crash-tolerant-replay": {
       "text": "LSM WAL `replay()` silently discards any trailing partial record by checking remaining bytes at every parse step, making it tolerant of process crashes during `append()`",
@@ -8384,7 +8464,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "if (other._timestamp, other._writer_id) > (self._timestamp, self._writer_id):\n    self._value = other._value  # timestamp then replica_id"
+      }
     },
     "macos-fsync-incomplete-without-fullfsync": {
       "text": "On macOS/Darwin, `os.fsync()` does not guarantee flushing the disk write cache to stable storage; only `fcntl(fd, F_FULLFSYNC)` provides that guarantee, meaning all 13 fsync sites in the codebase may provide no power-loss durability on the development platform",
@@ -9059,7 +9141,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "merged = merge_fn(key, display_local, display_remote, local_ts, remote_ts)\nnew_ts = max(local_ts, remote_ts) + 1\ncanonical_origin = max(local_origin, remote_node)\nself._store[key] = (merged, new_ts, canonical_origin, False)"
+      }
     },
     "multi-leader-custom-merge-requires-merge-fn": {
       "text": "Constructing a cluster with `CUSTOM_MERGE` strategy and `merge_fn=None` is accepted silently, but raises `TypeError` at the first actual conflict during `sync()`",
@@ -9079,7 +9163,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "if key in self._seen and (remote_ts, remote_node) in self._seen[key]:\n    return None  # already applied"
+      }
     },
     "multi-leader-lamport-monotonic": {
       "text": "Successive `put()` calls on the same `ReplicaNode` yield strictly increasing Lamport timestamps.",
@@ -9099,7 +9185,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "if (remote_ts, remote_node) > (local_ts, local_origin):\n    self._store[key] = (remote_val, remote_ts, remote_node, is_tombstone)"
+      }
     },
     "multi-leader-no-tombstone-gc": {
       "text": "Multi-leader replication stores tombstones indefinitely with no compaction or garbage collection method, which is safe but accumulates dead entries without bound",
@@ -9139,7 +9227,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "pending_by_node = {}\nfor nid in self._node_order:\n    pending_by_node[nid] = self._nodes[nid].get_pending_changes()\n# then distribute to peers"
+      }
     },
     "multi-leader-sync-count-includes-noops": {
       "text": "The count returned by `sync()` includes idempotent no-op deliveries (changes already in the target's `_seen` set), so it reflects replication attempts, not accepted changes",
@@ -9193,7 +9283,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "def delete(self, key):\n    ts = self._tick()\n    self._store[key] = (_TOMBSTONE, ts, self.node_id, True)"
+      }
     },
     "multiple-core-components-assume-single-thread-silently": {
       "text": "The B-tree, garbage collector, and consistent hash ring all assume single-threaded access without locks, assertions, or documentation \u2014 a systematic pattern where concurrency unsafety is implicit rather than enforced.",
@@ -9247,7 +9339,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "self._versions.setdefault(key, []).append(\n    Version(key, value, created_by=tx.tx_id))"
+      }
     },
     "mvcc-counters-must-be-monotonic": {
       "text": "`_next_tx_id` and `_next_timestamp` must never reissue a previously used value; if they reset to 1 on restart, visibility comparisons like `created_by < tx.tx_id` silently produce wrong results by conflating old and new transaction IDs",
@@ -9975,7 +10069,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "def merge(self, other):\n    merged_tombstones = self._tombstones | other._tombstones\n    merged_tags = (self_tags | other_tags) - merged_tombstones\n    # new add() creates fresh tag not in tombstones -> add wins"
+      }
     },
     "orset-no-causal-context": {
       "text": "The ORSet implementation uses no version vector, dot context, or causal summary to compress tombstone state; each removed tag is stored individually as a `(replica_id, seq)` tuple in the tombstone set",
@@ -10647,7 +10743,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "class PNCounter:\n    def __init__(self, replica_id):\n        self.p = GCounter(replica_id)  # increments\n        self.n = GCounter(replica_id)  # decrements\n    def value(self):\n        return self.p.value() - self.n.value()"
+      }
     },
     "point-lookup-always-reaches-leaf": {
       "text": "Every `get` must descend to a leaf node regardless of tree height since internal nodes hold no values; cost is exactly *h* page reads for a tree of height *h*",
@@ -10969,7 +11067,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "if self._log[n].term != self._current_term:\n    continue  # only commit entries from current term"
+      }
     },
     "raft-follower-rejects-writes": {
       "text": "`RaftNode.client_request()` on a follower returns `{\"success\": False, \"error\": \"not leader\"}` as a structured dict rather than raising an exception; only the leader accepts client writes.",
@@ -11039,7 +11139,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "if self._state != \"leader\":\n    return {\"success\": False, \"entry\": None, \"error\": \"not leader\"}"
+      }
     },
     "raft-no-prevote-or-lease": {
       "text": "The Raft implementation has no PreVote, leader lease, or CheckQuorum mechanism; split-brain safety relies entirely on term numbers and the single-vote-per-term invariant",
@@ -11092,7 +11194,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "self._partitioned = set()\n# ...\nif sender in self._partitioned or receiver in self._partitioned:\n    continue  # drop message"
+      }
     },
     "raft-randomized-timeout-only-split-vote-defense": {
       "text": "The only mechanism preventing simultaneous candidacy is the randomized election timeout range (default 150\u2013300ms); there is no protocol-level tiebreaker such as PreVote",
@@ -11132,7 +11236,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "self._log = [LogEntry(term=0, index=0, command=None)]  # sentinel"
+      }
     },
     "raft-single-tick-delivery": {
       "text": "`RaftCluster.tick()` collects outbound messages and delivers both the request and its response within the same tick invocation \u2014 there is no simulated network latency.",
@@ -11583,7 +11689,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "targets = available[:self.read_quorum]\n# repair only among the R replicas queried, not all N\nfor rid in stale:\n    self.replicas[rid].put(key, best_value, best_version)"
+      }
     },
     "read-uses-linear-scan-for-offset-gaps": {
       "text": "`Topic.read` finds the start position by scanning for `msg.offset >= offset` rather than computing an array index, which is necessary because compaction creates offset holes that break arithmetic indexing.",
@@ -11663,7 +11771,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "def reconcile(self, key, merged_value, contexts):\n    merged_vc = VectorClock()\n    for ctx in contexts:\n        merged_vc = merged_vc.merge(ctx)\n    merged_vc = merged_vc.increment(self.node_id)\n    self._data[key] = [VersionedValue(value=merged_value, vector_clock=merged_vc)]"
+      }
     },
     "reconstruct-state-is-pure-read": {
       "text": "`reconstruct_state` never modifies the `EventStore`; it is a read-only fold over a single stream's events that returns a locally-constructed dict",
@@ -11962,7 +12072,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "def put(self, key, value, version):\n    if key in self._store:\n        _, current_version = self._store[key]\n        if version < current_version:\n            return False"
+      }
     },
     "replica-versions-caller-coordinated": {
       "text": "`Replica.put` does not generate version numbers; version assignment is the responsibility of `ReadRepairStore.put`, which reads the max version across all replicas (including unavailable ones) before writing.",
@@ -12326,7 +12438,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "for v in existing:\n    if new_vc.dominates(v.vector_clock):\n        pass  # superseded\n    else:\n        surviving.append(v)  # concurrent sibling survives\nsurviving.append(new_version)"
+      }
     },
     "silent-corruption-returns-garbage": {
       "text": "A bit-flip in a value region of `hash-index-storage/bitcask.py` causes `get()` to return corrupted data with no error; the only partial integrity check is the key-equality assertion",
@@ -12902,7 +13016,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "if result and result[0] == current_key:\n    pass  # older timestamp, skip\nelse:\n    result.append((current_key, current_value))"
+      }
     },
     "sstable-merge-forward-only": {
       "text": "The k-way merge in `sstable-and-compaction/sstable.py` is forward-only with no direction tracking or reverse iteration support; there is no direction enum, no `FindLargest`, and no heap rebuild on direction change.",
@@ -13034,7 +13150,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "for i, (key, value) in enumerate(entries):\n    offset = f.tell()\n    if i % sparse_index_interval == 0:\n        offsets.append((key, offset))  # index every 16th key"
+      }
     },
     "sstable-sparse-index-in-footer": {
       "text": "Both SSTable implementations store the sparse index at the end of the file with a footer pointer, meaning bloom filters could be co-located in the same footer region without changing the file layout",
@@ -13453,7 +13571,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "self._watermark = max(self._watermark, event.timestamp - self._allowed_lateness)"
+      }
     },
     "stream-version-is-event-count": {
       "text": "`stream_version()` returns the count of events in a stream (not the latest `event_id`), and `expected_version` checks against this count for optimistic concurrency",
@@ -13483,7 +13603,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "def sync_all(self):\n    for _ in range(2):  # two rounds guarantees convergence\n        for a in self.replica_ids:\n            for b in self.replica_ids:\n                if a != b: self.sync(a, b)"
+      }
     },
     "sync-mode-none-skips-per-write-fsync": {
       "text": "When `sync_mode=\"none\"`, the per-write `_do_sync()` call (default `force=False`) is a complete no-op \u2014 no fsync and no batch queue \u2014 trading durability for maximum write throughput",
@@ -14259,7 +14381,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "def _window_key(self, timestamp):\n    return int(timestamp // self._window.duration)"
+      }
     },
     "two-incompatible-conflict-resolution-paradigms": {
       "text": "The codebase contains two mathematically incompatible conflict resolution paradigms with no bridge between them: CRDTs provide algebraically proven convergence (idempotent, commutative merge satisfying SEC requirements), while the multi-leader strategy pattern offers LWW and custom-merge without formal convergence guarantees, and no mechanism exists to compose or translate between them.",
@@ -14581,7 +14705,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "def increment(self, node_id):\n    new = dict(self._clock)\n    new[node_id] = new.get(node_id, 0) + 1\n    return VectorClock(new)  # returns new, never mutates"
+      }
     },
     "verification-impossible-at-every-layer": {
       "text": "Verification of system correctness is impossible at every layer of the architecture: data integrity verification degrades from partial to absent along the storage pipeline (WAL CRCs exclude metadata, SSTables have no checksums at all), while protocol safety claims are unfalsifiable because all distributed testing uses synchronous simulation that cannot exercise the asynchronous failure modes the protocols are designed to tolerate.",
@@ -14721,7 +14847,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "created_visible = (\n    created_by == tx.tx_id or                    # own writes\n    (created_by in self._committed and           # committed\n     created_by not in tx.active_at_start and    # not in-flight at snapshot\n     created_by < tx.tx_id))                     # started before us"
+      }
     },
     "vnode-150-guarantees-sub-1.5-imbalance": {
       "text": "With 3 equally-weighted nodes and 150 vnodes each, `load_imbalance()` is asserted to stay below 1.5 (`test_consistent_hashing.py:49`).",
@@ -14801,7 +14929,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "self._seq_num += 1\ndata = _encode_record(self._seq_num, OP_COMMIT, b\"\", b\"\")\nself._fd.write(data)\nself._do_sync(force=True)"
+      }
     },
     "wal-batch-bug-is-performance-not-correctness": {
       "text": "The stale `_write_count` after forced syncs causes extra fsyncs (premature batch threshold triggers) but never causes data loss \u2014 forced syncs always flush to disk regardless of counter state.",
@@ -15035,7 +15165,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "while True:\n    try:\n        rec = _read_record(f)\n        if rec is None: break\n        records.append(rec)\n    except ValueError:\n        break  # stop at first CRC error"
+      }
     },
     "wal-corruption-stops-per-file": {
       "text": "`_recover_seq_num` stops at the first corrupted record within each file but continues to subsequent WAL files, so cross-file recovery is resilient but intra-file records after corruption are silently lost",
@@ -15611,7 +15743,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "record_length = 4 + 8 + 1 + 4 + len(key) + 4 + len(value)\nheader = struct.pack(\"<IIQBi\", record_length, crc, seq_num, op_type_byte, len(key))\nreturn header + key + struct.pack(\"<i\", len(value)) + value"
+      }
     },
     "wal-recover-on-every-startup": {
       "text": "`BTree.__init__` calls `WAL.recover()` unconditionally on every startup; an empty WAL short-circuits after a single read with no further I/O",
@@ -15738,7 +15872,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "def _rotate(self):\n    if self._fd:\n        self._fd.flush()\n        os.fsync(self._fd.fileno())\n        self._fd.close()"
+      }
     },
     "wal-rotate-no-gap-protection": {
       "text": "If a segment file is manually deleted from the directory, `_rotate` can produce a filename that reuses a previously-used number, since it derives the next name solely from the current highest filename.",
@@ -16210,7 +16346,9 @@
       "source_url": "",
       "source_hash": "",
       "date": "",
-      "metadata": {}
+      "metadata": {
+        "example": "checksum = zlib.crc32(key + value) & 0xFFFFFFFF"
+      }
     },
     "write-meta-no-fsync": {
       "text": "`PageManager._write_meta` calls `flush()` but not `os.fsync()`, so metadata updates (`next_free_page`, `free_list_head`) are not durable against power loss \u2014 compounding the WAL bypass with a durability gap on the direct write path.",
