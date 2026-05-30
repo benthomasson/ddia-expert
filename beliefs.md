@@ -1,8 +1,8 @@
 ---
 schema_version: "1.0"
 project_name: "reasons"
-updated_at: "2026-05-30T13:07:13+00:00"
-node_count: 1404
+updated_at: "2026-05-30T13:09:55+00:00"
+node_count: 1405
 generator: ftl-reasons/0.42.0
 ---
 
@@ -1422,13 +1422,13 @@ CRC32 is computed per individual record or page (typically hundreds of bytes to 
 All four CRDT types implement `__eq__` to compare semantic state (not object identity), enabling `CRDTReplicaGroup.all_converged()` and the semilattice property tests to verify convergence via equality checks.
 - Source: entries/2026/05/29/conflict-free-replicated-data-types-test_crdts.md
 
-### crdt-merge-algebra-satisfies-convergence-requirements [IN] DERIVED
-All four CRDT types satisfy the algebraic properties required for strong eventual convergence: merge is idempotent (re-merging produces no change), equality compares semantic state rather than object identity (enabling correct convergence checks), and ORSet tombstones grow monotonically (preventing element resurrection after removal).
-- Depends on: crdt-merge-is-idempotent, crdt-eq-compares-semantic-state, orset-tombstones-grow-monotonically
-
 ### crdt-merge-is-idempotent [IN] OBSERVATION
 All four CRDT `merge` methods (`GCounter`, `PNCounter`, `LWWRegister`, `ORSet`) are idempotent: merging the same state twice produces the same result as merging once
 - Source: entries/2026/05/29/conflict-free-replicated-data-types-crdts.md
+
+### crdt-merge-is-idempotent-and-convergence-tested [IN] DERIVED
+All four CRDT types demonstrate idempotent merge (re-merging produces no change), semantic equality comparison, and monotonic ORSet tombstones. The sync_all test confirms convergence after two rounds, consistent with merge being commutative and associative, though these properties are exercised by tests rather than proven by the antecedents alone.
+- Depends on: crdt-merge-is-idempotent, crdt-eq-compares-semantic-state, orset-tombstones-grow-monotonically, sync-all-two-rounds-suffices
 
 ### crdt-merge-returns-self [IN] OBSERVATION
 `merge()` mutates and returns `self` (enabling chaining like `deepcopy(a).merge(b)`) rather than returning a new instance, which means callers must deepcopy before merging if they need to preserve the original state.
@@ -1553,18 +1553,6 @@ Distributed system correctness is undermined at both the storage and protocol la
 ### distributed-divergence-accumulates-without-bound [IN] DERIVED
 Replica divergence accumulates without bound: write operations have compounding correctness gaps (sloppy quorums count hints, sub-quorum configs accepted, conflict resolution split across modules), and the repair mechanism (Merkle-based anti-entropy) cannot fully reconcile because tombstone semantics differ at every layer.
 - Depends on: distributed-writes-have-compounding-correctness-gaps, anti-entropy-detects-but-cannot-fully-resolve-divergence
-
-### distributed-layer-has-three-incompatible-convergence-models [IN] DERIVED
-The distributed layer uses three fundamentally incompatible convergence and resolution models with no unifying bridge: CRDTs encode resolution algebraically in merge semantics, the strategy pattern selects between LWW and custom resolution at runtime, AND consensus and membership use irreconcilable strong-leader (Raft) vs. eventual-consistency (gossip) models — composing correct end-to-end behavior requires manually bridging paradigms designed in isolation.
-- Depends on: two-incompatible-conflict-resolution-paradigms, consensus-and-membership-use-incompatible-convergence-models
-
-### distributed-layer-incoherent-and-unachievable [IN] DERIVED
-The distributed layer is both internally incoherent and externally unachievable: convergence and ordering models are mutually incompatible across modules (CRDTs encode algebraic resolution, LWW uses wall-clock tiebreaking, gossip uses epidemic thresholds) AND correctness is doubly unachievable under network partitions (storage-layer guarantees are unmet, write correctness gaps are amplified by partition-induced failure detection breakdowns).
-- Depends on: distributed-models-incompatible-at-convergence-and-ordering, distributed-correctness-doubly-unachievable-under-partition
-
-### distributed-models-incompatible-at-convergence-and-ordering [IN] DERIVED
-The distributed layer has mutually incompatible models at two independent levels: convergence mechanisms (CRDTs encode algebraic resolution, LWW uses timestamp comparison, Raft requires strong leader authority, gossip relies on epidemic propagation) have no unifying bridge, AND ordering models (Lamport clocks provide total order via node-ID tiebreaking, vector clocks provide partial order with incomparable states, hash indexes use non-monotonic wall-clock time) are fundamentally incompatible across modules.
-- Depends on: distributed-layer-has-three-incompatible-convergence-models, ordering-models-are-incompatible-across-modules
 
 ### distributed-protocols-rest-on-unverifiable-assumptions [IN] DERIVED
 Distributed protocols rest on doubly invalid foundations: end-to-end correctness requires storage-layer guarantees (crash-safe compaction, CRC-protected metadata) that no storage engine provides, and protocol safety claims are unfalsifiable under the current testing methodology (synchronous simulation, no crash path tests) — the protocols assume both correct storage and correct testing, and have neither.
@@ -2744,7 +2732,7 @@ Constructing a new `LSMTree` on an existing directory replays the WAL to recover
 
 ### lsm-wal-strictly-weaker-than-standalone-wal [IN] DERIVED
 The LSM tree's built-in WAL provides strictly weaker guarantees than the standalone WAL module along two independent axes: it has no CRC or checksum for integrity (vs per-record CRC32 in the standalone WAL), and its truncation zeroes the entire file instantly via wb mode (vs careful record-by-record rewriting), meaning corruption goes undetected and truncation is all-or-nothing rather than surgical.
-- Depends on: lsm-wal-has-no-integrity-check, lsm-wal-truncate-destroys-immediately
+- Depends on: lsm-wal-has-no-integrity-check, lsm-wal-truncate-destroys-immediately, wal-uses-crc32-not-sha, wal-truncate-rewrites-files
 
 ### lsm-wal-truncate-destroys-immediately [IN] OBSERVATION
 The LSM tree's `WAL.truncate()` opens the file with `"wb"` mode which zeroes all content instantly, with no intermediate durable state to recover from if a crash occurs before the file is reopened for appending
@@ -4794,10 +4782,6 @@ The non-atomic `truncate()` in `wal.py` can produce reordered or incomplete file
 `TumblingWindowAggregator` assigns windows by floor-dividing the timestamp by window size, producing aligned non-overlapping boundaries regardless of when events arrive
 - Source: entries/2026/05/29/stream-join-processor-stream_join_processor.md
 
-### two-incompatible-conflict-resolution-paradigms [IN] DERIVED
-The codebase contains two mathematically incompatible conflict resolution paradigms with no bridge between them: CRDTs provide algebraically proven convergence (idempotent, commutative merge satisfying SEC requirements), while the multi-leader strategy pattern offers LWW and custom-merge without formal convergence guarantees, and no mechanism exists to compose or translate between them.
-- Depends on: crdt-merge-algebra-satisfies-convergence-requirements, conflict-resolution-architecture-is-split
-
 ### two-sstable-implementations-same-pattern [IN] OBSERVATION
 `lsm.py` (using `sparse_index_interval=16` and `bisect`) and `sstable.py` (using `block_size=64` and manual binary search) implement the same sparse-index-with-block-scan pattern with different defaults, naming, and file format maturity
 - Source: entries/2026/05/29/topic-sstable-block-format.md
@@ -5543,10 +5527,26 @@ CRDT merge convergence is both algebraically correct and practically sustainable
 - Depends on: crdt-merge-algebra-satisfies-convergence-requirements
 - Unless: orset-no-causal-context
 
+### crdt-merge-algebra-satisfies-convergence-requirements [OUT] DERIVED
+All four CRDT types satisfy the algebraic properties required for strong eventual convergence: merge is idempotent (re-merging produces no change), equality compares semantic state rather than object identity (enabling correct convergence checks), and ORSet tombstones grow monotonically (preventing element resurrection after removal).
+- Depends on: crdt-merge-is-idempotent, crdt-eq-compares-semantic-state, orset-tombstones-grow-monotonically
+
 ### derived-systems-maintain-consistency-when-position-durable [OUT] DERIVED
 Derived systems (secondary indexes, materialized views, projections) can maintain consistency with their source through position-tracked CDC replay: every derived system tracks how far through the CDC log it has processed, and any derived system can be rebuilt from scratch via full event replay producing identical state to incremental processing.
 - Depends on: derived-systems-rebuildable-from-cdc, derived-systems-are-position-tracked
 - Unless: cdc-consumer-position-is-volatile
+
+### distributed-layer-has-three-incompatible-convergence-models [OUT] DERIVED
+The distributed layer uses three fundamentally incompatible convergence and resolution models with no unifying bridge: CRDTs encode resolution algebraically in merge semantics, the strategy pattern selects between LWW and custom resolution at runtime, AND consensus and membership use irreconcilable strong-leader (Raft) vs. eventual-consistency (gossip) models — composing correct end-to-end behavior requires manually bridging paradigms designed in isolation.
+- Depends on: two-incompatible-conflict-resolution-paradigms, consensus-and-membership-use-incompatible-convergence-models
+
+### distributed-layer-incoherent-and-unachievable [OUT] DERIVED
+The distributed layer is both internally incoherent and externally unachievable: convergence and ordering models are mutually incompatible across modules (CRDTs encode algebraic resolution, LWW uses wall-clock tiebreaking, gossip uses epidemic thresholds) AND correctness is doubly unachievable under network partitions (storage-layer guarantees are unmet, write correctness gaps are amplified by partition-induced failure detection breakdowns).
+- Depends on: distributed-models-incompatible-at-convergence-and-ordering, distributed-correctness-doubly-unachievable-under-partition
+
+### distributed-models-incompatible-at-convergence-and-ordering [OUT] DERIVED
+The distributed layer has mutually incompatible models at two independent levels: convergence mechanisms (CRDTs encode algebraic resolution, LWW uses timestamp comparison, Raft requires strong leader authority, gossip relies on epidemic propagation) have no unifying bridge, AND ordering models (Lamport clocks provide total order via node-ID tiebreaking, vector clocks provide partial order with incomparable states, hash indexes use non-monotonic wall-clock time) are fundamentally incompatible across modules.
+- Depends on: distributed-layer-has-three-incompatible-convergence-models, ordering-models-are-incompatible-across-modules
 
 ### dynamo-read-repair-ensures-replica-consistency [OUT] DERIVED
 Eager all-node read repair after every quorum read ensures all replicas converge to the latest version, because repair propagates to all reachable nodes (not just quorum participants) and per-key versioning prevents false cross-key conflicts.
@@ -5627,6 +5627,10 @@ SSTable point lookups return correct results through two-phase search (binary se
 Total Order Broadcast maintains identical delivery ordering across node failures: recovered nodes deliver the same slot sequence as live nodes, confirming that per-slot Paxos consensus and contiguous slot delivery enforce a single global order even through failure and recovery.
 - Depends on: tob-recovery-replays-missed-slots, tob-contiguous-delivery
 - Unless: distributed-protocols-simulate-synchronous-delivery
+
+### two-incompatible-conflict-resolution-paradigms [OUT] DERIVED
+The codebase contains two mathematically incompatible conflict resolution paradigms with no bridge between them: CRDTs provide algebraically proven convergence (idempotent, commutative merge satisfying SEC requirements), while the multi-leader strategy pattern offers LWW and custom-merge without formal convergence guarantees, and no mechanism exists to compose or translate between them.
+- Depends on: crdt-merge-algebra-satisfies-convergence-requirements, conflict-resolution-architecture-is-split
 
 ### unbundled-catchup-produces-consistent-derived-state [OUT] DERIVED
 Catch-up via snapshot and streaming produces consistent derived-system state equivalent to full event replay, because WAL entries are ordered by LSN and the rebuild protocol is verified to match full replay output.

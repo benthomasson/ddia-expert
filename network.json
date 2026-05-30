@@ -3,8 +3,8 @@
     "schema_version": "1.0",
     "project_name": "reasons",
     "created_at": "2026-05-28T22:04:49+00:00",
-    "updated_at": "2026-05-30T13:07:13+00:00",
-    "node_count": 1404,
+    "updated_at": "2026-05-30T13:09:55+00:00",
+    "node_count": 1405,
     "generator": "ftl-reasons/0.42.0"
   },
   "nodes": {
@@ -4182,7 +4182,7 @@
     },
     "crdt-merge-algebra-satisfies-convergence-requirements": {
       "text": "All four CRDT types satisfy the algebraic properties required for strong eventual convergence: merge is idempotent (re-merging produces no change), equality compares semantic state rather than object identity (enabling correct convergence checks), and ORSet tombstones grow monotonically (preventing element resurrection after removal).",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -4209,6 +4209,28 @@
       "truth_value": "IN",
       "justifications": [],
       "source": "entries/2026/05/29/conflict-free-replicated-data-types-crdts.md",
+      "source_url": "",
+      "source_hash": "",
+      "date": "",
+      "metadata": {}
+    },
+    "crdt-merge-is-idempotent-and-convergence-tested": {
+      "text": "All four CRDT types demonstrate idempotent merge (re-merging produces no change), semantic equality comparison, and monotonic ORSet tombstones. The sync_all test confirms convergence after two rounds, consistent with merge being commutative and associative, though these properties are exercised by tests rather than proven by the antecedents alone.",
+      "truth_value": "IN",
+      "justifications": [
+        {
+          "type": "SL",
+          "antecedents": [
+            "crdt-merge-is-idempotent",
+            "crdt-eq-compares-semantic-state",
+            "orset-tombstones-grow-monotonically",
+            "sync-all-two-rounds-suffices"
+          ],
+          "outlist": [],
+          "label": ""
+        }
+      ],
+      "source": "",
       "source_url": "",
       "source_hash": "",
       "date": "",
@@ -4675,7 +4697,7 @@
     },
     "distributed-layer-has-three-incompatible-convergence-models": {
       "text": "The distributed layer uses three fundamentally incompatible convergence and resolution models with no unifying bridge: CRDTs encode resolution algebraically in merge semantics, the strategy pattern selects between LWW and custom resolution at runtime, AND consensus and membership use irreconcilable strong-leader (Raft) vs. eventual-consistency (gossip) models \u2014 composing correct end-to-end behavior requires manually bridging paradigms designed in isolation.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -4695,7 +4717,7 @@
     },
     "distributed-layer-incoherent-and-unachievable": {
       "text": "The distributed layer is both internally incoherent and externally unachievable: convergence and ordering models are mutually incompatible across modules (CRDTs encode algebraic resolution, LWW uses wall-clock tiebreaking, gossip uses epidemic thresholds) AND correctness is doubly unachievable under network partitions (storage-layer guarantees are unmet, write correctness gaps are amplified by partition-induced failure detection breakdowns).",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -4715,7 +4737,7 @@
     },
     "distributed-models-incompatible-at-convergence-and-ordering": {
       "text": "The distributed layer has mutually incompatible models at two independent levels: convergence mechanisms (CRDTs encode algebraic resolution, LWW uses timestamp comparison, Raft requires strong leader authority, gossip relies on epidemic propagation) have no unifying bridge, AND ordering models (Lamport clocks provide total order via node-ID tiebreaking, vector clocks provide partial order with incomparable states, hash indexes use non-monotonic wall-clock time) are fundamentally incompatible across modules.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -8262,6 +8284,17 @@
           ],
           "outlist": [],
           "label": "Point-by-point comparison reveals the LSM WAL is weaker in both integrity checking and truncation safety"
+        },
+        {
+          "type": "SL",
+          "antecedents": [
+            "lsm-wal-has-no-integrity-check",
+            "lsm-wal-truncate-destroys-immediately",
+            "wal-uses-crc32-not-sha",
+            "wal-truncate-rewrites-files"
+          ],
+          "outlist": [],
+          "label": ""
         }
       ],
       "source": "",
@@ -14230,7 +14263,7 @@
     },
     "two-incompatible-conflict-resolution-paradigms": {
       "text": "The codebase contains two mathematically incompatible conflict resolution paradigms with no bridge between them: CRDTs provide algebraically proven convergence (idempotent, commutative merge satisfying SEC requirements), while the multi-leader strategy pattern offers LWW and custom-merge without formal convergence guarantees, and no mechanism exists to compose or translate between them.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
