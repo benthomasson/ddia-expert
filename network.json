@@ -3,7 +3,7 @@
     "schema_version": "1.0",
     "project_name": "reasons",
     "created_at": "2026-05-28T22:04:49+00:00",
-    "updated_at": "2026-06-06T19:32:22+00:00",
+    "updated_at": "2026-06-06T21:54:30+00:00",
     "node_count": 1405,
     "generator": "ftl-reasons/0.43.0"
   },
@@ -716,7 +716,7 @@
     },
     "avro-schema-evolution-handles-version-mismatch": {
       "text": "Avro schema evolution correctly handles writer-reader version mismatches through mandatory dual-schema resolution (writer schema parses wire bytes, reader schema shapes output), with clean separation between structural schema errors at parse time and compatibility errors at resolution time.",
-      "truth_value": "OUT",
+      "truth_value": "IN",
       "justifications": [
         {
           "type": "SL",
@@ -824,7 +824,7 @@
     },
     "binary-formats-rigid-across-entire-storage-stack": {
       "text": "The entire storage stack uses rigid binary formats that preclude both forward evolution and post-corruption recovery: WAL records are contiguously packed with no block alignment or version negotiation preventing resync after mid-file corruption, and SSTables lack per-entry checksums and efficient skip structures \u2014 neither layer can be upgraded in place or self-repaired after partial damage.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -867,7 +867,7 @@
     },
     "bitcask-compact-not-crash-safe": {
       "text": "Hash-index-storage compaction is non-atomic with no error handling: a crash between deleting old files and completing the rewrite can leave the store in an unrecoverable state with no rollback mechanism.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [],
       "source": "entries/2026/05/28/hash-index-storage-bitcask-compact.md",
       "source_url": "",
@@ -2137,7 +2137,7 @@
     },
     "btree-range-scan-provides-ordered-access": {
       "text": "B-tree range scans provide correct ordered sequential access by walking the actively maintained sibling chain with support for unbounded end keys, traversing all matching keys in sorted order.",
-      "truth_value": "OUT",
+      "truth_value": "IN",
       "justifications": [
         {
           "type": "SL",
@@ -2253,7 +2253,7 @@
     },
     "btree-splits-are-crash-safe": {
       "text": "Multi-page B-tree operations (splits, deletes) are made crash-safe by writing all modifications to the WAL before applying them to data pages.",
-      "truth_value": "OUT",
+      "truth_value": "IN",
       "justifications": [
         {
           "type": "SL",
@@ -2443,7 +2443,7 @@
     },
     "btree-wal-replays-without-commit": {
       "text": "The B-tree's WAL replays all valid (CRC-passing) entries on recovery regardless of whether a commit marker is present \u2014 uncommitted entries are applied without distinction.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [],
       "source": "entries/2026/05/28/b-tree-storage-engine-test_btree.md",
       "source_url": "",
@@ -3555,7 +3555,7 @@
     },
     "concurrency-unsafe-on-both-read-and-write-paths": {
       "text": "Concurrency safety is absent from both mutation and query paths: core components (B-tree, garbage collector, consistent hash ring) silently assume single-threaded write access with no locks or assertions, and range scans lack snapshot isolation, cycle guards, or concurrent modification protection, meaning concurrent workloads can corrupt state through both writes and reads independently.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -3797,7 +3797,7 @@
     },
     "consistent-hash-ring-not-thread-safe": {
       "text": "`ConsistentHashRing` has no synchronization; concurrent `add_node`/`remove_node` calls corrupt the sorted `_ring_positions` and `_ring_nodes` lists.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [],
       "source": "entries/2026/05/29/consistent-hashing-consistent_hashing-ConsistentHashRing.md",
       "source_url": "",
@@ -3847,7 +3847,7 @@
     },
     "consistent-hash-routing-correct-under-single-thread": {
       "text": "Consistent hash routing provides correct minimal-redistribution key assignment with proper deduplication: adding an Nth node moves approximately 1/N of keys (not a full reshuffle), and the preference list correctly skips virtual nodes of already-seen physical nodes to return exactly replication_factor distinct physical nodes.",
-      "truth_value": "OUT",
+      "truth_value": "IN",
       "justifications": [
         {
           "type": "SL",
@@ -4749,7 +4749,7 @@
     },
     "distributed-correctness-undermined-at-both-layers": {
       "text": "Distributed system correctness is undermined at both the storage and protocol layers: storage engines silently assume single-threaded access (no locks, no assertions, no documentation), while the quorum protocol weakens its own semantic guarantees (counting hint storage as successful writes, allowing sub-quorum configurations without error).",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -5434,7 +5434,7 @@
     },
     "event-sourcing-state-is-fully-reconstructible": {
       "text": "Event sourcing state can be fully reconstructed from the event log: projections are stateless replay functions (cache, not source of truth), and snapshots use deep copy to isolate stored state from mutations.",
-      "truth_value": "OUT",
+      "truth_value": "IN",
       "justifications": [
         {
           "type": "SL",
@@ -5564,7 +5564,7 @@
     },
     "event-store-persist-no-durability": {
       "text": "`EventStore._persist_event()` in `event-sourcing-store/event_store.py` opens the file in a `with` block, writes JSON, and relies on implicit `close()` \u2014 no explicit `flush()` or `os.fsync()`, making persisted events vulnerable to loss on OS crash",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [],
       "source": "entries/2026/05/29/topic-os-fsync-durability.md",
       "source_url": "",
@@ -5842,7 +5842,7 @@
     },
     "flush-clears-then-appends": {
       "text": "`_flush()` both clears `self._memtable` and appends to `self._sstables`, creating a window where data exists in neither location if a concurrent reader checks between the two mutations",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [],
       "source": "entries/2026/05/28/topic-lsm-concurrency-safety.md",
       "source_url": "",
@@ -5927,7 +5927,7 @@
     },
     "format-rigidity-prevents-evolutionary-repair": {
       "text": "The system cannot evolve its way out of known corruption vulnerabilities: the rigid binary format design across the entire storage stack prevents forward evolution and post-corruption recovery (no block alignment, no version fields, no extensibility), and the system simultaneously lacks defense-in-depth against the corruption these formats cannot recover from (no input validation, no resync capability).",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -6129,7 +6129,7 @@
     },
     "gc-not-thread-safe": {
       "text": "`garbage_collect()` mutates `_versions` (replacing lists and deleting keys) without synchronization, assuming single-threaded execution \u2014 concurrent reads or writes during GC would race on the dict and its lists.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [],
       "source": "entries/2026/05/29/snapshot-isolation-mvcc_database-garbage_collect.md",
       "source_url": "",
@@ -6599,7 +6599,7 @@
     },
     "hash-index-no-crc-by-design": {
       "text": "`hash-index-storage/bitcask.py` intentionally omits CRC to focus on keydir/append-log/compaction; `log-structured-hash-table/bitcask.py` provides the integrity-checking variant with `zlib.crc32` and `CorruptionError`",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [],
       "source": "entries/2026/05/29/topic-hash-index-bitcask-no-crc.md",
       "source_url": "",
@@ -6629,7 +6629,7 @@
     },
     "hash-index-survives-restart": {
       "text": "Hash-index storage correctly reconstructs its in-memory index from on-disk segments after restart by scanning in ascending order so newer writes overwrite older entries, with fsync-controlled durability for each write.",
-      "truth_value": "OUT",
+      "truth_value": "IN",
       "justifications": [
         {
           "type": "SL",
@@ -6762,7 +6762,7 @@
     },
     "hint-file-no-fsync": {
       "text": "Hint files are written without `fsync`; they are a best-effort startup optimization that can be lost on crash without data loss, since the data file remains authoritative.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [],
       "source": "entries/2026/05/28/hash-index-storage-bitcask-_write_hint_file.md",
       "source_url": "",
@@ -7114,7 +7114,7 @@
     },
     "integrity-degrades-along-storage-pipeline": {
       "text": "Data integrity verification degrades monotonically along the storage pipeline: WAL records have CRC checksums that exclude routing metadata (partial coverage), SSTables have no checksums at all (zero coverage), and neither layer can recover from detected corruption \u2014 data transitions from partially verified to completely unverified as it moves through compaction from WAL to SSTable.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -7771,7 +7771,7 @@
     },
     "log-structured-bitcask-no-fsync": {
       "text": "`log-structured-hash-table/bitcask.py` uses only `flush()` without `os.fsync()` on data writes, unlike `hash-index-storage` which calls `os.fsync` per record when `sync_writes` is enabled",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [],
       "source": "entries/2026/05/29/topic-bitcask-paper-design.md",
       "source_url": "",
@@ -8187,7 +8187,7 @@
     },
     "lsm-read-path-correct-across-flushes": {
       "text": "The LSM read path maintains correctness across memtable flushes by searching newest-first (memtable then SSTables in reverse sequence order) using a reference swap rather than deep copy for the frozen memtable.",
-      "truth_value": "OUT",
+      "truth_value": "IN",
       "justifications": [
         {
           "type": "SL",
@@ -8387,7 +8387,7 @@
     },
     "lsm-wal-no-crc": {
       "text": "The LSM tree's WAL (`lsm.py:14-53`) uses only length-prefixed framing with no checksum, making it unable to distinguish corruption from valid data unless a length field causes an out-of-bounds read",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [],
       "source": "entries/2026/05/29/topic-record-boundary-recovery.md",
       "source_url": "",
@@ -8397,7 +8397,7 @@
     },
     "lsm-wal-provides-crash-recovery": {
       "text": "The LSM WAL replays on construction to recover unflushed memtable state, providing crash recovery for in-flight writes.",
-      "truth_value": "OUT",
+      "truth_value": "IN",
       "justifications": [
         {
           "type": "SL",
@@ -9371,7 +9371,7 @@
     },
     "multiple-core-components-assume-single-thread-silently": {
       "text": "The B-tree, garbage collector, and consistent hash ring all assume single-threaded access without locks, assertions, or documentation \u2014 a systematic pattern where concurrency unsafety is implicit rather than enforced.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -11550,7 +11550,7 @@
     },
     "range-scan-lacks-safety-guarantees": {
       "text": "Range scans are vulnerable to three independent failure modes: concurrent modifications produce inconsistent results (no snapshot isolation), corrupted sibling pointers can cause infinite traversal (no cycle guard), and large result sets consume unbounded memory (eager materialization into a list).",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -11624,7 +11624,7 @@
     },
     "range-scan-no-cycle-guard": {
       "text": "`range_scan` has no visited-set or cycle detection on the leaf sibling chain; a corrupted `next_sibling` pointer would cause an infinite loop.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [],
       "source": "entries/2026/05/28/b-tree-storage-engine-btree-range_scan.md",
       "source_url": "",
@@ -11724,7 +11724,7 @@
     },
     "read-path-unreliable-from-storage-through-derived-systems": {
       "text": "The complete read path from storage through derived systems is unreliable at every stage: the SSTable layer has compounding integrity and performance deficiencies (no per-entry checksums, linear miss-probes from missing Bloom integration, redundant key-list rebuilds per lookup) while the CDC backbone feeding all derived systems depends on reconstruction heuristics for event semantics and requires callers to manually flush and provide old values for consistency.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -12400,7 +12400,7 @@
     },
     "schema-registry-no-compat-enforcement": {
       "text": "Schema registration accepts any schema without checking compatibility against previously registered versions under the same subject, unlike Confluent which enforces backward/forward/full compatibility on registration",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [],
       "source": "entries/2026/05/29/topic-confluent-schema-registry-protocol.md",
       "source_url": "",
@@ -12817,7 +12817,7 @@
     },
     "ssi-isolation-holds-under-single-thread": {
       "text": "SSI's composed invariant layers provide correct serializable snapshot isolation: MVCC enforces visibility through append-only versions and symmetric deletion rules, and SSI validation ensures own-writes are checked before store consultation, preventing lost updates.",
-      "truth_value": "OUT",
+      "truth_value": "IN",
       "justifications": [
         {
           "type": "SL",
@@ -12983,7 +12983,7 @@
     },
     "sstable-format-lacks-integrity-and-efficiency-mechanisms": {
       "text": "The SSTable format has no integrity or efficiency safeguards: entries carry no CRC or checksum, range scans bypass the sparse index and scan from file start, and the entry count header is trusted without verification \u2014 meaning corruption goes undetected, negative lookups are unnecessarily expensive, and truncated files produce silent data loss.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -13057,7 +13057,7 @@
     },
     "sstable-layer-compounds-integrity-and-performance-deficiencies": {
       "text": "The SSTable layer has mutually reinforcing integrity and performance deficiencies: no per-entry CRC or checksum means corrupted entries return wrong values silently, and no Bloom filter integration forces every negative lookup to scan all SSTables sequentially, maximizing both the probability and frequency of encountering those silent corruptions.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -13152,7 +13152,7 @@
     },
     "sstable-no-checksums": {
       "text": "The SSTable format has no CRC or checksum on entries or blocks; the only validation is a magic-byte assertion (`MAGIC == b\"SSTB\"`) on file open.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [],
       "source": "entries/2026/05/28/sstable-and-compaction-sstable.md",
       "source_url": "",
@@ -13341,7 +13341,7 @@
     },
     "sstable-writer-finish-no-fsync": {
       "text": "`sstable-and-compaction/sstable.py:SSTableWriter.finish()` closes the file without calling `flush()` or `os.fsync()`, relying on implicit Python close-time buffer flush with no disk durability guarantee.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [],
       "source": "entries/2026/05/29/topic-fsync-guarantees-across-implementations.md",
       "source_url": "",
@@ -14825,7 +14825,7 @@
     },
     "verification-impossible-at-every-layer": {
       "text": "Verification of system correctness is impossible at every layer of the architecture: data integrity verification degrades from partial to absent along the storage pipeline (WAL CRCs exclude metadata, SSTables have no checksums at all), while protocol safety claims are unfalsifiable because all distributed testing uses synchronous simulation that cannot exercise the asynchronous failure modes the protocols are designed to tolerate.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -15653,7 +15653,7 @@
     },
     "wal-multi-segment-continuity-is-reliable": {
       "text": "Multi-segment WAL replay provides reliable cross-segment continuity: segment rotation fsyncs the outgoing file before closing it, and EOF within one segment advances to the next rather than terminating replay, ensuring no inter-segment data loss during normal operation.",
-      "truth_value": "OUT",
+      "truth_value": "IN",
       "justifications": [
         {
           "type": "SL",
@@ -15705,7 +15705,7 @@
     },
     "wal-no-directory-fsync": {
       "text": "The WAL implementation never fsyncs the parent directory after segment creation or deletion, meaning file metadata changes (including unlinks) are not guaranteed durable on crash on Linux",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [],
       "source": "entries/2026/05/28/topic-wal-segment-deletion-ordering.md",
       "source_url": "",
@@ -16334,7 +16334,7 @@
     },
     "wal-truncate-not-crash-safe": {
       "text": "`truncate()` rewrites WAL files in place without atomic rename, so a crash during truncation can leave the log in an inconsistent state.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [],
       "source": "entries/2026/05/28/write-ahead-log-wal.md",
       "source_url": "",
@@ -16386,7 +16386,7 @@
     },
     "wal-truncation-is-multi-failure-hazard": {
       "text": "WAL truncation combines three independent failure modes: it blocks all concurrent operations for its entire duration, silently discards all records after encountering corruption in a file, and is not crash-safe due to in-place file rewriting without atomic rename.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -16410,7 +16410,7 @@
     },
     "wal-truncation-safe-when-linear": {
       "text": "WAL truncation maintains data safety through two complementary mechanisms: segments are processed in oldest-first order (so a crash mid-truncation leaves a contiguous suffix of segments), and the current WAL file is flushed and fsynced before scanning for records to remove (preventing buffered data from being lost).",
-      "truth_value": "OUT",
+      "truth_value": "IN",
       "justifications": [
         {
           "type": "SL",

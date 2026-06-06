@@ -1,7 +1,7 @@
 ---
 schema_version: "1.0"
 project_name: "reasons"
-updated_at: "2026-06-06T19:32:22+00:00"
+updated_at: "2026-06-06T21:54:33+00:00"
 node_count: 1405
 generator: ftl-reasons/0.43.0
 ---
@@ -250,6 +250,11 @@ SchemaRegistry prepends a 4-byte big-endian unsigned int schema ID (struct.pack(
 SchemaError is raised at parse time for structurally invalid definitions (a valid Schema object is guaranteed well-formed); SchemaCompatibilityError is raised during decode resolution or compatibility checking when two schemas cannot be reconciled.
 - Source: entries/2026/05/29/avro-serializer-avro_serializer.md
 
+### avro-schema-evolution-handles-version-mismatch [IN] DERIVED
+Avro schema evolution correctly handles writer-reader version mismatches through mandatory dual-schema resolution (writer schema parses wire bytes, reader schema shapes output), with clean separation between structural schema errors at parse time and compatibility errors at resolution time.
+- Depends on: avro-writer-reader-dual-schema-resolution, avro-schema-error-vs-compatibility-error
+- Unless: schema-registry-no-compat-enforcement
+
 ### avro-skip-is-recursive-not-bytejump [IN] OBSERVATION
 The decoder's `_skip` method discards unwanted fields by recursively walking the writer schema rather than using byte-size jumps, which works correctly but requires understanding the element schema
 - Source: entries/2026/05/29/topic-avro-block-encoding.md
@@ -282,10 +287,6 @@ In `batch` sync mode, individual WAL appends do not fsync until `_write_count` r
 The WAL `_write_count` counter only resets when the batch threshold triggers a sync (line 133), not when a forced sync occurs, which may cause counter drift between forced and threshold-triggered syncs
 - Source: entries/2026/05/29/topic-fsync-semantics-by-mode.md
 
-### binary-formats-rigid-across-entire-storage-stack [IN] DERIVED
-The entire storage stack uses rigid binary formats that preclude both forward evolution and post-corruption recovery: WAL records are contiguously packed with no block alignment or version negotiation preventing resync after mid-file corruption, and SSTables lack per-entry checksums and efficient skip structures — neither layer can be upgraded in place or self-repaired after partial damage.
-- Depends on: wal-binary-format-prevents-evolution-and-recovery, sstable-format-lacks-integrity-and-efficiency-mechanisms
-
 ### bitcask-auto-compact-threshold [IN] OBSERVATION
 When the number of frozen segments exceeds `auto_compact_threshold` (default 5), compaction is triggered automatically during `put()` operations
 - Source: entries/2026/05/28/log-structured-hash-table-test_bitcask.md
@@ -293,10 +294,6 @@ When the number of frozen segments exceeds `auto_compact_threshold` (default 5),
 ### bitcask-compact-bypasses-write-record [IN] OBSERVATION
 `compact()` re-serializes records directly to the output file rather than calling `_write_record`, duplicating the binary serialization logic in a separate code path
 - Source: entries/2026/05/29/log-structured-hash-table-bitcask-_write_record.md
-
-### bitcask-compact-not-crash-safe [IN] OBSERVATION
-Hash-index-storage compaction is non-atomic with no error handling: a crash between deleting old files and completing the rewrite can leave the store in an unrecoverable state with no rollback mechanism.
-- Source: entries/2026/05/28/hash-index-storage-bitcask-compact.md
 
 ### bitcask-compact-preserves-timestamps [IN] OBSERVATION
 Compaction rewrites records with their original timestamps (not the time of compaction), preserving timestamp-based ordering across merges.
@@ -736,6 +733,11 @@ If a crash occurs after the right page and left page are WAL-logged but before t
 `put` must re-read metadata after `_insert` returns because `PageManager.allocate_page` mutates `next_free` and `free_head` as a side effect during splits, and those changes are not threaded back through the return value.
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-put.md
 
+### btree-range-scan-provides-ordered-access [IN] DERIVED
+B-tree range scans provide correct ordered sequential access by walking the actively maintained sibling chain with support for unbounded end keys, traversing all matching keys in sorted order.
+- Depends on: btree-sibling-chain-maintained-across-mutations, range-scan-supports-unbounded
+- Unless: range-scan-no-cycle-guard
+
 ### btree-recursive-insert-returns-union [IN] OBSERVATION
 `_insert` returns a discriminated union: `None` (updated existing), `'inserted'` (new key, no split), or `(mid_key, new_page)` (split happened); root splits are handled in `put()`, not inside the recursion.
 - Source: entries/2026/05/28/b-tree-storage-engine-btree.md
@@ -767,6 +769,11 @@ The B-tree implementation has no locking, latching, or concurrency control; all 
 ### btree-split-write-order-protects-chain [IN] OBSERVATION
 During a leaf split, `_insert` writes the new right page to the WAL before the modified left page, ensuring the sibling pointer target is durable before any pointer references it — so the chain never points to a nonexistent page after crash recovery
 - Source: entries/2026/05/29/topic-split-and-sibling-update-atomicity.md
+
+### btree-splits-are-crash-safe [IN] DERIVED
+Multi-page B-tree operations (splits, deletes) are made crash-safe by writing all modifications to the WAL before applying them to data pages.
+- Depends on: btree-wal-provides-split-atomicity, btree-wal-fsync-per-entry
+- Unless: btree-wal-replays-without-commit
 
 ### btree-stdlib-only [IN] OBSERVATION
 The B-tree module uses only stdlib imports (os, struct, zlib, bisect) with zero external dependencies.
@@ -819,10 +826,6 @@ Multi-page operations (splits, deletes that free pages) are made crash-safe by w
 ### btree-wal-replay-is-idempotent [IN] OBSERVATION
 Because the B-tree WAL stores complete page images, replaying entries already applied to the data file produces identical results, making the crash window after `sync()` but before `truncate()` harmless
 - Source: entries/2026/05/29/topic-write-ahead-logging-fsync-ordering.md
-
-### btree-wal-replays-without-commit [IN] OBSERVATION
-The B-tree's WAL replays all valid (CRC-passing) entries on recovery regardless of whether a commit marker is present — uncommitted entries are applied without distinction.
-- Source: entries/2026/05/28/b-tree-storage-engine-test_btree.md
 
 ### btree-wal-three-phase-commit [IN] OBSERVATION
 The B-tree WAL commit follows a strict three-phase protocol: (1) write WAL entries + fsync, (2) fsync data file via `page_manager.sync()`, (3) truncate WAL + fsync WAL fd — crash-safe at every interleaving because WAL entries are physical page images making replay idempotent.
@@ -1196,10 +1199,6 @@ LSM compaction runs automatically when `len(self._sstables) >= self._compaction_
 The `expected_version` optimistic concurrency check in `append_batch` runs before any state mutation, so a `ConcurrencyConflict` exception is safe and leaves the store completely unchanged.
 - Source: entries/2026/05/29/event-sourcing-store-event_store-append_batch.md
 
-### concurrency-unsafe-on-both-read-and-write-paths [IN] DERIVED
-Concurrency safety is absent from both mutation and query paths: core components (B-tree, garbage collector, consistent hash ring) silently assume single-threaded write access with no locks or assertions, and range scans lack snapshot isolation, cycle guards, or concurrent modification protection, meaning concurrent workloads can corrupt state through both writes and reads independently.
-- Depends on: multiple-core-components-assume-single-thread-silently, range-scan-lacks-safety-guarantees
-
 ### conflict-requires-different-origins [IN] OBSERVATION
 A conflict in `apply_remote_change` is only detected when `local_origin != remote_node`; two writes from the same origin at different timestamps are treated as sequential updates and resolved by tuple comparison without generating a `ConflictRecord`.
 - Source: entries/2026/05/29/multi-leader-replication-multi_leader-apply_remote_change.md
@@ -1248,10 +1247,6 @@ Key lookup via `get_node` is O(log V) where V is total virtual nodes, using `bis
 `ConsistentHashRing` does not validate that `num_vnodes`, `weight`, or `replication_factor` are positive; zero or negative values silently produce degenerate ring states (e.g., a node with zero vnodes exists in `_nodes` but owns no ring arc).
 - Source: entries/2026/05/29/consistent-hashing-consistent_hashing-ConsistentHashRing.md
 
-### consistent-hash-ring-not-thread-safe [IN] OBSERVATION
-`ConsistentHashRing` has no synchronization; concurrent `add_node`/`remove_node` calls corrupt the sorted `_ring_positions` and `_ring_nodes` lists.
-- Source: entries/2026/05/29/consistent-hashing-consistent_hashing-ConsistentHashRing.md
-
 ### consistent-hash-ring-sorted-invariant [IN] OBSERVATION
 `_ring_positions` is maintained in sorted order at all times via `bisect` insertion; `_ring_nodes` is kept parallel to it with `len(_ring_positions) == len(_ring_nodes)` always holding.
 - Source: entries/2026/05/29/consistent-hashing-consistent_hashing-ConsistentHashRing.md
@@ -1267,6 +1262,11 @@ All consistent hash ring positions are computed via MD5 truncated to 32 bits; th
 ### consistent-hash-ring-uses-md5-truncated-to-32-bit [IN] OBSERVATION
 The ring hashes keys and vnode identifiers using `hashlib.md5` truncated to 32 bits via `& 0xFFFFFFFF`, chosen for distribution quality rather than security.
 - Source: entries/2026/05/29/consistent-hashing-consistent_hashing-ConsistentHashRing.md
+
+### consistent-hash-routing-correct-under-single-thread [IN] DERIVED
+Consistent hash routing provides correct minimal-redistribution key assignment with proper deduplication: adding an Nth node moves approximately 1/N of keys (not a full reshuffle), and the preference list correctly skips virtual nodes of already-seen physical nodes to return exactly replication_factor distinct physical nodes.
+- Depends on: consistent-hash-minimal-redistribution, ch-preference-list-skips-duplicates
+- Unless: consistent-hash-ring-not-thread-safe
 
 ### consistent-hash-weight-scales-vnodes [IN] OBSERVATION
 The `weight` parameter on `add_node` scales virtual node count proportionally, supporting heterogeneous nodes with different capacities
@@ -1469,10 +1469,6 @@ Backup replicas independently recompute the SHA-256 digest from the request payl
 `_load_existing_sstables` using `os.listdir` cannot distinguish pre-compaction from post-compaction file sets after a crash — if the crash occurs after creating the merged SSTable but before deleting the inputs, recovery sees duplicates; the inverse loses data.
 - Source: entries/2026/05/29/topic-manifest-and-crash-recovery.md
 
-### distributed-correctness-undermined-at-both-layers [IN] DERIVED
-Distributed system correctness is undermined at both the storage and protocol layers: storage engines silently assume single-threaded access (no locks, no assertions, no documentation), while the quorum protocol weakens its own semantic guarantees (counting hint storage as successful writes, allowing sub-quorum configurations without error).
-- Depends on: multiple-core-components-assume-single-thread-silently, quorum-guarantees-weakened-at-two-levels
-
 ### distributed-divergence-accumulates-without-bound [IN] DERIVED
 Replica divergence accumulates without bound: write operations have compounding correctness gaps (sloppy quorums count hints, sub-quorum configs accepted, conflict resolution split across modules), and the repair mechanism (Merkle-based anti-entropy) cannot fully reconcile because tombstone semantics differ at every layer.
 - Depends on: distributed-writes-have-compounding-correctness-gaps, anti-entropy-detects-but-cannot-fully-resolve-divergence
@@ -1633,6 +1629,11 @@ Event sourcing read operations conflate two ID spaces: projections assume contig
 Event sourcing has no durable recovery mechanism: appends update in-memory state before persisting to disk with no rollback on failure, snapshots are ephemeral in-memory dicts lost on restart, and state reconstruction must always replay from the beginning with no incremental checkpoint support.
 - Depends on: event-store-append-is-not-crash-consistent, es-snapshots-incomplete-for-production-use
 
+### event-sourcing-state-is-fully-reconstructible [IN] DERIVED
+Event sourcing state can be fully reconstructed from the event log: projections are stateless replay functions (cache, not source of truth), and snapshots use deep copy to isolate stored state from mutations.
+- Depends on: projection-is-stateless-replay, save-snapshot-deep-copies-state
+- Unless: event-store-persist-no-durability
+
 ### event-sourcing-unreliable-in-persistence-and-addressing [IN] DERIVED
 Event sourcing is fundamentally unreliable at two independent levels: it has no durable recovery mechanism (in-memory state updated before disk, no crash-consistent append, ephemeral snapshots), and its core addressing abstraction conflates stream-scoped and global ID spaces across read paths, meaning even successfully persisted events may be incorrectly reconstructed.
 - Depends on: event-sourcing-lacks-any-durable-recovery-path, event-sourcing-conflates-two-id-spaces
@@ -1664,10 +1665,6 @@ The event store uses newline-delimited JSON where per-line resync is architectur
 ### event-store-optimistic-concurrency-via-expected-version [IN] OBSERVATION
 `EventStore.append` takes an `expected_version` parameter for optimistic concurrency on stream appends, rejecting writes when the stream has advanced past the caller's version
 - Source: entries/2026/05/29/topic-ddia-unbundling-concept.md
-
-### event-store-persist-no-durability [IN] OBSERVATION
-`EventStore._persist_event()` in `event-sourcing-store/event_store.py` opens the file in a `with` block, writes JSON, and relies on implicit `close()` — no explicit `flush()` or `os.fsync()`, making persisted events vulnerable to loss on OS crash
-- Source: entries/2026/05/29/topic-os-fsync-durability.md
 
 ### event-store-persist-no-flush-no-fsync [IN] OBSERVATION
 `EventStore._persist_event` opens the NDJSON file in append mode, writes one JSON line, and closes it without calling `flush()` or `os.fsync()`; written data may remain in OS buffers or Python buffers at crash time.
@@ -1770,10 +1767,6 @@ Only 3 of the `test_*.py` files use `@pytest.fixture` (`test_cdc`, `test_map_sid
 Every `os.fsync()` call in the codebase is immediately preceded by a `.flush()` call, ensuring Python's userspace buffer is drained to the kernel page cache before requesting stable storage persistence.
 - Source: entries/2026/05/29/topic-fsync-vs-flush-semantics.md
 
-### flush-clears-then-appends [IN] OBSERVATION
-`_flush()` both clears `self._memtable` and appends to `self._sstables`, creating a window where data exists in neither location if a concurrent reader checks between the two mutations
-- Source: entries/2026/05/28/topic-lsm-concurrency-safety.md
-
 ### flush-creates-sequential-sstables [IN] OBSERVATION
 Each `_flush` call creates an SSTable file with a strictly increasing sequence number (zero-padded filename for lexicographic = numeric sort), preserving newest-last ordering in `self._sstables`
 - Source: entries/2026/05/29/log-structured-merge-tree-lsm-_flush.md
@@ -1793,10 +1786,6 @@ Passing `force=True` to `_do_sync()` causes flush+fsync regardless of the config
 ### force-true-used-at-rotation-and-close [IN] OBSERVATION
 The only `_do_sync(force=True)` call sites (lines 165 and 175) correspond to segment rotation and WAL close, both operations where proceeding without a flush would risk data loss or file corruption
 - Source: entries/2026/05/29/topic-sync-mode-none-safety.md
-
-### format-rigidity-prevents-evolutionary-repair [IN] DERIVED
-The system cannot evolve its way out of known corruption vulnerabilities: the rigid binary format design across the entire storage stack prevents forward evolution and post-corruption recovery (no block alignment, no version fields, no extensibility), and the system simultaneously lacks defense-in-depth against the corruption these formats cannot recover from (no input validation, no resync capability).
-- Depends on: binary-formats-rigid-across-entire-storage-stack, no-defense-in-depth-against-corruption
 
 ### free-list-head-persisted-in-page-zero [IN] OBSERVATION
 The free list head pointer is stored as the fifth field of the metadata page (page 0) in the layout `[root_page:4B][height:4B][total_keys:4B][next_free_page:4B][free_list_head:4B]`, making it durable across restarts.
@@ -1840,10 +1829,6 @@ Each free-list page occupies a full page (default 4096 bytes) but stores only 7 
 
 ### gc-no-active-keeps-one [IN] OBSERVATION
 When no transactions are active, `garbage_collect()` retains at most one version per key — the latest committed non-deleted version — and drops everything else including fully-deleted keys.
-- Source: entries/2026/05/29/snapshot-isolation-mvcc_database-garbage_collect.md
-
-### gc-not-thread-safe [IN] OBSERVATION
-`garbage_collect()` mutates `_versions` (replacing lists and deleting keys) without synchronization, assuming single-threaded execution — concurrent reads or writes during GC would race on the dict and its lists.
 - Source: entries/2026/05/29/snapshot-isolation-mvcc_database-garbage_collect.md
 
 ### gc-preserves-active-snapshots [IN] OBSERVATION
@@ -1998,10 +1983,6 @@ Hash index storage is fundamentally memory-bound: every key must reside in RAM f
 Both Bitcask implementations require every live key to be held in a Python dict in memory; the dataset's key space is bounded by available RAM
 - Source: entries/2026/05/29/topic-bitcask-vs-lsm-tree.md
 
-### hash-index-no-crc-by-design [IN] OBSERVATION
-`hash-index-storage/bitcask.py` intentionally omits CRC to focus on keydir/append-log/compaction; `log-structured-hash-table/bitcask.py` provides the integrity-checking variant with `zlib.crc32` and `CorruptionError`
-- Source: entries/2026/05/29/topic-hash-index-bitcask-no-crc.md
-
 ### hash-index-no-range-queries [IN] OBSERVATION
 Neither hash index implementation (`hash-index-storage/bitcask.py` or `log-structured-hash-table/bitcask.py`) provides a `scan`, `range`, or ordered-iteration method; only exact-key point lookups are supported.
 - Source: entries/2026/05/29/topic-ddia-chapter3-hash-indexes.md
@@ -2009,6 +1990,11 @@ Neither hash index implementation (`hash-index-storage/bitcask.py` or `log-struc
 ### hash-index-read-is-single-seek [IN] OBSERVATION
 A Bitcask `get()` does one dict lookup plus one positioned disk read (O(1)), while an LSM-tree `get()` may search the memtable then multiple SSTables from newest to oldest (O(log N) per level)
 - Source: entries/2026/05/29/topic-bitcask-vs-lsm-tree.md
+
+### hash-index-survives-restart [IN] DERIVED
+Hash-index storage correctly reconstructs its in-memory index from on-disk segments after restart by scanning in ascending order so newer writes overwrite older entries, with fsync-controlled durability for each write.
+- Depends on: bitcask-rebuild-sorts-ascending, bitcask-recovery-order-is-ascending, hash-index-sync-writes-controls-fsync
+- Unless: bitcask-compact-not-crash-safe
 
 ### hash-index-sync-writes-controls-fsync [IN] OBSERVATION
 In hash-index-storage Bitcask, the `sync_writes` flag controls whether each `_write_record` call fsyncs to disk; when `False`, recently written records may be lost on crash.
@@ -2053,10 +2039,6 @@ A corrupted hint file silently loads bad offsets into the index with no validati
 ### hint-expiry-bounds-durability [IN] OBSERVATION
 Hints in `HintedHandoffStore` have a TTL; if `trigger_handoff` doesn't run before `created_at + hint_ttl`, `expire_hints` silently drops the hint, permanently losing that replica's copy of the data
 - Source: entries/2026/05/29/topic-sloppy-quorum-tradeoffs.md
-
-### hint-file-no-fsync [IN] OBSERVATION
-Hint files are written without `fsync`; they are a best-effort startup optimization that can be lost on crash without data loss, since the data file remains authoritative.
-- Source: entries/2026/05/28/hash-index-storage-bitcask-_write_hint_file.md
 
 ### hint-file-no-integrity-check [IN] OBSERVATION
 Neither the hint file writer nor reader performs checksum validation; a truncated or corrupted hint file causes a `struct.error` or `IndexError` on startup rather than a graceful fallback to data file scanning.
@@ -2165,10 +2147,6 @@ Input validation is systematically absent across configuration and API boundarie
 ### integrity-checking-is-both-incomplete-and-unrecoverable [IN] DERIVED
 Data integrity checking fails in two complementary ways: CRC checksums exclude routing metadata (sequence numbers, page numbers, headers), so corruption in those fields goes undetected; and every reader halts at the first detected CRC failure with no resync capability — meaning both detectable and undetectable corruption are terminal.
 - Depends on: payload-only-crc-leaves-metadata-unprotected, corruption-is-terminal-across-all-readers
-
-### integrity-degrades-along-storage-pipeline [IN] DERIVED
-Data integrity verification degrades monotonically along the storage pipeline: WAL records have CRC checksums that exclude routing metadata (partial coverage), SSTables have no checksums at all (zero coverage), and neither layer can recover from detected corruption — data transitions from partially verified to completely unverified as it moves through compaction from WAL to SSTable.
-- Depends on: integrity-checking-is-both-incomplete-and-unrecoverable, sstable-layer-compounds-integrity-and-performance-deficiencies
 
 ### internal-node-children-invariant [IN] OBSERVATION
 _serialize_internal assumes len(children) == len(keys) + 1 but does not assert it; too few children raises IndexError, while extra children beyond keys+1 are silently dropped — a potential data-loss path if the invariant is violated.
@@ -2406,10 +2384,6 @@ Both `put` and `delete` call `_record_seen` with the local node's ID, ensuring t
 A participant in the `"prepared"` state holds key-level locks (`self.locks[key] = tx_id`) that cause any subsequent transaction touching the same keys to abort with a lock conflict during its own `prepare()`.
 - Source: entries/2026/05/29/topic-2pc-blocking-problem.md
 
-### log-structured-bitcask-no-fsync [IN] OBSERVATION
-`log-structured-hash-table/bitcask.py` uses only `flush()` without `os.fsync()` on data writes, unlike `hash-index-storage` which calls `os.fsync` per record when `sync_writes` is enabled
-- Source: entries/2026/05/29/topic-bitcask-paper-design.md
-
 ### log-structured-compact-closes-active-file [IN] OBSERVATION
 In `log-structured-hash-table/bitcask.py`, compaction closes `_active_file` during its write phase, making all reads and writes to the active segment impossible until the active file is reopened under a new name at the end of compaction
 - Source: entries/2026/05/29/topic-concurrent-merge-safety.md
@@ -2542,6 +2516,11 @@ The LSM-tree engine has no built-in byte or operation counters for writes; all w
 `lsm.py:range_scan` loads all matching entries from every SSTable and memtable into a dict before returning any results, making first-result latency proportional to total result set size
 - Source: entries/2026/05/28/topic-merge-iterator-vs-dict-merge.md
 
+### lsm-read-path-correct-across-flushes [IN] DERIVED
+The LSM read path maintains correctness across memtable flushes by searching newest-first (memtable then SSTables in reverse sequence order) using a reference swap rather than deep copy for the frozen memtable.
+- Depends on: lsm-newest-first-read-path, lsm-memtable-swap-is-reference-not-copy
+- Unless: flush-clears-then-appends
+
 ### lsm-replay-strips-seq-nums [IN] OBSERVATION
 The LSM tree's `replay` method (`lsm.py:28`) returns `List[Tuple[str, bytes]]`, discarding WAL sequence numbers and making gap detection impossible at the LSM layer
 - Source: entries/2026/05/29/topic-gap-detection-during-replay.md
@@ -2610,9 +2589,10 @@ The WAL in `log-structured-merge-tree/lsm.py` uses only length-prefix framing wi
 The LSM WAL format has no checksums or magic bytes; it can detect truncation (incomplete length-prefixed records) but not corruption of existing bytes
 - Source: entries/2026/05/29/log-structured-merge-tree-lsm-WAL.md
 
-### lsm-wal-no-crc [IN] OBSERVATION
-The LSM tree's WAL (`lsm.py:14-53`) uses only length-prefixed framing with no checksum, making it unable to distinguish corruption from valid data unless a length field causes an out-of-bounds read
-- Source: entries/2026/05/29/topic-record-boundary-recovery.md
+### lsm-wal-provides-crash-recovery [IN] DERIVED
+The LSM WAL replays on construction to recover unflushed memtable state, providing crash recovery for in-flight writes.
+- Depends on: lsm-wal-replays-on-reopen
+- Unless: lsm-wal-no-crc
 
 ### lsm-wal-replays-on-reopen [IN] OBSERVATION
 Constructing a new `LSMTree` on an existing directory replays the WAL to recover unflushed memtable state; this is validated by the crash recovery test which skips `close()` and reopens
@@ -2942,10 +2922,6 @@ Replication occurs only when `sync()` is explicitly called; there is no backgrou
 ### multi-leader-tombstone-delete [IN] OBSERVATION
 Deletes are implemented as tombstone writes (`_TOMBSTONE` sentinel with `is_tombstone=True`) that replicate like normal mutations; `get()` returns `None` for tombstoned keys
 - Source: entries/2026/05/29/multi-leader-replication-multi_leader.md
-
-### multiple-core-components-assume-single-thread-silently [IN] DERIVED
-The B-tree, garbage collector, and consistent hash ring all assume single-threaded access without locks, assertions, or documentation — a systematic pattern where concurrency unsafety is implicit rather than enforced.
-- Depends on: btree-single-threaded-assumption, gc-not-thread-safe, consistent-hash-ring-not-thread-safe
 
 ### mvcc-active-set-frozen-at-begin [IN] OBSERVATION
 `MVCCDatabase.begin_transaction` captures `active_at_start` as a frozen set of all currently active transaction IDs at that moment; it is never modified after creation and serves as the transaction's immutable snapshot boundary
@@ -3624,10 +3600,6 @@ Range partitioning routing depends on maintaining strict lockstep invariants acr
 `BTree.range_scan(start_key, end_key)` returns keys in the half-open interval `[start_key, end_key)` — start-inclusive, end-exclusive; `end_key=None` scans to the last key.
 - Source: entries/2026/05/28/b-tree-storage-engine-btree-range_scan.md
 
-### range-scan-lacks-safety-guarantees [IN] DERIVED
-Range scans are vulnerable to three independent failure modes: concurrent modifications produce inconsistent results (no snapshot isolation), corrupted sibling pointers can cause infinite traversal (no cycle guard), and large result sets consume unbounded memory (eager materialization into a list).
-- Depends on: range-scan-no-concurrency-protection, range-scan-no-cycle-guard, range-scan-materializes-results
-
 ### range-scan-last-writer-wins [IN] OBSERVATION
 `range_scan` iterates sources oldest-to-newest (SSTables, then immutable memtables, then active memtable) so that dict overwrites naturally give each key the value from the newest source
 - Source: entries/2026/05/28/log-structured-merge-tree-lsm-range_scan.md
@@ -3647,10 +3619,6 @@ The range scan merge uses an incrementing priority counter where higher priority
 ### range-scan-no-concurrency-protection [IN] OBSERVATION
 `range_scan` can observe inconsistent state if a flush or compaction runs concurrently, since there is no snapshot isolation or locking
 - Source: entries/2026/05/28/log-structured-merge-tree-lsm-range_scan.md
-
-### range-scan-no-cycle-guard [IN] OBSERVATION
-`range_scan` has no visited-set or cycle detection on the leaf sibling chain; a corrupted `next_sibling` pointer would cause an infinite loop.
-- Source: entries/2026/05/28/b-tree-storage-engine-btree-range_scan.md
 
 ### range-scan-no-mutation [IN] OBSERVATION
 `Partition.range_scan` is a pure read operation with no side effects — it never modifies `_keys`, `_values`, or any other state, and returns a fresh list the caller can mutate freely.
@@ -3687,10 +3655,6 @@ The causal graph has two edge types: `_parent` (same-node sequential) and `_caus
 ### read-path-anticipates-concurrent-flush [IN] OBSERVATION
 Both `get()` (line 254) and `range_scan()` (line 286) check `_immutable_memtables` in the correct order, indicating the read path was designed for a concurrent-flush architecture that the write path never implements
 - Source: entries/2026/05/29/topic-immutable-memtable-gap.md
-
-### read-path-unreliable-from-storage-through-derived-systems [IN] DERIVED
-The complete read path from storage through derived systems is unreliable at every stage: the SSTable layer has compounding integrity and performance deficiencies (no per-entry checksums, linear miss-probes from missing Bloom integration, redundant key-list rebuilds per lookup) while the CDC backbone feeding all derived systems depends on reconstruction heuristics for event semantics and requires callers to manually flush and provide old values for consistency.
-- Depends on: sstable-layer-compounds-integrity-and-performance-deficiencies, cdc-backbone-both-heuristic-and-insufficient
 
 ### read-predicate-deps-only-for-committed [IN] OBSERVATION
 `read_predicate` records dependency graph edges only for keys in the committed snapshot (`k in snap`), not for keys the transaction itself created via `write()` — avoiding self-dependencies
@@ -3916,10 +3880,6 @@ If `_read_entry` encounters truncated data mid-range, `_scan_range_for_key` sile
 `SchemaRegistry` is a pure in-memory dict with monotonic ID assignment, with no persistence, HTTP API, or subject-based grouping
 - Source: entries/2026/05/29/topic-confluent-schema-registry-protocol.md
 
-### schema-registry-no-compat-enforcement [IN] OBSERVATION
-Schema registration accepts any schema without checking compatibility against previously registered versions under the same subject, unlike Confluent which enforces backward/forward/full compatibility on registration
-- Source: entries/2026/05/29/topic-confluent-schema-registry-protocol.md
-
 ### secondary-index-document-class-unused [IN] OBSERVATION
 The `Document` dataclass exists as a domain concept but the DB classes accept `pk` and `fields` separately and never consume `Document` instances.
 - Source: entries/2026/05/29/secondary-index-partitioning-secondary_index_partitioning.md
@@ -4072,6 +4032,11 @@ During a leaf split, the new right page is written with the old leaf's `next_sib
 `SSIDatabase` adds a `_dependency_graph` and `_predicate_locks` on top of MVCC to detect read-write conflicts (write skew) that basic snapshot isolation permits
 - Source: entries/2026/05/29/topic-mvcc-snapshot-isolation.md
 
+### ssi-isolation-holds-under-single-thread [IN] DERIVED
+SSI's composed invariant layers provide correct serializable snapshot isolation: MVCC enforces visibility through append-only versions and symmetric deletion rules, and SSI validation ensures own-writes are checked before store consultation, preventing lost updates.
+- Depends on: transaction-isolation-composes-two-invariant-layers, ssi-own-writes-require-buffer-check
+- Unless: gc-not-thread-safe
+
 ### ssi-own-writes-require-buffer-check [IN] OBSERVATION
 `SSIDatabase.read` must check `tx._writes` and `tx._deletes` before consulting `_store`, since a transaction's own writes aren't materialized into the shared store until commit — unlike MVCCDatabase where eager writes make own-writes visible automatically
 - Source: entries/2026/05/29/topic-snapshot-vs-ssi-tradeoffs.md
@@ -4124,10 +4089,6 @@ A crash between SSTableWriter creation and `finish()` leaves `entry_count=0` in 
 The SSTable format supports exactly two entry types (value and tombstone via `TOMBSTONE_MARKER`); there is no third type for merge operands, which would be required for RocksDB-style merge support
 - Source: entries/2026/05/29/topic-rocksdb-merge-operator.md
 
-### sstable-format-lacks-integrity-and-efficiency-mechanisms [IN] DERIVED
-The SSTable format has no integrity or efficiency safeguards: entries carry no CRC or checksum, range scans bypass the sparse index and scan from file start, and the entry count header is trusted without verification — meaning corruption goes undetected, negative lookups are unnecessarily expensive, and truncated files produce silent data loss.
-- Depends on: sstable-no-checksums, sstable-range-scan-no-index-skip, entry-count-header-never-verified
-
 ### sstable-get-miss-returns-none [IN] OBSERVATION
 `SSTableReader.get()` returns `None` for keys not found in the table, rather than raising an exception
 - Source: entries/2026/05/29/sstable-and-compaction-tester_test_sstable.md
@@ -4147,10 +4108,6 @@ The SSTable format (`sstable.py:10-11`) uses a 4-byte magic `b"SSTB"` and a 2-by
 ### sstable-has-timestamps-lsm-ignores-them [IN] OBSERVATION
 `SSTableEntry` in `sstable.py` carries a `timestamp` field, but `lsm.py`'s merge and conflict resolution uses only structural SSTable ordering (sequence number priority), not per-entry timestamps
 - Source: entries/2026/05/29/topic-leveldb-merging-iterator.md
-
-### sstable-layer-compounds-integrity-and-performance-deficiencies [IN] DERIVED
-The SSTable layer has mutually reinforcing integrity and performance deficiencies: no per-entry CRC or checksum means corrupted entries return wrong values silently, and no Bloom filter integration forces every negative lookup to scan all SSTables sequentially, maximizing both the probability and frequency of encountering those silent corruptions.
-- Depends on: sstable-format-lacks-integrity-and-efficiency-mechanisms, lsm-miss-probes-all-due-to-no-bloom-integration
 
 ### sstable-lookup-is-two-phase [IN] OBSERVATION
 Point lookups in both SSTable implementations first binary-search the sparse index to identify a block, then linearly scan entries within that block's byte range; total cost is O(log(N/B) + B)
@@ -4179,10 +4136,6 @@ The k-way merge in `sstable-and-compaction/sstable.py` is forward-only with no d
 ### sstable-metadata-level-field-unused [IN] OBSERVATION
 `SSTableMetadata.level` in `sstable-and-compaction/sstable.py` exists as a field but has no persistent backing; level assignments would be lost on restart without a MANIFEST equivalent
 - Source: entries/2026/05/28/topic-manifest-based-compaction.md
-
-### sstable-no-checksums [IN] OBSERVATION
-The SSTable format has no CRC or checksum on entries or blocks; the only validation is a magic-byte assertion (`MAGIC == b"SSTB"`) on file open.
-- Source: entries/2026/05/28/sstable-and-compaction-sstable.md
 
 ### sstable-point-lookup-correct-under-sort-invariant [IN] DERIVED
 SSTable point lookups return correct results through two-phase search (binary search on sparse index to identify block, then linear scan within block), with clean None returns for keys not present in the table.
@@ -4236,10 +4189,6 @@ The SSTable's 12-byte trailer (`footer_start` offset + entry `count`) is an unpr
 ### sstable-writer-append-then-patch [IN] OBSERVATION
 `SSTableWriter` writes a placeholder header, appends all entries and the sparse index, then seeks back to byte 0 to patch the final entry count — an unfinished SSTable has `entry_count=0` and appears empty.
 - Source: entries/2026/05/28/sstable-and-compaction-sstable.md
-
-### sstable-writer-finish-no-fsync [IN] OBSERVATION
-`sstable-and-compaction/sstable.py:SSTableWriter.finish()` closes the file without calling `flush()` or `os.fsync()`, relying on implicit Python close-time buffer flush with no disk durability guarantee.
-- Source: entries/2026/05/29/topic-fsync-guarantees-across-implementations.md
 
 ### sstable-writer-is-natural-filter-builder [IN] OBSERVATION
 The `SSTableWriter.add()` → `finish()` lifecycle is the natural integration point for per-SSTable bloom filter construction, since keys are already iterated in sorted order during the write pass
@@ -4702,10 +4651,6 @@ When multiple nodes share the same counter value during `prune`, which survive d
 `VectorClock` is immutable: `increment`, `merge`, and `prune` all return new instances and never modify `_clock` in place.
 - Source: entries/2026/05/29/vector-clocks-vector_clock.md
 
-### verification-impossible-at-every-layer [IN] DERIVED
-Verification of system correctness is impossible at every layer of the architecture: data integrity verification degrades from partial to absent along the storage pipeline (WAL CRCs exclude metadata, SSTables have no checksums at all), while protocol safety claims are unfalsifiable because all distributed testing uses synchronous simulation that cannot exercise the asynchronous failure modes the protocols are designed to tolerate.
-- Depends on: integrity-degrades-along-storage-pipeline, protocol-safety-unfalsifiable-under-current-testing
-
 ### verify-proof-direction-unvalidated [IN] OBSERVATION
 The `direction` field in proof siblings is not validated; any value other than `"left"` is silently treated as `"right"` via the else branch.
 - Source: entries/2026/05/29/merkle-tree-merkle_tree-verify_proof.md
@@ -4992,6 +4937,11 @@ The WAL binary record format uses little-endian byte order unconditionally (stru
 The WAL module in `write-ahead-log/wal.py` uses `self._lock` for thread safety across its mutation paths, while the LSM tree module has zero locking or concurrency control despite having the same concurrent-access risks
 - Source: entries/2026/05/29/topic-superversion-refcount-implementation.md
 
+### wal-multi-segment-continuity-is-reliable [IN] DERIVED
+Multi-segment WAL replay provides reliable cross-segment continuity: segment rotation fsyncs the outgoing file before closing it, and EOF within one segment advances to the next rather than terminating replay, ensuring no inter-segment data loss during normal operation.
+- Depends on: wal-eof-advances-to-next-file, wal-rotate-fsync-before-close
+- Unless: wal-no-directory-fsync
+
 ### wal-no-commit-method [IN] OBSERVATION
 The standalone `WriteAheadLog` class in `write-ahead-log/wal.py` has no `commit` method; sync-then-truncate coordination must be implemented by a higher-level storage engine that composes the WAL with a data file
 - Source: entries/2026/05/29/topic-wal-commit-protocol.md
@@ -4999,10 +4949,6 @@ The standalone `WriteAheadLog` class in `write-ahead-log/wal.py` has no `commit`
 ### wal-no-concurrent-group-commit [IN] OBSERVATION
 The WAL uses a single `threading.Lock` and a write counter for batch sync rather than a concurrent waiter queue, so it cannot amortize fsync cost across concurrent callers the way PostgreSQL's group commit does.
 - Source: entries/2026/05/29/topic-group-commit-optimization.md
-
-### wal-no-directory-fsync [IN] OBSERVATION
-The WAL implementation never fsyncs the parent directory after segment creation or deletion, meaning file metadata changes (including unlinks) are not guaranteed durable on crash on Linux
-- Source: entries/2026/05/28/topic-wal-segment-deletion-ordering.md
 
 ### wal-no-gap-detection [IN] OBSERVATION
 Neither the WAL reader nor any visible consumer checks for sequence number gaps after replay, making silent data loss from mid-file corruption undetectable
@@ -5201,10 +5147,6 @@ During truncate, if a corrupt record is encountered in a WAL file, all subsequen
 `truncate` does not validate that `up_to_seq` is within range — passing a value beyond `current_seq_num()` silently deletes all records without error
 - Source: entries/2026/05/28/write-ahead-log-wal-truncate.md
 
-### wal-truncate-not-crash-safe [IN] OBSERVATION
-`truncate()` rewrites WAL files in place without atomic rename, so a crash during truncation can leave the log in an inconsistent state.
-- Source: entries/2026/05/28/write-ahead-log-wal.md
-
 ### wal-truncate-preserves-records-above-seq [IN] OBSERVATION
 `WriteAheadLog.truncate(up_to_seq)` keeps records with `seq_num > up_to_seq` and deletes only those at or below, enabling partial log reclamation tied to checkpoint boundaries.
 - Source: entries/2026/05/29/topic-wal-checkpoint-protocol.md
@@ -5221,9 +5163,10 @@ WAL truncation is only safe because it is called after the data the WAL protects
 `WriteAheadLog.truncate()` reads and rewrites every segment file record-by-record rather than deleting whole segment files, making it O(total records) instead of O(segments)
 - Source: entries/2026/05/29/topic-log-compaction-vs-persistence.md
 
-### wal-truncation-is-multi-failure-hazard [IN] DERIVED
-WAL truncation combines three independent failure modes: it blocks all concurrent operations for its entire duration, silently discards all records after encountering corruption in a file, and is not crash-safe due to in-place file rewriting without atomic rename.
-- Depends on: wal-truncate-not-crash-safe, wal-truncate-blocks-all-operations, wal-truncate-drops-after-corruption
+### wal-truncation-safe-when-linear [IN] DERIVED
+WAL truncation maintains data safety through two complementary mechanisms: segments are processed in oldest-first order (so a crash mid-truncation leaves a contiguous suffix of segments), and the current WAL file is flushed and fsynced before scanning for records to remove (preventing buffered data from being lost).
+- Depends on: wal-truncate-deletes-oldest-first, wal-truncate-fsyncs-before-scan
+- Unless: wal-truncate-not-crash-safe
 
 ### wal-truncation-vs-corruption-distinction [IN] OBSERVATION
 `_read_record` returns `None` for short reads (truncation) but raises `ValueError` for CRC mismatch (corruption), giving callers two distinct failure modes to handle differently during recovery
@@ -5274,10 +5217,13 @@ Two-phase commit recovery drives all interrupted transactions to a terminal stat
 - Depends on: 2pc-coordinator-recovery-replays-commit, 2pc-lock-ownership-guard
 - Unless: 2pc-timeout-unused
 
-### avro-schema-evolution-handles-version-mismatch [OUT] DERIVED
-Avro schema evolution correctly handles writer-reader version mismatches through mandatory dual-schema resolution (writer schema parses wire bytes, reader schema shapes output), with clean separation between structural schema errors at parse time and compatibility errors at resolution time.
-- Depends on: avro-writer-reader-dual-schema-resolution, avro-schema-error-vs-compatibility-error
-- Unless: schema-registry-no-compat-enforcement
+### binary-formats-rigid-across-entire-storage-stack [OUT] DERIVED
+The entire storage stack uses rigid binary formats that preclude both forward evolution and post-corruption recovery: WAL records are contiguously packed with no block alignment or version negotiation preventing resync after mid-file corruption, and SSTables lack per-entry checksums and efficient skip structures — neither layer can be upgraded in place or self-repaired after partial damage.
+- Depends on: wal-binary-format-prevents-evolution-and-recovery, sstable-format-lacks-integrity-and-efficiency-mechanisms
+
+### bitcask-compact-not-crash-safe [OUT] OBSERVATION
+Hash-index-storage compaction is non-atomic with no error handling: a crash between deleting old files and completing the rewrite can leave the store in an unrecoverable state with no rollback mechanism.
+- Source: entries/2026/05/28/hash-index-storage-bitcask-compact.md
 
 ### bloom-filter-sizing-is-production-ready [OUT] DERIVED
 The Bloom filter implementation uses textbook-optimal bit array and hash count formulas, making it ready for production integration.
@@ -5300,19 +5246,13 @@ B-tree mutations pay double fsync costs for user data (WAL entry + data page) bu
 The B-tree's page I/O layer lacks defensive validation at every stage: deserialization accepts any bytes, leaf-finding doesn't verify node types, and page writes silently truncate oversized data — a single corrupted byte can cascade through the tree undetected.
 - Depends on: btree-deserialize-no-validation, find-leaf-no-type-check, write-page-silently-truncates
 
-### btree-range-scan-provides-ordered-access [OUT] DERIVED
-B-tree range scans provide correct ordered sequential access by walking the actively maintained sibling chain with support for unbounded end keys, traversing all matching keys in sorted order.
-- Depends on: btree-sibling-chain-maintained-across-mutations, range-scan-supports-unbounded
-- Unless: range-scan-no-cycle-guard
-
-### btree-splits-are-crash-safe [OUT] DERIVED
-Multi-page B-tree operations (splits, deletes) are made crash-safe by writing all modifications to the WAL before applying them to data pages.
-- Depends on: btree-wal-provides-split-atomicity, btree-wal-fsync-per-entry
-- Unless: btree-wal-replays-without-commit
-
 ### btree-structural-integrity-silently-erodes [OUT] DERIVED
 B-tree structural integrity silently erodes over time: deletions cause monotonic degradation (leaked pages, ever-growing height) while the I/O layer performs no validation to detect or report the resulting inconsistencies.
 - Depends on: btree-delete-causes-monotonic-degradation, btree-page-io-has-no-defensive-checks
+
+### btree-wal-replays-without-commit [OUT] OBSERVATION
+The B-tree's WAL replays all valid (CRC-passing) entries on recovery regardless of whether a commit marker is present — uncommitted entries are applied without distinction.
+- Source: entries/2026/05/28/b-tree-storage-engine-test_btree.md
 
 ### cdc-consumer-position-is-volatile [OUT] OBSERVATION
 CDCConsumer tracks its read position as an in-memory integer (`_position`) with no durable offset storage, meaning position is lost on process restart
@@ -5342,6 +5282,10 @@ Compaction is unsalvageable as designed: it is the highest-risk operation within
 No storage engine implementation uses the write-temp/fsync/rename pattern for file creation, and both Bitcask implementations delete old segments before renaming replacements, creating crash windows where data exists in neither old nor new files.
 - Depends on: no-atomic-file-creation, delete-before-rename-ordering, lsm-compact-no-atomic-rename
 
+### concurrency-unsafe-on-both-read-and-write-paths [OUT] DERIVED
+Concurrency safety is absent from both mutation and query paths: core components (B-tree, garbage collector, consistent hash ring) silently assume single-threaded write access with no locks or assertions, and range scans lack snapshot isolation, cycle guards, or concurrent modification protection, meaning concurrent workloads can corrupt state through both writes and reads independently.
+- Depends on: multiple-core-components-assume-single-thread-silently, range-scan-lacks-safety-guarantees
+
 ### concurrent-access-during-compaction-is-doubly-unsafe [OUT] DERIVED
 Compaction under concurrent access is unsafe in two independent failure modes: concurrent readers and writers have no synchronization (no locks, latches, or snapshots on either path), AND compaction itself has no crash-safe file operations — concurrent access can corrupt live state silently, and a crash during this unsynchronized compaction produces irrecoverable data loss.
 - Depends on: concurrency-unsafe-on-both-read-and-write-paths, post-crash-compaction-produces-irrecoverable-corruption
@@ -5350,10 +5294,9 @@ Compaction under concurrent access is unsafe in two independent failure modes: c
 Consensus protocol correctness is doubly unverified: both Raft and TOB represent untested inverse optimizations of Multi-Paxos whose safety properties diverge specifically under asynchrony and crash failures, AND the testing methodology covers neither crash nor asynchronous failure modes — the exact conditions under which the two optimization strategies would reveal different safety profiles.
 - Depends on: consensus-safety-unverified-across-optimization-variants, testing-covers-neither-crash-nor-async-failure-modes
 
-### consistent-hash-routing-correct-under-single-thread [OUT] DERIVED
-Consistent hash routing provides correct minimal-redistribution key assignment with proper deduplication: adding an Nth node moves approximately 1/N of keys (not a full reshuffle), and the preference list correctly skips virtual nodes of already-seen physical nodes to return exactly replication_factor distinct physical nodes.
-- Depends on: consistent-hash-minimal-redistribution, ch-preference-list-skips-duplicates
-- Unless: consistent-hash-ring-not-thread-safe
+### consistent-hash-ring-not-thread-safe [OUT] OBSERVATION
+`ConsistentHashRing` has no synchronization; concurrent `add_node`/`remove_node` calls corrupt the sorted `_ring_positions` and `_ring_nodes` lists.
+- Source: entries/2026/05/29/consistent-hashing-consistent_hashing-ConsistentHashRing.md
 
 ### correctness-gap-widens-under-failure [OUT] DERIVED
 The gap between expected and actual system correctness widens under failure: distributed protocols require storage-layer guarantees (crash-safe compaction, atomic writes, complete CRC coverage) that no implementation provides, and the resulting divergence accumulates without bound because anti-entropy can detect but not fully reconcile the inconsistencies.
@@ -5400,6 +5343,10 @@ The distributed cluster has no reliable foundational infrastructure: membership 
 Distributed correctness is doubly unachievable under network partitions: protocols require storage-layer guarantees (crash-safe compaction, CRC-protected metadata) that aren't met, AND partitions amplify the resulting gaps through disrupted gossip-based failure detection and stale leader writes — the prerequisites for correctness are absent even before partitions introduce additional failure modes.
 - Depends on: end-to-end-correctness-requires-unmet-storage-guarantees, network-partitions-amplify-write-correctness-gaps
 
+### distributed-correctness-undermined-at-both-layers [OUT] DERIVED
+Distributed system correctness is undermined at both the storage and protocol layers: storage engines silently assume single-threaded access (no locks, no assertions, no documentation), while the quorum protocol weakens its own semantic guarantees (counting hint storage as successful writes, allowing sub-quorum configurations without error).
+- Depends on: multiple-core-components-assume-single-thread-silently, quorum-guarantees-weakened-at-two-levels
+
 ### distributed-layer-has-three-incompatible-convergence-models [OUT] DERIVED
 The distributed layer uses three fundamentally incompatible convergence and resolution models with no unifying bridge: CRDTs encode resolution algebraically in merge semantics, the strategy pattern selects between LWW and custom resolution at runtime, AND consensus and membership use irreconcilable strong-leader (Raft) vs. eventual-consistency (gossip) models — composing correct end-to-end behavior requires manually bridging paradigms designed in isolation.
 - Depends on: two-incompatible-conflict-resolution-paradigms, consensus-and-membership-use-incompatible-convergence-models
@@ -5437,14 +5384,21 @@ End-to-end distributed correctness is unachievable: protocol-layer weaknesses (s
 Derived systems depend on event infrastructure that is independently unreliable in both content and ordering: events may be lost, duplicated, or mis-addressed due to unreliable persistence and addressing, AND their ordering is broken at every layer — WAL sequence numbers are vestigial, event IDs conflate two spaces, and CDC consumer positions are volatile.
 - Depends on: derived-systems-depend-on-unreliable-event-infrastructure, ordering-infrastructure-broken-at-every-layer
 
-### event-sourcing-state-is-fully-reconstructible [OUT] DERIVED
-Event sourcing state can be fully reconstructed from the event log: projections are stateless replay functions (cache, not source of truth), and snapshots use deep copy to isolate stored state from mutations.
-- Depends on: projection-is-stateless-replay, save-snapshot-deep-copies-state
-- Unless: event-store-persist-no-durability
+### event-store-persist-no-durability [OUT] OBSERVATION
+`EventStore._persist_event()` in `event-sourcing-store/event_store.py` opens the file in a `with` block, writes JSON, and relies on implicit `close()` — no explicit `flush()` or `os.fsync()`, making persisted events vulnerable to loss on OS crash
+- Source: entries/2026/05/29/topic-os-fsync-durability.md
+
+### flush-clears-then-appends [OUT] OBSERVATION
+`_flush()` both clears `self._memtable` and appends to `self._sstables`, creating a window where data exists in neither location if a concurrent reader checks between the two mutations
+- Source: entries/2026/05/28/topic-lsm-concurrency-safety.md
 
 ### format-and-structure-prevent-all-repair [OUT] DERIVED
 The system can neither self-heal during operation nor be evolved to add self-healing capabilities: runtime degradation is permanent (leaked pages accumulate, tree height only grows, no rebalancing occurs, crash recovery has no safe path), AND the rigid binary formats across the entire storage stack prevent adding recovery mechanisms such as resync points, version negotiation, or structural checksums.
 - Depends on: format-rigidity-prevents-evolutionary-repair, storage-has-no-self-healing-at-any-layer
+
+### format-rigidity-prevents-evolutionary-repair [OUT] DERIVED
+The system cannot evolve its way out of known corruption vulnerabilities: the rigid binary format design across the entire storage stack prevents forward evolution and post-corruption recovery (no block alignment, no version fields, no extensibility), and the system simultaneously lacks defense-in-depth against the corruption these formats cannot recover from (no input validation, no resync capability).
+- Depends on: binary-formats-rigid-across-entire-storage-stack, no-defense-in-depth-against-corruption
 
 ### fsync-policy-inconsistent-across-critical-paths [OUT] DERIVED
 The codebase has a systematic fsync policy inconsistency between components: WAL critical operations (checkpoints, batch commits, segment rotations) always force-fsync regardless of configured mode, but B-tree metadata mutations (which are equally critical for crash recovery) skip fsync entirely despite paying double fsync for user data pages.
@@ -5458,10 +5412,17 @@ The complete data lifecycle is unsafe from storage maintenance through data retr
 Both the physical storage layer and the logical transaction layer are independently fragile under restart, creating a full-stack restart hazard: the B-tree's durability model protects user data pages but not structural metadata (height, sibling chain, free list), while the transaction system's isolation model depends on monotonic counters and abort-as-status-change semantics that have no persistence backing.
 - Depends on: btree-durability-protects-data-not-structure, transaction-isolation-fragile-under-restart
 
-### hash-index-survives-restart [OUT] DERIVED
-Hash-index storage correctly reconstructs its in-memory index from on-disk segments after restart by scanning in ascending order so newer writes overwrite older entries, with fsync-controlled durability for each write.
-- Depends on: bitcask-rebuild-sorts-ascending, bitcask-recovery-order-is-ascending, hash-index-sync-writes-controls-fsync
-- Unless: bitcask-compact-not-crash-safe
+### gc-not-thread-safe [OUT] OBSERVATION
+`garbage_collect()` mutates `_versions` (replacing lists and deleting keys) without synchronization, assuming single-threaded execution — concurrent reads or writes during GC would race on the dict and its lists.
+- Source: entries/2026/05/29/snapshot-isolation-mvcc_database-garbage_collect.md
+
+### hash-index-no-crc-by-design [OUT] OBSERVATION
+`hash-index-storage/bitcask.py` intentionally omits CRC to focus on keydir/append-log/compaction; `log-structured-hash-table/bitcask.py` provides the integrity-checking variant with `zlib.crc32` and `CorruptionError`
+- Source: entries/2026/05/29/topic-hash-index-bitcask-no-crc.md
+
+### hint-file-no-fsync [OUT] OBSERVATION
+Hint files are written without `fsync`; they are a best-effort startup optimization that can be lost on crash without data loss, since the data file remains authoritative.
+- Source: entries/2026/05/28/hash-index-storage-bitcask-_write_hint_file.md
 
 ### hint-generation-no-crc-validation [OUT] OBSERVATION
 `create_hint_files` does not verify CRC checksums on the segment records it reads (unlike `_scan_segment`), so corrupted data can be silently indexed via hint files
@@ -5472,10 +5433,18 @@ Hinted handoff maintains write availability during replica failures by routing w
 - Depends on: hinted-handoff-sloppy-quorum-writes-to-non-preferred, hinted-handoff-no-exceptions
 - Unless: dynamo-hints-single-homed
 
+### integrity-degrades-along-storage-pipeline [OUT] DERIVED
+Data integrity verification degrades monotonically along the storage pipeline: WAL records have CRC checksums that exclude routing metadata (partial coverage), SSTables have no checksums at all (zero coverage), and neither layer can recover from detected corruption — data transitions from partially verified to completely unverified as it moves through compaction from WAL to SSTable.
+- Depends on: integrity-checking-is-both-incomplete-and-unrecoverable, sstable-layer-compounds-integrity-and-performance-deficiencies
+
 ### lamport-mutex-provides-mutual-exclusion [OUT] DERIVED
 The Lamport mutex correctly ensures mutual exclusion: the requesting node with the lowest timestamp gets priority, and entry requires acknowledgment from every other node in the system, preventing any two nodes from entering the critical section simultaneously.
 - Depends on: lamport-mutex-lowest-timestamp-priority, lamport-mutex-requires-all-acks
 - Unless: lamport-send-delivers-synchronously
+
+### log-structured-bitcask-no-fsync [OUT] OBSERVATION
+`log-structured-hash-table/bitcask.py` uses only `flush()` without `os.fsync()` on data writes, unlike `hash-index-storage` which calls `os.fsync` per record when `sync_writes` is enabled
+- Source: entries/2026/05/29/topic-bitcask-paper-design.md
 
 ### lsm-compaction-output-is-correct [OUT] DERIVED
 LSM compaction produces correct merged output: tombstones are properly purged from the output SSTable, and the k-way merge is forward-only preserving sort order.
@@ -5487,19 +5456,17 @@ LSM compaction correctly reduces read amplification by merging all SSTables into
 - Depends on: lsm-compaction-is-full-merge, lsm-compaction-last-writer-wins
 - Unless: lsm-no-concurrency-control
 
-### lsm-read-path-correct-across-flushes [OUT] DERIVED
-The LSM read path maintains correctness across memtable flushes by searching newest-first (memtable then SSTables in reverse sequence order) using a reference swap rather than deep copy for the frozen memtable.
-- Depends on: lsm-newest-first-read-path, lsm-memtable-swap-is-reference-not-copy
-- Unless: flush-clears-then-appends
-
-### lsm-wal-provides-crash-recovery [OUT] DERIVED
-The LSM WAL replays on construction to recover unflushed memtable state, providing crash recovery for in-flight writes.
-- Depends on: lsm-wal-replays-on-reopen
-- Unless: lsm-wal-no-crc
+### lsm-wal-no-crc [OUT] OBSERVATION
+The LSM tree's WAL (`lsm.py:14-53`) uses only length-prefixed framing with no checksum, making it unable to distinguish corruption from valid data unless a length field causes an out-of-bounds read
+- Source: entries/2026/05/29/topic-record-boundary-recovery.md
 
 ### multi-leader-custom-merge-requires-merge-fn [OUT] OBSERVATION
 Constructing a cluster with `CUSTOM_MERGE` strategy and `merge_fn=None` is accepted silently, but raises `TypeError` at the first actual conflict during `sync()`
 - Source: entries/2026/05/29/multi-leader-replication-multi_leader-MultiLeaderCluster.md
+
+### multiple-core-components-assume-single-thread-silently [OUT] DERIVED
+The B-tree, garbage collector, and consistent hash ring all assume single-threaded access without locks, assertions, or documentation — a systematic pattern where concurrency unsafety is implicit rather than enforced.
+- Depends on: btree-single-threaded-assumption, gc-not-thread-safe, consistent-hash-ring-not-thread-safe
 
 ### mvcc-isolation-survives-restart [OUT] DERIVED
 MVCC's three-layer visibility model (append-only versions, own-writes visibility, symmetric deletion) with active sets frozen at transaction begin would provide correct snapshot isolation across process restarts if all state were persisted, since the visibility rules themselves are sound and compose correctly.
@@ -5546,6 +5513,18 @@ The `default=str` parameter in the PBFT digest function silently converts non-se
 A crash during compaction produces irrecoverable data loss: no implementation uses write-temp/fsync/rename for atomicity (Bitcask deletes before renaming, LSM lacks atomic rename), and the resulting file corruption is terminal because every reader halts at the first CRC failure with no resync or skip capability.
 - Depends on: compaction-lacks-crash-safety-across-implementations, corruption-is-terminal-across-all-readers
 
+### range-scan-lacks-safety-guarantees [OUT] DERIVED
+Range scans are vulnerable to three independent failure modes: concurrent modifications produce inconsistent results (no snapshot isolation), corrupted sibling pointers can cause infinite traversal (no cycle guard), and large result sets consume unbounded memory (eager materialization into a list).
+- Depends on: range-scan-no-concurrency-protection, range-scan-no-cycle-guard, range-scan-materializes-results
+
+### range-scan-no-cycle-guard [OUT] OBSERVATION
+`range_scan` has no visited-set or cycle detection on the leaf sibling chain; a corrupted `next_sibling` pointer would cause an infinite loop.
+- Source: entries/2026/05/28/b-tree-storage-engine-btree-range_scan.md
+
+### read-path-unreliable-from-storage-through-derived-systems [OUT] DERIVED
+The complete read path from storage through derived systems is unreliable at every stage: the SSTable layer has compounding integrity and performance deficiencies (no per-entry checksums, linear miss-probes from missing Bloom integration, redundant key-list rebuilds per lookup) while the CDC backbone feeding all derived systems depends on reconstruction heuristics for event semantics and requires callers to manually flush and provide old values for consistency.
+- Depends on: sstable-layer-compounds-integrity-and-performance-deficiencies, cdc-backbone-both-heuristic-and-insufficient
+
 ### recovery-destroys-both-durability-and-isolation [OUT] DERIVED
 A single restart simultaneously destroys both durability and isolation guarantees along independent axes: the WAL's carefully calibrated write-time durability tiers (per-write fsync vs batch-only fsync) become invisible to recovery, and the transaction isolation model's composed invariant layers (MVCC visibility plus SSI conflict detection) break because abort metadata and monotonic counters are non-persistent.
 - Depends on: write-time-durability-engineering-abandoned-at-recovery, transaction-isolation-fragile-under-restart
@@ -5558,14 +5537,25 @@ Recovery is paradoxically both over-engineered and under-implemented: the WAL bu
 Both the unbundled WAL and B-tree WAL replay all CRC-valid records without verifying batch completeness, meaning partial batches from mid-write crashes are silently applied as if they were complete transactions.
 - Depends on: wal-replay-no-atomicity-check, btree-wal-replays-without-commit
 
+### schema-registry-no-compat-enforcement [OUT] OBSERVATION
+Schema registration accepts any schema without checking compatibility against previously registered versions under the same subject, unlike Confluent which enforces backward/forward/full compatibility on registration
+- Source: entries/2026/05/29/topic-confluent-schema-registry-protocol.md
+
 ### silent-data-loss-is-default-operational-mode [OUT] DERIVED
 Silent data loss is the default operational mode: corruption propagates through every data transformation pipeline without detection (compaction copies without CRC validation, hint generation skips integrity checks), and the testing methodology cannot observe durability failures (no crash tests, no fsync verification), meaning data degrades continuously with no feedback signal to operators.
 - Depends on: corruption-propagates-through-all-data-pipelines, durability-bugs-invisible-to-testing
 
-### ssi-isolation-holds-under-single-thread [OUT] DERIVED
-SSI's composed invariant layers provide correct serializable snapshot isolation: MVCC enforces visibility through append-only versions and symmetric deletion rules, and SSI validation ensures own-writes are checked before store consultation, preventing lost updates.
-- Depends on: transaction-isolation-composes-two-invariant-layers, ssi-own-writes-require-buffer-check
-- Unless: gc-not-thread-safe
+### sstable-format-lacks-integrity-and-efficiency-mechanisms [OUT] DERIVED
+The SSTable format has no integrity or efficiency safeguards: entries carry no CRC or checksum, range scans bypass the sparse index and scan from file start, and the entry count header is trusted without verification — meaning corruption goes undetected, negative lookups are unnecessarily expensive, and truncated files produce silent data loss.
+- Depends on: sstable-no-checksums, sstable-range-scan-no-index-skip, entry-count-header-never-verified
+
+### sstable-layer-compounds-integrity-and-performance-deficiencies [OUT] DERIVED
+The SSTable layer has mutually reinforcing integrity and performance deficiencies: no per-entry CRC or checksum means corrupted entries return wrong values silently, and no Bloom filter integration forces every negative lookup to scan all SSTables sequentially, maximizing both the probability and frequency of encountering those silent corruptions.
+- Depends on: sstable-format-lacks-integrity-and-efficiency-mechanisms, lsm-miss-probes-all-due-to-no-bloom-integration
+
+### sstable-no-checksums [OUT] OBSERVATION
+The SSTable format has no CRC or checksum on entries or blocks; the only validation is a magic-byte assertion (`MAGIC == b"SSTB"`) on file open.
+- Source: entries/2026/05/28/sstable-and-compaction-sstable.md
 
 ### sstable-sorted-order-caller-responsibility [OUT] OBSERVATION
 `SSTableWriter.add()` does not enforce sorted key order; violation silently corrupts binary search in `SSTableReader.get()`.
@@ -5574,6 +5564,10 @@ SSI's composed invariant layers provide correct serializable snapshot isolation:
 ### sstable-write-path-has-dual-fragility [OUT] DERIVED
 The SSTable write path has two independent fragility points: sorted key order is the caller's responsibility with no enforcement (violation silently corrupts binary search), and the file header is written as a placeholder then patched via seek-back after all entries are written (a crash between data write and header patch leaves a structurally invalid file).
 - Depends on: sstable-sorted-order-caller-responsibility, sstable-writer-append-then-patch
+
+### sstable-writer-finish-no-fsync [OUT] OBSERVATION
+`sstable-and-compaction/sstable.py:SSTableWriter.finish()` closes the file without calling `flush()` or `os.fsync()`, relying on implicit Python close-time buffer flush with no disk durability guarantee.
+- Source: entries/2026/05/29/topic-fsync-guarantees-across-implementations.md
 
 ### storage-crash-recovery-has-no-safe-path [OUT] DERIVED
 No storage engine has a fully safe crash recovery path: compaction lacks atomicity, WAL replay ignores batch boundaries, and CRC checksums leave routing metadata unprotected — corruption can enter via unprotected metadata, persist through non-validating compaction, and survive recovery via batch-unaware replay.
@@ -5616,6 +5610,10 @@ Total Order Broadcast maintains identical delivery ordering across node failures
 The codebase contains two mathematically incompatible conflict resolution paradigms with no bridge between them: CRDTs provide algebraically proven convergence (idempotent, commutative merge satisfying SEC requirements), while the multi-leader strategy pattern offers LWW and custom-merge without formal convergence guarantees, and no mechanism exists to compose or translate between them.
 - Depends on: crdt-merge-algebra-satisfies-convergence-requirements, conflict-resolution-architecture-is-split
 
+### verification-impossible-at-every-layer [OUT] DERIVED
+Verification of system correctness is impossible at every layer of the architecture: data integrity verification degrades from partial to absent along the storage pipeline (WAL CRCs exclude metadata, SSTables have no checksums at all), while protocol safety claims are unfalsifiable because all distributed testing uses synchronous simulation that cannot exercise the asynchronous failure modes the protocols are designed to tolerate.
+- Depends on: integrity-degrades-along-storage-pipeline, protocol-safety-unfalsifiable-under-current-testing
+
 ### wal-durability-effective-on-standards-compliant-fsync [OUT] DERIVED
 The WAL's two-tier durability model provides effective crash protection: critical operations (checkpoints, batch commits, rotations) unconditionally force fsync while per-write sync respects the configured mode, creating a meaningful durability hierarchy where batch boundaries are always durable regardless of the performance/durability tradeoff chosen for individual writes.
 - Depends on: wal-two-tier-durability-model, critical-wal-operations-always-force-fsync
@@ -5625,14 +5623,13 @@ The WAL's two-tier durability model provides effective crash protection: critica
 The WAL's carefully calibrated write-time durability tiers (per-write fsync in sync mode vs. batch-only fsync) are completely invisible to recovery: sequence numbers and checkpoints that could distinguish between definitely-durable and potentially-lost records are never consulted, so replay treats all CRC-valid records identically regardless of whether they were fsynced — the write-time investment in durability is wasted.
 - Depends on: wal-two-tier-durability-model, wal-recovery-infrastructure-is-vestigial
 
-### wal-multi-segment-continuity-is-reliable [OUT] DERIVED
-Multi-segment WAL replay provides reliable cross-segment continuity: segment rotation fsyncs the outgoing file before closing it, and EOF within one segment advances to the next rather than terminating replay, ensuring no inter-segment data loss during normal operation.
-- Depends on: wal-eof-advances-to-next-file, wal-rotate-fsync-before-close
-- Unless: wal-no-directory-fsync
-
 ### wal-no-begin-marker [OUT] OBSERVATION
 The WAL protocol has no BEGIN record type, making it impossible during replay to distinguish a standalone PUT from the first record of a multi-record batch — the structural root cause of why COMMIT markers cannot enforce atomicity.
 - Source: entries/2026/05/29/topic-incomplete-batch-recovery.md
+
+### wal-no-directory-fsync [OUT] OBSERVATION
+The WAL implementation never fsyncs the parent directory after segment creation or deletion, meaning file metadata changes (including unlinks) are not guaranteed durable on crash on Linux
+- Source: entries/2026/05/28/topic-wal-segment-deletion-ordering.md
 
 ### wal-no-torn-write-tests [OUT] OBSERVATION
 The WAL module has no tests for truncated records, CRC mismatches, or partial writes; the B-tree module tests CRC corruption explicitly but the WAL does not
@@ -5654,10 +5651,13 @@ WAL sequence numbers are monotonic and strictly increasing but entirely vestigia
 The 4-byte sequence number field in each WAL entry is parsed during `recover()` but never consulted; replay order is determined solely by file offset
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-recover.md
 
-### wal-truncation-safe-when-linear [OUT] DERIVED
-WAL truncation maintains data safety through two complementary mechanisms: segments are processed in oldest-first order (so a crash mid-truncation leaves a contiguous suffix of segments), and the current WAL file is flushed and fsynced before scanning for records to remove (preventing buffered data from being lost).
-- Depends on: wal-truncate-deletes-oldest-first, wal-truncate-fsyncs-before-scan
-- Unless: wal-truncate-not-crash-safe
+### wal-truncate-not-crash-safe [OUT] OBSERVATION
+`truncate()` rewrites WAL files in place without atomic rename, so a crash during truncation can leave the log in an inconsistent state.
+- Source: entries/2026/05/28/write-ahead-log-wal.md
+
+### wal-truncation-is-multi-failure-hazard [OUT] DERIVED
+WAL truncation combines three independent failure modes: it blocks all concurrent operations for its entire duration, silently discards all records after encountering corruption in a file, and is not crash-safe due to in-place file rewriting without atomic rename.
+- Depends on: wal-truncate-not-crash-safe, wal-truncate-blocks-all-operations, wal-truncate-drops-after-corruption
 
 ### write-meta-no-fsync [OUT] OBSERVATION
 `PageManager._write_meta` calls `flush()` but not `os.fsync()`, so metadata updates (`next_free_page`, `free_list_head`) are not durable against power loss — compounding the WAL bypass with a durability gap on the direct write path.
