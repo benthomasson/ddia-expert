@@ -3,7 +3,7 @@
     "schema_version": "1.0",
     "project_name": "reasons",
     "created_at": "2026-05-28T22:04:49+00:00",
-    "updated_at": "2026-05-30T13:48:43+00:00",
+    "updated_at": "2026-06-06T19:32:22+00:00",
     "node_count": 1405,
     "generator": "ftl-reasons/0.43.0"
   },
@@ -927,7 +927,7 @@
     },
     "bitcask-compaction-preserves-state": {
       "text": "Bitcask compaction maintains identical observable behavior: every key returns the same value before and after compaction.",
-      "truth_value": "OUT",
+      "truth_value": "IN",
       "justifications": [
         {
           "type": "SL",
@@ -1748,7 +1748,7 @@
     },
     "btree-deserialize-no-validation": {
       "text": "Both _deserialize_leaf and _deserialize_internal perform no validation of page type, sort order, or buffer length; they trust that WAL CRC checks and the serialize functions guarantee well-formed pages, so corruption produces silent wrong results rather than errors.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [],
       "source": "entries/2026/05/29/b-tree-storage-engine-btree-_deserialize_leaf.md",
       "source_url": "",
@@ -1768,7 +1768,7 @@
     },
     "btree-durability-protects-data-not-structure": {
       "text": "The B-tree's durability model protects user data but not structural integrity: mutations pay double fsync for data pages (WAL entry + data write) while structural metadata is never fsynced, AND structural integrity silently erodes during normal operation (leaked pages, ever-growing height, dangling parent pointers after free_page) with no defensive checks in the I/O layer to detect or prevent degradation.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -1983,7 +1983,7 @@
     },
     "btree-mutation-fsync-is-asymmetric": {
       "text": "B-tree mutations pay double fsync costs for user data (WAL entry + data page) but skip fsync entirely for structural metadata, creating an asymmetry where key-value pairs survive crashes but the free-page list and allocation state may not.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -2017,7 +2017,7 @@
     },
     "btree-page-alignment-enables-corruption-recovery": {
       "text": "Fixed-size page addressing provides natural resync boundaries for recovering from data file corruption.",
-      "truth_value": "OUT",
+      "truth_value": "IN",
       "justifications": [
         {
           "type": "SL",
@@ -2049,7 +2049,7 @@
     },
     "btree-page-io-has-no-defensive-checks": {
       "text": "The B-tree's page I/O layer lacks defensive validation at every stage: deserialization accepts any bytes, leaf-finding doesn't verify node types, and page writes silently truncate oversized data \u2014 a single corrupted byte can cascade through the tree undetected.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -2285,7 +2285,7 @@
     },
     "btree-structural-integrity-silently-erodes": {
       "text": "B-tree structural integrity silently erodes over time: deletions cause monotonic degradation (leaked pages, ever-growing height) while the I/O layer performs no validation to detect or report the resulting inconsistencies.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -2826,7 +2826,7 @@
     },
     "cdc-consumer-position-is-volatile": {
       "text": "CDCConsumer tracks its read position as an in-memory integer (`_position`) with no durable offset storage, meaning position is lost on process restart",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [],
       "source": "entries/2026/05/29/topic-cdc-flush-semantics.md",
       "source_url": "",
@@ -3068,7 +3068,7 @@
     },
     "client-holds-stale-token-after-lock-expiry": {
       "text": "The `Client._held_tokens` dict is never cleared on lock expiry \u2014 the client retains and may use a token whose corresponding lock has already been acquired by another client",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [],
       "source": "entries/2026/05/29/topic-ddia-ch8-process-pauses.md",
       "source_url": "",
@@ -3278,7 +3278,7 @@
     },
     "compact-skips-crc-validation": {
       "text": "Log-structured-hash-table compaction reads records from frozen segments without verifying CRC checksums, unlike `_scan_segment` which stops at the first CRC mismatch; a corrupted record could be silently copied into the compacted segment.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [],
       "source": "entries/2026/05/28/log-structured-hash-table-bitcask-compact.md",
       "source_url": "",
@@ -3318,7 +3318,7 @@
     },
     "compaction-hazard-within-broken-durability-pipeline": {
       "text": "Compaction is the highest-risk operation yet operates within a durability pipeline broken at both ends: crash-unsafe compaction can permanently lose data or resurrect deletes, AND the surrounding infrastructure has fsync gaps (data may never reach disk) and unrecoverable integrity checks (corruption detected but not repaired) \u2014 the most dangerous operation has the least protection.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -3341,7 +3341,7 @@
     },
     "compaction-is-critical-data-lifecycle-hazard": {
       "text": "Compaction is the critical junction where crash safety and data lifecycle intersect: crash-unsafe compaction can permanently lose data or resurrect deleted keys (no write-temp/fsync/rename, delete-before-rename ordering), and fragmented tombstone semantics mean those corruptions propagate inconsistently through derived systems that require flush and old-value tracking for correctness.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -3374,7 +3374,7 @@
     },
     "compaction-is-unsalvageable-as-designed": {
       "text": "Compaction is unsalvageable as designed: it is the highest-risk operation within a durability pipeline broken at both ends (crash-unsafe writes that are unverifiable by testing), AND it triggers two independent failure modes under the concurrent access that production workloads produce (concurrent readers see inconsistent state, concurrent writers corrupt shared data structures), making it simultaneously the most critical and most dangerous operation.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -3397,7 +3397,7 @@
     },
     "compaction-lacks-crash-safety-across-implementations": {
       "text": "No storage engine implementation uses the write-temp/fsync/rename pattern for file creation, and both Bitcask implementations delete old segments before renaming replacements, creating crash windows where data exists in neither old nor new files.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -3578,7 +3578,7 @@
     },
     "concurrent-access-during-compaction-is-doubly-unsafe": {
       "text": "Compaction under concurrent access is unsafe in two independent failure modes: concurrent readers and writers have no synchronization (no locks, latches, or snapshots on either path), AND compaction itself has no crash-safe file operations \u2014 concurrent access can corrupt live state silently, and a crash during this unsynchronized compaction produces irrecoverable data loss.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -3681,7 +3681,7 @@
     },
     "consensus-correctness-doubly-unverified": {
       "text": "Consensus protocol correctness is doubly unverified: both Raft and TOB represent untested inverse optimizations of Multi-Paxos whose safety properties diverge specifically under asynchrony and crash failures, AND the testing methodology covers neither crash nor asynchronous failure modes \u2014 the exact conditions under which the two optimization strategies would reveal different safety profiles.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -3932,7 +3932,7 @@
     },
     "correctness-gap-widens-under-failure": {
       "text": "The gap between expected and actual system correctness widens under failure: distributed protocols require storage-layer guarantees (crash-safe compaction, atomic writes, complete CRC coverage) that no implementation provides, and the resulting divergence accumulates without bound because anti-entropy can detect but not fully reconcile the inconsistencies.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -3955,7 +3955,7 @@
     },
     "correctness-unachievable-and-unfalsifiable": {
       "text": "System correctness is both unachievable and unfalsifiable: the gap between specification and implementation widens under every failure mode (distributed protocols require unmet storage guarantees, replica divergence accumulates without bound, storage degrades monotonically), and the testing methodology cannot detect these gaps (crash paths untested, protocols validated only under synchronous simulation) \u2014 the system cannot be correct and cannot discover that it is not.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -4002,7 +4002,7 @@
     },
     "corruption-propagates-through-all-data-pipelines": {
       "text": "Corruption propagates silently through every data transformation pipeline: both Bitcask compaction implementations copy records without CRC validation, and hint file generation reads source records without integrity checks \u2014 every transformation step amplifies corruption rather than filtering it.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -4144,7 +4144,7 @@
     },
     "crash-failure-paths-systematically-untested": {
       "text": "Crash and failure recovery paths are systematically excluded from the test suite: the WAL has no tests for truncated records or CRC mismatches, LSM crash testing covers only WAL replay and ignores compaction crashes entirely, and SSI write-skew tests exist only in standalone tester files outside the default pytest runner \u2014 the most critical correctness scenarios have the least test coverage.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -4168,7 +4168,7 @@
     },
     "crash-recovery-both-broken-and-unverified": {
       "text": "Crash recovery is simultaneously broken and unverified: no storage engine has a safe crash recovery path (non-atomic compaction, batch-blind replay, metadata-excluding CRC), and crash/failure paths are systematically excluded from the test suite \u2014 recovery bugs will persist indefinitely because neither the broken mechanisms nor their absence is tested.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -4511,7 +4511,7 @@
     },
     "degradation-is-irreversible": {
       "text": "System degradation is irreversible: the system degrades monotonically at every abstraction level with no self-healing (leaked pages, growing tree height, accumulating divergence), and no subsystem at any architectural tier has a viable recovery strategy to arrest the erosion \u2014 recovery infrastructure is either vestigial, paradoxically over-engineered, or fundamentally missing.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -4534,7 +4534,7 @@
     },
     "delete-before-rename-ordering": {
       "text": "Both Bitcask implementations delete old segment files (`os.remove`) before renaming the compacted replacement, creating a crash window where neither old nor properly-named new data is on disk",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [],
       "source": "entries/2026/05/28/topic-bitcask-crash-recovery.md",
       "source_url": "",
@@ -4637,7 +4637,7 @@
     },
     "derived-systems-maintain-consistency-when-position-durable": {
       "text": "Derived systems (secondary indexes, materialized views, projections) can maintain consistency with their source through position-tracked CDC replay: every derived system tracks how far through the CDC log it has processed, and any derived system can be rebuilt from scratch via full event replay producing identical state to incremental processing.",
-      "truth_value": "OUT",
+      "truth_value": "IN",
       "justifications": [
         {
           "type": "SL",
@@ -4709,7 +4709,7 @@
     },
     "distributed-cluster-lacks-reliable-infrastructure": {
       "text": "The distributed cluster has no reliable foundational infrastructure: membership detection is unreliable in both accuracy (no adaptive thresholds) and propagation (asymmetric convergence rates between membership and data), and ordering infrastructure is broken at every layer (vestigial WAL sequence numbers, conflated event sourcing ID spaces, volatile CDC consumer positions), meaning neither who is in the cluster nor what order things happened can be answered reliably.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -4729,7 +4729,7 @@
     },
     "distributed-correctness-doubly-unachievable-under-partition": {
       "text": "Distributed correctness is doubly unachievable under network partitions: protocols require storage-layer guarantees (crash-safe compaction, CRC-protected metadata) that aren't met, AND partitions amplify the resulting gaps through disrupted gossip-based failure detection and stale leader writes \u2014 the prerequisites for correctness are absent even before partitions introduce additional failure modes.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -4849,7 +4849,7 @@
     },
     "distributed-protocols-rest-on-unverifiable-assumptions": {
       "text": "Distributed protocols rest on doubly invalid foundations: end-to-end correctness requires storage-layer guarantees (crash-safe compaction, CRC-protected metadata) that no storage engine provides, and protocol safety claims are unfalsifiable under the current testing methodology (synchronous simulation, no crash path tests) \u2014 the protocols assume both correct storage and correct testing, and have neither.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -4962,7 +4962,7 @@
     },
     "durability-bugs-invisible-to-testing": {
       "text": "Durability bugs are permanently invisible: the write-to-verify durability pipeline is broken at both ends (fsync policy gaps prevent data from reaching stable storage, and incomplete integrity checks cannot verify it arrived), while crash/failure recovery paths are systematically excluded from testing \u2014 the system cannot detect its own durability failures through any available mechanism.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -4982,7 +4982,7 @@
     },
     "durability-pipeline-broken-at-both-ends": {
       "text": "The write-to-verify durability pipeline is broken at both ends: fsync policy inconsistencies across critical paths mean data may never durably reach disk (B-tree skips fsync for structural metadata while paying double for data), and incomplete CRC coverage means corrupted data that does reach disk passes integrity checks undetected (payload-only CRC leaves routing metadata unprotected).",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -5155,7 +5155,7 @@
     },
     "end-to-end-correctness-requires-unmet-storage-guarantees": {
       "text": "End-to-end distributed correctness is unachievable: protocol-layer weaknesses (sloppy quorums, single-threaded assumptions) depend on storage-layer guarantees (atomic recovery, batch integrity, metadata checksums) that no implementation provides.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -5362,7 +5362,7 @@
     },
     "event-infrastructure-unreliable-in-content-and-ordering": {
       "text": "Derived systems depend on event infrastructure that is independently unreliable in both content and ordering: events may be lost, duplicated, or mis-addressed due to unreliable persistence and addressing, AND their ordering is broken at every layer \u2014 WAL sequence numbers are vestigial, event IDs conflate two spaces, and CDC consumer positions are volatile.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -5694,7 +5694,7 @@
     },
     "fencing-provides-linearizable-writes": {
       "text": "Fencing tokens provide linearizable write protection at the resource server: stale tokens are permanently rejected (no expiration) and the monotonic token ordering ensures only the most recent lock holder can successfully write.",
-      "truth_value": "OUT",
+      "truth_value": "IN",
       "justifications": [
         {
           "type": "SL",
@@ -5904,7 +5904,7 @@
     },
     "format-and-structure-prevent-all-repair": {
       "text": "The system can neither self-heal during operation nor be evolved to add self-healing capabilities: runtime degradation is permanent (leaked pages accumulate, tree height only grows, no rebalancing occurs, crash recovery has no safe path), AND the rigid binary formats across the entire storage stack prevent adding recovery mechanisms such as resync points, version negotiation, or structural checksums.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -6040,7 +6040,7 @@
     },
     "fsync-policy-inconsistent-across-critical-paths": {
       "text": "The codebase has a systematic fsync policy inconsistency between components: WAL critical operations (checkpoints, batch commits, segment rotations) always force-fsync regardless of configured mode, but B-tree metadata mutations (which are equally critical for crash recovery) skip fsync entirely despite paying double fsync for user data pages.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -6073,7 +6073,7 @@
     },
     "full-data-lifecycle-unsafe-from-write-through-read": {
       "text": "The complete data lifecycle is unsafe from storage maintenance through data retrieval: compaction is the highest-risk operation that can permanently lose or resurrect deleted data, and the read path from SSTable through CDC to derived systems is unreliable at every stage, meaning data is at risk whether it is being reorganized for efficiency or being served to consumers.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -6096,7 +6096,7 @@
     },
     "full-stack-restart-fragility": {
       "text": "Both the physical storage layer and the logical transaction layer are independently fragile under restart, creating a full-stack restart hazard: the B-tree's durability model protects user data pages but not structural metadata (height, sibling chain, free list), while the transaction system's isolation model depends on monotonic counters and abort-as-status-change semantics that have no persistence backing.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -6852,7 +6852,7 @@
     },
     "hint-generation-no-crc-validation": {
       "text": "`create_hint_files` does not verify CRC checksums on the segment records it reads (unlike `_scan_segment`), so corrupted data can be silently indexed via hint files",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [],
       "source": "entries/2026/05/29/log-structured-hash-table-bitcask-create_hint_files.md",
       "source_url": "",
@@ -9175,7 +9175,7 @@
     },
     "multi-leader-convergence-reliable-across-topologies": {
       "text": "Multi-leader replication achieves reliable eventual convergence regardless of network topology: sync uses a safe collect-then-distribute pattern with idempotent merge and monotonically advancing timestamps, and topology choice affects only the duration of observable divergence (linear in node count for ring, single round for all-to-all), not the final converged state.",
-      "truth_value": "OUT",
+      "truth_value": "IN",
       "justifications": [
         {
           "type": "SL",
@@ -9229,7 +9229,7 @@
     },
     "multi-leader-custom-merge-requires-merge-fn": {
       "text": "Constructing a cluster with `CUSTOM_MERGE` strategy and `merge_fn=None` is accepted silently, but raises `TypeError` at the first actual conflict during `sync()`",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [],
       "source": "entries/2026/05/29/multi-leader-replication-multi_leader-MultiLeaderCluster.md",
       "source_url": "",
@@ -9721,7 +9721,7 @@
     },
     "no-data-path-is-trustworthy": {
       "text": "No data path through the system is trustworthy: the primary storage path through compaction is unsalvageable (crash-unsafe within a broken durability pipeline, no concurrent access protection) while the secondary derived-data path through event infrastructure is unreliable in both content semantics and ordering guarantees, leaving no channel through which data can be read or propagated with confidence.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -9867,7 +9867,7 @@
     },
     "no-operational-path-to-correctness": {
       "text": "There is no operational path to system correctness: the system has no stable regime at any scale (storage degrades monotonically, failures widen the correctness gap, no paradigm is both scalable and self-healing), AND even if a stable state existed, correctness could not be verified (the gap between specification and implementation widens under every failure mode and testing validates the wrong model).",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -9920,7 +9920,7 @@
     },
     "no-safe-operating-mode-exists": {
       "text": "The system has no safe operating mode in any scenario: it is unsafe under concurrent access (both read and write paths lack synchronization across core components) AND unsafe during crash recovery (no storage engine has a fully safe recovery path), meaning correctness is unachievable whether the system is running normally under load or recovering from failure.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -9973,7 +9973,7 @@
     },
     "no-storage-paradigm-is-both-scalable-and-self-healing": {
       "text": "No storage paradigm offers both scalability and structural resilience: hash indexes are memory-bound, LSM miss-probes are linear due to missing Bloom integration, and all paradigms degrade monotonically after crashes with no safe recovery path (crash-unsafe compaction, incomplete CRC, replay without batch atomicity).",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -10006,7 +10006,7 @@
     },
     "no-subsystem-has-viable-recovery-strategy": {
       "text": "No subsystem at any architectural tier has a viable recovery strategy: storage-layer recovery is paradoxically over-engineered in infrastructure and under-implemented in usage (WAL builds complete but unused sequence/checkpoint machinery, with no safe crash recovery path), while application-layer event sourcing lacks durable persistence and uses conflated ID spaces \u2014 recovery fails both where infrastructure exists but is unused and where it was never built.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -10099,7 +10099,7 @@
     },
     "ordering-infrastructure-broken-at-every-layer": {
       "text": "Ordering and position infrastructure is broken or volatile at every layer: WAL sequence numbers are diligently computed and stored but never consulted during recovery, event sourcing conflates stream-scoped and global position IDs creating addressing ambiguity, and CDC consumer positions exist only in memory and are lost on restart \u2014 no ordering mechanism in the codebase reliably serves its intended purpose.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -10312,7 +10312,7 @@
     },
     "page-manager-metadata-durability-gap": {
       "text": "B-tree metadata has a durability gap at both lifecycle points: initial creation writes metadata directly without WAL protection, and all subsequent updates flush but never fsync, meaning metadata can be lost or inconsistent after any crash regardless of when it occurred.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -10335,7 +10335,7 @@
     },
     "page-manager-no-page-size-on-disk": {
       "text": "The page size is not persisted in the data file; reopening with a different `page_size` value silently corrupts all page reads with no error or detection mechanism",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [],
       "source": "entries/2026/05/29/b-tree-storage-engine-btree-PageManager.md",
       "source_url": "",
@@ -10536,7 +10536,7 @@
     },
     "pbft-default-str-fragile": {
       "text": "The `default=str` parameter in the PBFT digest function silently converts non-serializable objects to their `str()` representation, which is not deterministic across replicas for types like `datetime` or custom objects \u2014 a latent consensus-breaking bug if non-primitive request payloads are introduced.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [],
       "source": "entries/2026/05/29/topic-json-canonicalization-risks.md",
       "source_url": "",
@@ -10659,7 +10659,7 @@
     },
     "pbft-view-change-safety-holds-with-stable-digests": {
       "text": "PBFT view changes maintain safety (2f+1 agreement) and liveness (carrying prepared requests forward with contiguous sequence numbers into the new view), ensuring no committed request is lost across leader transitions.",
-      "truth_value": "OUT",
+      "truth_value": "IN",
       "justifications": [
         {
           "type": "SL",
@@ -10847,7 +10847,7 @@
     },
     "post-crash-compaction-produces-irrecoverable-corruption": {
       "text": "A crash during compaction produces irrecoverable data loss: no implementation uses write-temp/fsync/rename for atomicity (Bitcask deletes before renaming, LSM lacks atomic rename), and the resulting file corruption is terminal because every reader halts at the first CRC failure with no resync or skip capability.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -11953,7 +11953,7 @@
     },
     "recovery-destroys-both-durability-and-isolation": {
       "text": "A single restart simultaneously destroys both durability and isolation guarantees along independent axes: the WAL's carefully calibrated write-time durability tiers (per-write fsync vs batch-only fsync) become invisible to recovery, and the transaction isolation model's composed invariant layers (MVCC visibility plus SSI conflict detection) break because abort metadata and monotonic counters are non-persistent.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -11996,7 +11996,7 @@
     },
     "recovery-simultaneously-over-and-under-engineered": {
       "text": "Recovery is paradoxically both over-engineered and under-implemented: the WAL builds complete sequence number and checkpoint infrastructure that's never consulted during replay, while the actual recovery paths lack batch atomicity and metadata CRC protection \u2014 engineering effort was invested in infrastructure that goes unused while the active recovery path remains unsafe.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -12071,7 +12071,7 @@
     },
     "replay-lacks-batch-atomicity-across-implementations": {
       "text": "Both the unbundled WAL and B-tree WAL replay all CRC-valid records without verifying batch completeness, meaning partial batches from mid-write crashes are silently applied as if they were complete transactions.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -12552,7 +12552,7 @@
     },
     "silent-data-loss-is-default-operational-mode": {
       "text": "Silent data loss is the default operational mode: corruption propagates through every data transformation pipeline without detection (compaction copies without CRC validation, hint generation skips integrity checks), and the testing methodology cannot observe durability failures (no crash tests, no fsync verification), meaning data degrades continuously with no feedback signal to operators.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -13162,7 +13162,7 @@
     },
     "sstable-point-lookup-correct-under-sort-invariant": {
       "text": "SSTable point lookups return correct results through two-phase search (binary search on sparse index to identify block, then linear scan within block), with clean None returns for keys not present in the table.",
-      "truth_value": "OUT",
+      "truth_value": "IN",
       "justifications": [
         {
           "type": "SL",
@@ -13224,7 +13224,7 @@
     },
     "sstable-sorted-order-caller-responsibility": {
       "text": "`SSTableWriter.add()` does not enforce sorted key order; violation silently corrupts binary search in `SSTableReader.get()`.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [],
       "source": "entries/2026/05/28/sstable-and-compaction-sstable.md",
       "source_url": "",
@@ -13308,7 +13308,7 @@
     },
     "sstable-write-path-has-dual-fragility": {
       "text": "The SSTable write path has two independent fragility points: sorted key order is the caller's responsibility with no enforcement (violation silently corrupts binary search), and the file header is written as a placeholder then patched via seek-back after all entries are written (a crash between data write and header patch leaves a structurally invalid file).",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -13451,7 +13451,7 @@
     },
     "storage-crash-recovery-has-no-safe-path": {
       "text": "No storage engine has a fully safe crash recovery path: compaction lacks atomicity, WAL replay ignores batch boundaries, and CRC checksums leave routing metadata unprotected \u2014 corruption can enter via unprotected metadata, persist through non-validating compaction, and survive recovery via batch-unaware replay.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -13475,7 +13475,7 @@
     },
     "storage-has-no-self-healing-at-any-layer": {
       "text": "Storage engines degrade monotonically during normal operation (leaked pages, growing height, no rebalancing) and have no safe recovery after crashes (non-atomic compaction, partial batch replay, unchecked metadata) \u2014 there is no path from degraded state back to healthy state.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -13725,7 +13725,7 @@
     },
     "system-converges-on-permanent-dark-failure": {
       "text": "The system converges on permanent dark failure: there is no operational path to correctness at any scale AND failure is irreversible and undetectable, meaning the system silently accumulates data loss with no diagnostic signal, operational remedy, or evolutionary escape \u2014 even the decision to rebuild requires evidence the system cannot produce.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -13745,7 +13745,7 @@
     },
     "system-degrades-monotonically-at-every-abstraction-level": {
       "text": "The system degrades monotonically at every abstraction level with no equilibrium: storage engines erode structurally with no self-healing (leaked pages, growing height, no rebalancing, unsafe recovery), and the distributed layer's compensating mechanisms (anti-entropy, read repair) cannot fully resolve the resulting replica divergence, which accumulates without bound.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -13765,7 +13765,7 @@
     },
     "system-failure-is-undetectable-and-irreversible": {
       "text": "The system's natural trajectory is toward permanent undetectable data loss: corruption propagates silently through every pipeline without detection, AND the structural degradation that enables it is irreversible at every abstraction level \u2014 failure is invisible while it happens and unfixable after it's discovered.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -13785,7 +13785,7 @@
     },
     "system-has-no-stable-operational-regime": {
       "text": "The system has no stable operational regime at any scale: storage degrades monotonically during normal operation with no self-healing, failures widen correctness gaps at every abstraction level, and no storage paradigm can escape by scaling (hash indexes hit memory walls, LSM hits probe walls) \u2014 the architecture converges toward failure under every operating condition.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -13826,7 +13826,7 @@
     },
     "system-neither-verifiable-nor-repairable": {
       "text": "The system is trapped in a verification-repair deadlock: verification is impossible at every architectural layer (integrity checks degrade along the pipeline, protocol safety is unfalsifiable under current testing) AND the rigid binary format design across the storage stack prevents adding verification or self-healing capabilities through evolution, foreclosing both detection and correction of faults.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -14058,7 +14058,7 @@
     },
     "testing-covers-neither-crash-nor-async-failure-modes": {
       "text": "The testing methodology covers neither single-node crash failures nor distributed asynchronous failures: crash recovery paths are systematically untested (no torn-write tests, no compaction crash tests), and distributed protocols are validated only under synchronous deterministic simulation with no real network I/O \u2014 the entire failure surface area from storage crashes to network partitions is invisible to the test suite.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -14535,7 +14535,7 @@
     },
     "unbundled-catchup-produces-consistent-derived-state": {
       "text": "Catch-up via snapshot and streaming produces consistent derived-system state equivalent to full event replay, because WAL entries are ordered by LSN and the rebuild protocol is verified to match full replay output.",
-      "truth_value": "OUT",
+      "truth_value": "IN",
       "justifications": [
         {
           "type": "SL",
@@ -15091,7 +15091,7 @@
     },
     "wal-batch-replay-provides-atomicity": {
       "text": "WAL batch replay correctly identifies and rejects incomplete batches via the trailing COMMIT sentinel, providing atomic-or-nothing batch recovery semantics.",
-      "truth_value": "OUT",
+      "truth_value": "IN",
       "justifications": [
         {
           "type": "SL",
@@ -15399,7 +15399,7 @@
     },
     "wal-durability-tiers-lost-during-recovery": {
       "text": "The WAL's carefully calibrated write-time durability tiers (per-write fsync in sync mode vs. batch-only fsync) are completely invisible to recovery: sequence numbers and checkpoints that could distinguish between definitely-durable and potentially-lost records are never consulted, so replay treats all CRC-valid records identically regardless of whether they were fsynced \u2014 the write-time investment in durability is wasted.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -15560,7 +15560,7 @@
     },
     "wal-is-reliable-source-of-truth": {
       "text": "The WAL serves as the authoritative source from which the entire storage engine can be rebuilt via replay.",
-      "truth_value": "OUT",
+      "truth_value": "IN",
       "justifications": [
         {
           "type": "SL",
@@ -15675,7 +15675,7 @@
     },
     "wal-no-begin-marker": {
       "text": "The WAL protocol has no BEGIN record type, making it impossible during replay to distinguish a standalone PUT from the first record of a multi-record batch \u2014 the structural root cause of why COMMIT markers cannot enforce atomicity.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [],
       "source": "entries/2026/05/29/topic-incomplete-batch-recovery.md",
       "source_url": "",
@@ -15755,7 +15755,7 @@
     },
     "wal-no-torn-write-tests": {
       "text": "The WAL module has no tests for truncated records, CRC mismatches, or partial writes; the B-tree module tests CRC corruption explicitly but the WAL does not",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [],
       "source": "entries/2026/05/29/topic-partial-write-detection.md",
       "source_url": "",
@@ -15930,7 +15930,7 @@
     },
     "wal-recovery-infrastructure-is-vestigial": {
       "text": "The WAL carries vestigial recovery-related infrastructure: sequence numbers are monotonically assigned under lock and stored in every record but never consulted for ordering, deduplication, or gap detection during recovery (file position alone determines replay order), and checkpoint records occupy positions in the same sequence space but are neither searched for during recovery scanning nor used as truncation watermarks.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -15974,7 +15974,7 @@
     },
     "wal-replay-no-atomicity-check": {
       "text": "`replay()` does not verify that batch operations have a corresponding COMMIT record; partial batches from a mid-write crash would be replayed as if committed, since replay filters only by record type, not by batch completeness",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [],
       "source": "entries/2026/05/28/topic-wal-commit-semantics.md",
       "source_url": "",
@@ -16068,7 +16068,7 @@
     },
     "wal-seq-nums-are-vestigial": {
       "text": "WAL sequence numbers are monotonic and strictly increasing but entirely vestigial: they are computed under lock, stored in every record, and parsed during recovery, yet never consulted for ordering, deduplication, or gap detection \u2014 file position alone determines replay order.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
@@ -16125,7 +16125,7 @@
     },
     "wal-seq-unused-in-recovery": {
       "text": "The 4-byte sequence number field in each WAL entry is parsed during `recover()` but never consulted; replay order is determined solely by file offset",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [],
       "source": "entries/2026/05/29/b-tree-storage-engine-btree-recover.md",
       "source_url": "",
@@ -16135,7 +16135,7 @@
     },
     "wal-sequence-numbers-enable-ordered-recovery": {
       "text": "WAL sequence numbers provide infrastructure for ordered recovery: they are recovered from disk on init, checkpoints consume positions in the same monotonic space, and the total ordering could enable gap detection and ordered replay.",
-      "truth_value": "OUT",
+      "truth_value": "IN",
       "justifications": [
         {
           "type": "SL",
@@ -16478,7 +16478,7 @@
     },
     "write-meta-no-fsync": {
       "text": "`PageManager._write_meta` calls `flush()` but not `os.fsync()`, so metadata updates (`next_free_page`, `free_list_head`) are not durable against power loss \u2014 compounding the WAL bypass with a durability gap on the direct write path.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [],
       "source": "entries/2026/05/29/topic-free-list-corruption-risks.md",
       "source_url": "",
@@ -16508,7 +16508,7 @@
     },
     "write-time-durability-engineering-abandoned-at-recovery": {
       "text": "The WAL's carefully engineered write-time durability infrastructure is systematically abandoned at recovery time: the two-tier durability model (per-write sync vs. batch-only fsync) loses all distinction during replay because recovery ignores tiers entirely, AND crash recovery is both broken (no safe path across any implementation) and unverified (no crash or async tests), meaning the engineering investment in write-time safety provides zero value when it is most needed.",
-      "truth_value": "IN",
+      "truth_value": "OUT",
       "justifications": [
         {
           "type": "SL",
