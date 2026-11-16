@@ -1,6 +1,6 @@
 # Proposed Beliefs
 
-Edit each entry: change `[ACCEPT/REJECT]` to `[ACCEPT]` or `[REJECT]`.
+Edit each entry: change `[ACCEPT]` to `[ACCEPT]` or `[ACCEPT]`.
 Then run: `code-expert accept-beliefs`
 
 ---
@@ -149,7 +149,7 @@ Sequence numbers increment under a threading.Lock and are never reused; on recov
 **Source:** 52 entries from entries/
 **Model:** claude
 
-### [REJECT] btree-delete-no-rebalance
+### [ACCEPT] btree-delete-no-rebalance
 Duplicates existing belief `btree-no-underflow-rebalancing`
 - Source: entries/2026/05/28/b-tree-storage-engine-btree-_delete.md
 
@@ -169,7 +169,7 @@ Empty leaf cleanup only triggers when the current internal node is at depth 2 (d
 When an empty leaf is removed during deletion, `_delete` patches the previous sibling's `next_sibling` pointer to splice the empty leaf out of the linked list used by `range_scan` and `__iter__`
 - Source: entries/2026/05/28/b-tree-storage-engine-btree-_delete.md
 
-### [REJECT] btree-insert-three-way-return
+### [ACCEPT] btree-insert-three-way-return
 Duplicates existing belief `btree-recursive-insert-returns-union`
 - Source: entries/2026/05/28/b-tree-storage-engine-btree-_insert.md
 
@@ -185,7 +185,7 @@ Leaf splits copy the midpoint key into both the parent and the right leaf (key r
 Page allocation during splits modifies metadata through `PageManager.write_meta` (not WAL-logged), creating a potential crash-safety gap if the process fails between allocation and the subsequent WAL commit
 - Source: entries/2026/05/28/b-tree-storage-engine-btree-_insert.md
 
-### [REJECT] btree-sibling-chain-maintained
+### [ACCEPT] btree-sibling-chain-maintained
 Duplicates existing belief `btree-leaf-sibling-chain`
 - Source: entries/2026/05/28/b-tree-storage-engine-btree-_insert.md
 
@@ -197,7 +197,7 @@ Leaf pages are laid out as `[type:1B][num_keys:2B][next_sibling:4B][entries...]`
 `_serialize_leaf` is a pure function with no side effects; all I/O happens in the caller via `_wal_write_page`
 - Source: entries/2026/05/28/b-tree-storage-engine-btree-_serialize_leaf.md
 
-### [REJECT] leaf-sibling-forms-linked-list
+### [ACCEPT] leaf-sibling-forms-linked-list
 Duplicates existing belief `btree-leaf-sibling-chain`
 - Source: entries/2026/05/28/b-tree-storage-engine-btree-_serialize_leaf.md
 
@@ -213,11 +213,11 @@ B-tree values are written as raw bytes with no encoding; keys accept `str` (auto
 `allocate_page` always recycles from the free list before extending the file with a new page, keeping the data file compact after deletions
 - Source: entries/2026/05/28/b-tree-storage-engine-btree-allocate_page.md
 
-### [REJECT] allocate-page-not-wal-protected
+### [ACCEPT] allocate-page-not-wal-protected
 Duplicates `btree-allocate-page-outside-wal` (same claim about metadata writes bypassing WAL)
 - Source: entries/2026/05/28/b-tree-storage-engine-btree-allocate_page.md
 
-### [REJECT] free-list-is-singly-linked
+### [ACCEPT] free-list-is-singly-linked
 Duplicates existing belief `btree-free-list-intrusive` (free list threaded through freed pages)
 - Source: entries/2026/05/28/b-tree-storage-engine-btree-allocate_page.md
 
@@ -262,7 +262,7 @@ The B-tree WAL uses redo-only recovery (replay logged page images forward); ther
 `range_scan` has no visited-set or cycle detection on the leaf sibling chain; a corrupted `next_sibling` pointer would cause an infinite loop.
 - Source: entries/2026/05/28/b-tree-storage-engine-btree-range_scan.md
 
-### [REJECT] range-scan-resets-io-counters
+### [ACCEPT] range-scan-resets-io-counters
 Duplicate of existing belief `btree-counters-reset-per-operation`.
 - Source: entries/2026/05/28/b-tree-storage-engine-btree-range_scan.md
 
@@ -282,7 +282,7 @@ Duplicate of existing belief `btree-counters-reset-per-operation`.
 `BTree._delete` removes keys from leaves but never calls `free_page` on empty leaves, causing unbounded page file growth despite `PageManager` having a free list mechanism.
 - Source: entries/2026/05/28/b-tree-storage-engine-fix-plan.md
 
-### [REJECT] btree-fix-plan-execution-order
+### [ACCEPT] btree-fix-plan-execution-order
 This describes dependency ordering within a planning document, not a code invariant — it will become irrelevant once the fixes land.
 - Source: entries/2026/05/28/b-tree-storage-engine-fix-plan.md
 
@@ -310,11 +310,11 @@ A single `BTree.get()` reads at most `height + 1` disk pages, verified via `pm.p
 Data written before `BTree.close()` is fully recoverable by constructing a new `BTree` on the same directory, including updates and deletes.
 - Source: entries/2026/05/28/b-tree-storage-engine-tester_test_btree.md
 
-### [REJECT] btree-get-reads-at-most-height-plus-one-pages
+### [ACCEPT] btree-get-reads-at-most-height-plus-one-pages
 Duplicate of `btree-lookup-reads-bounded-by-height` proposed from the sibling test entry.
 - Source: entries/2026/05/28/b-tree-storage-engine-tester_test_btree.md
 
-### [REJECT] btree-range-scan-excludes-end
+### [ACCEPT] btree-range-scan-excludes-end
 Duplicate of `range-scan-half-open-interval` proposed from the range_scan entry.
 - Source: entries/2026/05/28/b-tree-storage-engine-tester_test_btree.md
 
@@ -326,11 +326,11 @@ Duplicate of `range-scan-half-open-interval` proposed from the range_scan entry.
 `_scan_data_file` removes tombstoned keys from `keydir` during rebuild, but `_load_hint_file` unconditionally inserts entries — it relies on compaction having already stripped tombstones before writing the hint file.
 - Source: entries/2026/05/28/hash-index-storage-bitcask-_rebuild_index.md
 
-### [REJECT] hint-file-is-fast-path
+### [ACCEPT] hint-file-is-fast-path
 Duplicate of existing belief `bitcask-hint-files-skip-scan`.
 - Source: entries/2026/05/28/hash-index-storage-bitcask-_rebuild_index.md
 
-### [REJECT] no-corruption-detection-on-rebuild
+### [ACCEPT] no-corruption-detection-on-rebuild
 Duplicate of existing belief `bitcask-no-checksum-validation`.
 - Source: entries/2026/05/28/hash-index-storage-bitcask-_rebuild_index.md
 
@@ -363,7 +363,7 @@ During compaction, keys whose `keydir` entry points to the active file are exclu
 Hash-index-storage compaction is non-atomic with no error handling: a crash between deleting old files and completing the rewrite can leave the store in an unrecoverable state with no rollback mechanism.
 - Source: entries/2026/05/28/hash-index-storage-bitcask-compact.md
 
-### [REJECT] bitcask-compact-renumbers-active-file
+### [ACCEPT] bitcask-compact-renumbers-active-file
 Duplicates existing belief `bitcask-compaction-renumbers-active`.
 - Source: entries/2026/05/28/hash-index-storage-bitcask-compact.md
 
@@ -403,7 +403,7 @@ In `_scan_segment`, a CRC mismatch or short read stops scanning the entire segme
 A tombstone record in segment N removes the key from `_index` even if the key's live value was written in an earlier segment, because the index is a flat dict shared across all segment scans.
 - Source: entries/2026/05/28/log-structured-hash-table-bitcask-_scan_segment.md
 
-### [REJECT] scan-segment-is-read-only
+### [ACCEPT] scan-segment-is-read-only
 Too trivial — a scan/recovery function being read-only with respect to disk is expected behavior, not a surprising invariant.
 - Source: entries/2026/05/28/log-structured-hash-table-bitcask-_scan_segment.md
 
@@ -415,7 +415,7 @@ If a segment contains a key with invalid UTF-8 bytes, `_scan_segment` raises an 
 Log-structured-hash-table compaction reads records from frozen segments without verifying CRC checksums, unlike `_scan_segment` which stops at the first CRC mismatch; a corrupted record could be silently copied into the compacted segment.
 - Source: entries/2026/05/28/log-structured-hash-table-bitcask-compact.md
 
-### [REJECT] compact-preserves-active-highest-id
+### [ACCEPT] compact-preserves-active-highest-id
 Substantially duplicates existing belief `bitcask-compaction-renumbers-active` — the invariant that the active segment has the highest ID is maintained by the renumbering mechanism that belief already describes.
 - Source: entries/2026/05/28/log-structured-hash-table-bitcask-compact.md
 
@@ -456,7 +456,7 @@ Compaction performs delete-then-rename without journaling; a crash mid-compactio
 `BitcaskStore.delete()` writes a tombstone record (`b"__BITCASK_TOMBSTONE__"`); `get()` returns `None` for tombstoned keys, and `compact()` removes both the original entry and the tombstone
 - Source: entries/2026/05/28/log-structured-hash-table-test_bitcask.md
 
-### [REJECT] bitcask-crc-per-record
+### [ACCEPT] bitcask-crc-per-record
 Overlaps with `bitcask-crc-covers-payload-only` — the CRC-per-record framing and CorruptionError behavior are already captured there
 - Source: entries/2026/05/28/log-structured-hash-table-test_bitcask.md
 
@@ -468,11 +468,11 @@ On startup recovery, the store skips incomplete records at segment tail (header 
 When the number of frozen segments exceeds `auto_compact_threshold` (default 5), compaction is triggered automatically during `put()` operations
 - Source: entries/2026/05/28/log-structured-hash-table-test_bitcask.md
 
-### [REJECT] bitcask-index-is-memory-only
+### [ACCEPT] bitcask-index-is-memory-only
 Duplicates existing belief `bitcask-keydir-is-sole-index` — both describe the in-memory index as the sole authority for key lookups
 - Source: entries/2026/05/28/log-structured-hash-table-test_bitcask.md
 
-### [REJECT] compact-merges-all-sstables
+### [ACCEPT] compact-merges-all-sstables
 Duplicates existing belief `lsm-compaction-is-full-merge`
 - Source: entries/2026/05/28/log-structured-merge-tree-lsm-compact.md
 
@@ -512,7 +512,7 @@ The priority integer stored in the `merged` dict during `range_scan` is never re
 `range_scan` can observe inconsistent state if a flush or compaction runs concurrently, since there is no snapshot isolation or locking
 - Source: entries/2026/05/28/log-structured-merge-tree-lsm-range_scan.md
 
-### [REJECT] lsm-range-scan-half-open
+### [ACCEPT] lsm-range-scan-half-open
 Duplicates `range-scan-half-open-interval` proposed from the more detailed range_scan entry
 - Source: entries/2026/05/28/log-structured-merge-tree-test_lsm.md
 
@@ -520,7 +520,7 @@ Duplicates `range-scan-half-open-interval` proposed from the more detailed range
 When the number of entries in the active memtable reaches `memtable_threshold`, the memtable is automatically frozen and flushed to a new SSTable on disk
 - Source: entries/2026/05/28/log-structured-merge-tree-test_lsm.md
 
-### [REJECT] lsm-compaction-merges-all-to-one
+### [ACCEPT] lsm-compaction-merges-all-to-one
 Duplicates existing belief `lsm-compaction-is-full-merge`
 - Source: entries/2026/05/28/log-structured-merge-tree-test_lsm.md
 
@@ -528,7 +528,7 @@ Duplicates existing belief `lsm-compaction-is-full-merge`
 Constructing a new `LSMTree` on an existing directory replays the WAL to recover unflushed memtable state; this is validated by the crash recovery test which skips `close()` and reopens
 - Source: entries/2026/05/28/log-structured-merge-tree-test_lsm.md
 
-### [REJECT] lsm-newest-write-wins-across-sstables
+### [ACCEPT] lsm-newest-write-wins-across-sstables
 Covered by existing belief `lsm-newest-first-read-path` (for point lookups) combined with proposed `range-scan-last-writer-wins` (for range scans)
 - Source: entries/2026/05/28/log-structured-merge-tree-test_lsm.md
 
@@ -597,7 +597,7 @@ After leveled compaction runs on L0 SSTables, the output readers have `level == 
 `test_sstable.py` is a linear script using bare `assert` statements and `print` progress markers, not a pytest/unittest suite — it runs top-to-bottom in a `tempfile.TemporaryDirectory` context.
 - Source: entries/2026/05/28/sstable-and-compaction-test_sstable.md
 
-### [REJECT] delete-never-rebalances
+### [ACCEPT] delete-never-rebalances
 Duplicates existing belief `btree-no-underflow-rebalancing`.
 - Source: entries/2026/05/28/topic-b-tree-underflow-rebalancing.md
 
@@ -684,7 +684,7 @@ Each new slice in `ScalableBloomFilter` uses FPR of `p * (ratio ^ slice_index)`,
 
 ## Entry: `topic-btree-split-and-merge-strategy.md`
 
-### [REJECT] btree-metadata-tracks-height-and-total-keys
+### [ACCEPT] btree-metadata-tracks-height-and-total-keys
 Overlaps with existing belief `btree-page-zero-is-metadata` which already establishes that page 0 is the metadata page
 - Source: entries/2026/05/28/topic-btree-split-and-merge-strategy.md
 
@@ -700,7 +700,7 @@ When all keys are removed from a non-root leaf, the page is returned to the free
 Multi-page operations (splits, deletes that free pages) are made crash-safe by writing all page modifications to the WAL before applying them to the data file
 - Source: entries/2026/05/28/topic-btree-split-and-merge-strategy.md
 
-### [REJECT] btree-leaves-form-sibling-linked-list
+### [ACCEPT] btree-leaves-form-sibling-linked-list
 Duplicates existing belief `btree-leaf-sibling-chain`
 - Source: entries/2026/05/28/topic-btree-split-and-merge-strategy.md
 
@@ -708,7 +708,7 @@ Duplicates existing belief `btree-leaf-sibling-chain`
 
 ## Entry: `topic-concurrent-btree-deletion.md`
 
-### [REJECT] delete-has-no-merge
+### [ACCEPT] delete-has-no-merge
 Duplicates existing belief `btree-no-underflow-rebalancing`
 - Source: entries/2026/05/28/topic-concurrent-btree-deletion.md
 
@@ -716,7 +716,7 @@ Duplicates existing belief `btree-no-underflow-rebalancing`
 The entire B-tree implementation contains zero locking, latching, mutex, or thread-safety constructs; it is strictly single-threaded with no concurrent-access support
 - Source: entries/2026/05/28/topic-concurrent-btree-deletion.md
 
-### [REJECT] free-list-reclaims-empty-leaves
+### [ACCEPT] free-list-reclaims-empty-leaves
 Overlaps with proposed `btree-empty-leaf-freed-on-delete` and existing `btree-free-list-intrusive`; the reclamation trigger and the free list mechanism are already covered
 - Source: entries/2026/05/28/topic-concurrent-btree-deletion.md
 
@@ -740,7 +740,7 @@ For SSTable compaction, rebuilding a fresh `BloomFilter` during the merge write 
 Using `CountingBloomFilter.remove()` during compaction would require `merge_sstables` to report which keys were discarded, which the current implementation does not do — duplicates and tombstones are silently skipped in the merge loop
 - Source: entries/2026/05/28/topic-counting-bloom-compaction-interaction.md
 
-### [REJECT] bloom-filter-not-integrated
+### [ACCEPT] bloom-filter-not-integrated
 Already proposed and accepted from the bloom-filter-integration entry above
 - Source: entries/2026/05/28/topic-counting-bloom-compaction-interaction.md
 
@@ -793,11 +793,11 @@ The LSM test suite (`test_lsm.py`) runs all operations sequentially with no conc
 Every WAL record is prefixed with a 4-byte little-endian length covering all subsequent fields (CRC through value), enabling the reader to know exactly how many bytes to consume
 - Source: entries/2026/05/28/topic-lsm-crash-recovery-wal-format.md
 
-### [REJECT] wal-crc-covers-payload-only
+### [ACCEPT] wal-crc-covers-payload-only
 Duplicates existing belief `wal-crc-does-not-cover-seqnum`
 - Source: entries/2026/05/28/topic-lsm-crash-recovery-wal-format.md
 
-### [REJECT] wal-corruption-stops-file-scan
+### [ACCEPT] wal-corruption-stops-file-scan
 Duplicates existing beliefs `wal-crc-mismatch-halts-all-replay` and `wal-partial-read-is-eof`
 - Source: entries/2026/05/28/topic-lsm-crash-recovery-wal-format.md
 
@@ -825,7 +825,7 @@ The WAL protects user key-value writes but does not record SSTable-level state t
 `lsm.py:range_scan` loads all matching entries from every SSTable and memtable into a dict before returning any results, making first-result latency proportional to total result set size
 - Source: entries/2026/05/28/topic-merge-iterator-vs-dict-merge.md
 
-### [REJECT] heapq-imported-but-unused-for-merge
+### [ACCEPT] heapq-imported-but-unused-for-merge
 Duplicates existing belief `lsm-heapq-imported-unused`
 - Source: entries/2026/05/28/topic-merge-iterator-vs-dict-merge.md
 
@@ -854,11 +854,11 @@ The reference implementation fully propagates splits upward through `_insert`'s 
 Since neither the reference implementation nor PostgreSQL merges internal nodes on delete, tree height only grows (on root splits) and never shrinks, even under heavy deletion
 - Source: entries/2026/05/28/topic-postgres-nbtree-lazy-deletion.md
 
-### [REJECT] sibling-chain-enables-but-unused-for-rebalancing
+### [ACCEPT] sibling-chain-enables-but-unused-for-rebalancing
 Redundant — combines `btree-leaf-sibling-chain` (sibling pointers exist) and `btree-no-underflow-rebalancing` (no rebalancing happens) without adding a new testable claim
 - Source: entries/2026/05/28/topic-postgres-nbtree-lazy-deletion.md
 
-### [REJECT] deferred-cleanup-is-production-pattern
+### [ACCEPT] deferred-cleanup-is-production-pattern
 Design principle generalization, not a testable fact about this codebase; better suited to a DDIA reading note than a code belief
 - Source: entries/2026/05/28/topic-postgres-nbtree-lazy-deletion.md
 
@@ -882,19 +882,19 @@ In the multi-leader replication module, tombstones cannot be safely removed unti
 The B-tree's WAL `commit()` only truncates after fsyncing the data file, making truncation idempotent — a crash mid-truncation simply replays the WAL entries again on recovery
 - Source: entries/2026/05/28/topic-truncation-crash-safety.md
 
-### [REJECT] atomic-rename-requires-same-filesystem
+### [ACCEPT] atomic-rename-requires-same-filesystem
 General OS/POSIX knowledge, not a fact about this codebase — no code in the repository implements or relies on atomic rename
 - Source: entries/2026/05/28/topic-truncation-crash-safety.md
 
-### [REJECT] crash-safe-truncation-three-step
+### [ACCEPT] crash-safe-truncation-three-step
 Describes a proposed fix pattern, not the current codebase behavior; the code does not implement write-to-temp + fsync + rename
 - Source: entries/2026/05/28/topic-truncation-crash-safety.md
 
-### [REJECT] orphaned-tmp-means-original-intact
+### [ACCEPT] orphaned-tmp-means-original-intact
 Describes behavior of a proposed cleanup protocol that does not exist in the codebase
 - Source: entries/2026/05/28/topic-truncation-crash-safety.md
 
-### [REJECT] single-write-not-atomic-across-pages
+### [ACCEPT] single-write-not-atomic-across-pages
 General filesystem/OS knowledge, not a testable claim about this codebase
 - Source: entries/2026/05/28/topic-wal-atomicity-guarantees.md
 
@@ -902,7 +902,7 @@ General filesystem/OS knowledge, not a testable claim about this codebase
 `append_batch()` buffers all operations plus COMMIT into a single `write()` call to minimize the partial-write window, but the code acknowledges this is not a true atomicity guarantee — a crash during the write can persist a prefix without the COMMIT marker
 - Source: entries/2026/05/28/topic-wal-atomicity-guarantees.md
 
-### [REJECT] replay-does-not-enforce-commit-boundary
+### [ACCEPT] replay-does-not-enforce-commit-boundary
 Duplicate of existing belief `wal-replay-ignores-commit`
 - Source: entries/2026/05/28/topic-wal-atomicity-guarantees.md
 
@@ -910,11 +910,11 @@ Duplicate of existing belief `wal-replay-ignores-commit`
 WAL integrity uses `zlib.crc32` (32-bit, non-cryptographic); it detects accidental corruption but not intentional tampering
 - Source: entries/2026/05/28/topic-wal-checksum-format.md
 
-### [REJECT] crc32-covers-op-key-value-only
+### [ACCEPT] crc32-covers-op-key-value-only
 Duplicate of existing belief `wal-crc-does-not-cover-seqnum` (same fact stated from the opposite direction)
 - Source: entries/2026/05/28/topic-wal-checksum-format.md
 
-### [REJECT] wal-stops-at-first-corruption
+### [ACCEPT] wal-stops-at-first-corruption
 Duplicate of existing belief `wal-crc-mismatch-halts-all-replay`
 - Source: entries/2026/05/28/topic-wal-checksum-format.md
 
@@ -922,7 +922,7 @@ Duplicate of existing belief `wal-crc-mismatch-halts-all-replay`
 Each WAL record starts with a 4-byte little-endian length prefix (not counting itself), followed by CRC, seq_num, op_type, and length-prefixed key/value pairs — minimum 25 bytes per record for empty key/value
 - Source: entries/2026/05/28/topic-wal-checksum-format.md
 
-### [REJECT] corruption-test-exploits-tail-position
+### [ACCEPT] corruption-test-exploits-tail-position
 Test strategy detail, not an architectural invariant — describes how `test_corruption` works rather than a property the codebase must maintain
 - Source: entries/2026/05/28/topic-wal-checksum-format.md
 
@@ -939,27 +939,27 @@ Test strategy detail, not an architectural invariant — describes how `test_cor
 `replay()` does not verify that batch operations have a corresponding COMMIT record; partial batches from a mid-write crash would be replayed as if committed, since replay filters only by record type, not by batch completeness
 - Source: entries/2026/05/28/topic-wal-commit-semantics.md
 
-### [REJECT] wal-replay-filters-commit-checkpoint
+### [ACCEPT] wal-replay-filters-commit-checkpoint
 Duplicate of already-accepted `wal-replay-ignores-commit`
 - Source: entries/2026/05/28/topic-wal-commit-semantics.md
 
-### [REJECT] replay-excludes-commit-and-checkpoint
+### [ACCEPT] replay-excludes-commit-and-checkpoint
 Duplicate of already-accepted `wal-replay-ignores-commit`
 - Source: entries/2026/05/28/topic-wal-crash-recovery-correctness.md
 
-### [REJECT] append-batch-always-force-syncs
+### [ACCEPT] append-batch-always-force-syncs
 Duplicate of already-accepted `wal-batch-always-fsyncs`
 - Source: entries/2026/05/28/topic-wal-crash-recovery-correctness.md
 
-### [REJECT] iterate-yields-all-record-types
+### [ACCEPT] iterate-yields-all-record-types
 Duplicate of `wal-iterate-preserves-all-ops` proposed above from the earlier entry
 - Source: entries/2026/05/28/topic-wal-crash-recovery-correctness.md
 
-### [REJECT] uncommitted-batch-records-discarded-on-replay
+### [ACCEPT] uncommitted-batch-records-discarded-on-replay
 Contradicts accepted belief `wal-replay-ignores-commit` and entry 1's analysis; entry 2 describes what a *correct* replay should do, not what the current implementation does — `replay()` filters by record type without batch-grouping logic
 - Source: entries/2026/05/28/topic-wal-crash-recovery-correctness.md
 
-### [REJECT] crc-validates-op-key-value-not-header
+### [ACCEPT] crc-validates-op-key-value-not-header
 Largely duplicate of already-accepted `wal-crc-does-not-cover-seqnum`; the positive framing (what IS covered) is the complement of the existing negative framing
 - Source: entries/2026/05/28/topic-wal-crash-recovery-correctness.md
 
@@ -975,7 +975,7 @@ Corruption of `record_length` causes `_read_record` to consume wrong bytes for t
 The WAL, Bitcask, and B-tree storage engine all compute CRC over data payloads only, excluding their respective header/framing metadata fields — a consistent pattern across the repo
 - Source: entries/2026/05/28/topic-wal-crc-coverage-gap.md
 
-### [REJECT] wal-crc-covers-payload-only
+### [ACCEPT] wal-crc-covers-payload-only
 Largely duplicate of already-accepted `wal-crc-does-not-cover-seqnum`; the cross-cutting claim is captured by `all-three-implementations-use-payload-only-crc` instead
 - Source: entries/2026/05/28/topic-wal-crc-coverage-gap.md
 
@@ -999,7 +999,7 @@ The WAL implementation never fsyncs the parent directory after segment creation 
 `append_batch` of N items writes N+1 records to the WAL: the N data records plus a trailing record with `op_type == "COMMIT"` that seals the batch
 - Source: entries/2026/05/28/write-ahead-log-test_wal.md
 
-### [REJECT] wal-corruption-truncates-at-boundary
+### [ACCEPT] wal-corruption-truncates-at-boundary
 Duplicate of already-accepted `wal-crc-mismatch-halts-all-replay`; both describe the same behavior where corrupted records stop replay and only valid prefix records are returned
 - Source: entries/2026/05/28/write-ahead-log-test_wal.md
 
@@ -1020,7 +1020,7 @@ Checkpoint markers consume a sequence number in the same monotonic space as data
 `checkpoint()` increments the WAL sequence counter by 1, occupying a position in the sequence number space alongside data records (e.g., after 6 data records at seq 1-6, `current_seq_num()` is 7 and `checkpoint()` returns 8).
 - Source: entries/2026/05/28/write-ahead-log-tester_test_wal.md
 
-### [REJECT] wal-replay-excludes-commit-markers
+### [ACCEPT] wal-replay-excludes-commit-markers
 Duplicates existing belief `wal-replay-ignores-commit`.
 - Source: entries/2026/05/28/write-ahead-log-tester_test_wal.md
 
@@ -1028,7 +1028,7 @@ Duplicates existing belief `wal-replay-ignores-commit`.
 When the WAL encounters a corrupted record during replay, it stops and returns all structurally valid records preceding the corruption point rather than raising an exception to the caller.
 - Source: entries/2026/05/28/write-ahead-log-tester_test_wal.md
 
-### [REJECT] wal-batch-appends-three-ops-plus-commit
+### [ACCEPT] wal-batch-appends-three-ops-plus-commit
 Too test-specific; the general principle (batch appends a trailing COMMIT) is captured by `wal-batch-commit-sentinel` below.
 - Source: entries/2026/05/28/write-ahead-log-tester_test_wal.md
 
@@ -1036,7 +1036,7 @@ Too test-specific; the general principle (batch appends a trailing COMMIT) is ca
 With `sync_mode="sync"`, WAL records are durable immediately after `append` returns — they survive process death even if `close()` is never called.
 - Source: entries/2026/05/28/write-ahead-log-tester_test_wal.md
 
-### [REJECT] wal-crc-covers-op-key-value-only
+### [ACCEPT] wal-crc-covers-op-key-value-only
 Duplicates existing belief `wal-crc-does-not-cover-seqnum`.
 - Source: entries/2026/05/28/write-ahead-log-wal-_encode_record.md
 
@@ -1056,11 +1056,11 @@ Key and value lengths in the WAL binary format are packed as signed 32-bit integ
 The WAL binary record format uses little-endian byte order unconditionally (struct prefix `<`), making log files non-portable across architectures with different endianness.
 - Source: entries/2026/05/28/write-ahead-log-wal-_encode_record.md
 
-### [REJECT] wal-read-record-none-on-partial
+### [ACCEPT] wal-read-record-none-on-partial
 Duplicates existing belief `wal-partial-read-is-eof`.
 - Source: entries/2026/05/28/write-ahead-log-wal-_read_record.md
 
-### [REJECT] wal-crc-excludes-seq-num
+### [ACCEPT] wal-crc-excludes-seq-num
 Duplicates existing belief `wal-crc-does-not-cover-seqnum`.
 - Source: entries/2026/05/28/write-ahead-log-wal-_read_record.md
 
@@ -1076,7 +1076,7 @@ Each WAL record on disk is prefixed with a 4-byte little-endian uint32 length co
 Every `append_batch` call writes exactly one COMMIT record (op code 3) as the final record in the batch, with empty key and value fields, consuming one additional sequence number.
 - Source: entries/2026/05/28/write-ahead-log-wal-append_batch.md
 
-### [REJECT] wal-batch-forces-fsync
+### [ACCEPT] wal-batch-forces-fsync
 Duplicates existing belief `wal-batch-always-fsyncs`.
 - Source: entries/2026/05/28/write-ahead-log-wal-append_batch.md
 
@@ -1084,7 +1084,7 @@ Duplicates existing belief `wal-batch-always-fsyncs`.
 All records in an `append_batch` call (operations + COMMIT) are buffered into a single `bytearray` and written in one `write()` syscall to minimize the window for partial writes.
 - Source: entries/2026/05/28/write-ahead-log-wal-append_batch.md
 
-### [REJECT] wal-replay-ignores-commit-boundaries
+### [ACCEPT] wal-replay-ignores-commit-boundaries
 Duplicates existing belief `wal-replay-ignores-commit`.
 - Source: entries/2026/05/28/write-ahead-log-wal-append_batch.md
 
@@ -1109,11 +1109,11 @@ Before reading, `iterate()` calls `fd.flush()` but not `os.fsync()`, so buffered
 - Source: entries/2026/05/28/write-ahead-log-wal-iterate.md
 
 
-### [REJECT] replay-returns-only-put-delete
+### [ACCEPT] replay-returns-only-put-delete
 Duplicates existing `wal-replay-ignores-commit` — both describe filtering out non-data records during replay
 - Source: entries/2026/05/28/write-ahead-log-wal-replay.md
 
-### [REJECT] replay-stops-at-corruption
+### [ACCEPT] replay-stops-at-corruption
 Duplicates existing `wal-crc-mismatch-halts-all-replay` — same claim that CRC failure terminates replay for all subsequent records
 - Source: entries/2026/05/28/write-ahead-log-wal-replay.md
 
@@ -1137,7 +1137,7 @@ The file read phase of `replay` runs without holding `self._lock`, so concurrent
 `replay` returns an in-memory `List[WALRecord]` snapshot, not a lazy iterator — the full result set is materialized before returning, which can be large if the WAL is large
 - Source: entries/2026/05/28/write-ahead-log-wal-replay.md
 
-### [REJECT] wal-truncate-not-atomic
+### [ACCEPT] wal-truncate-not-atomic
 Duplicates existing `wal-truncate-not-crash-safe` — both describe the lack of atomic file operations (no temp-file-rename pattern) during truncation
 - Source: entries/2026/05/28/write-ahead-log-wal-truncate.md
 
@@ -1201,11 +1201,11 @@ EventStore disk persistence uses JSONL (newline-delimited JSON) format, loaded i
 `reconstruct_state(handlers, events, up_to=N)` replays exactly the first N events to rebuild past state at that point in time.
 - Source: entries/2026/05/29/event-sourcing-store-test_event_store.md
 
-### [REJECT] hint-files-only-from-compaction
+### [ACCEPT] hint-files-only-from-compaction
 Duplicate of existing belief `hint-written-only-during-compaction`.
 - Source: entries/2026/05/29/hash-index-storage-bitcask-_load_hint_file.md
 
-### [REJECT] hint-no-tombstones
+### [ACCEPT] hint-no-tombstones
 Duplicate of existing belief `bitcask-hint-files-exclude-tombstones`.
 - Source: entries/2026/05/29/hash-index-storage-bitcask-_load_hint_file.md
 
@@ -1213,19 +1213,19 @@ Duplicate of existing belief `bitcask-hint-files-exclude-tombstones`.
 Each hint record is `HINT_HEADER_SIZE (24 bytes) + 4 (key_size uint32) + key_length` bytes; the `HINT_FORMAT` constant covers only the fixed 24-byte portion, not the full record.
 - Source: entries/2026/05/29/hash-index-storage-bitcask-_load_hint_file.md
 
-### [REJECT] hint-no-integrity-check
+### [ACCEPT] hint-no-integrity-check
 Duplicate of existing belief `hint-file-no-integrity-check`.
 - Source: entries/2026/05/29/hash-index-storage-bitcask-_load_hint_file.md
 
-### [REJECT] rebuild-order-matters
+### [ACCEPT] rebuild-order-matters
 Duplicate of existing beliefs `bitcask-recovery-order-is-ascending` and `bitcask-rebuild-sorts-ascending`.
 - Source: entries/2026/05/29/hash-index-storage-bitcask-_load_hint_file.md
 
-### [REJECT] bitcask-tombstone-is-empty-value
+### [ACCEPT] bitcask-tombstone-is-empty-value
 Duplicate of existing belief `bitcask-tombstone-is-empty-string`.
 - Source: entries/2026/05/29/hash-index-storage-bitcask-_scan_data_file.md
 
-### [REJECT] bitcask-scan-order-determines-correctness
+### [ACCEPT] bitcask-scan-order-determines-correctness
 Duplicate of existing beliefs `bitcask-recovery-order-is-ascending` and `scan-segment-ordering-invariant`.
 - Source: entries/2026/05/29/hash-index-storage-bitcask-_scan_data_file.md
 
@@ -1233,15 +1233,15 @@ Duplicate of existing beliefs `bitcask-recovery-order-is-ascending` and `scan-se
 In `_scan_data_file`, a truncated header safely breaks the scan loop, but a short key/value read after a valid header is not detected — the truncated data is silently used, potentially corrupting the keydir.
 - Source: entries/2026/05/29/hash-index-storage-bitcask-_scan_data_file.md
 
-### [REJECT] tester-bitcask-sync-writes-disabled
+### [ACCEPT] tester-bitcask-sync-writes-disabled
 Duplicate of existing belief `bitcask-tests-disable-sync`.
 - Source: entries/2026/05/29/hash-index-storage-tester_test_bitcask.md
 
-### [REJECT] tester-bitcask-recovery-two-paths
+### [ACCEPT] tester-bitcask-recovery-two-paths
 Covered by existing beliefs `bitcask-crash-recovery-without-hints` and `bitcask-hint-files-skip-scan`.
 - Source: entries/2026/05/29/hash-index-storage-tester_test_bitcask.md
 
-### [REJECT] tester-bitcask-compaction-removes-tombstones
+### [ACCEPT] tester-bitcask-compaction-removes-tombstones
 Duplicate of existing belief `compact-purges-tombstones`.
 - Source: entries/2026/05/29/hash-index-storage-tester_test_bitcask.md
 
@@ -1249,32 +1249,32 @@ Duplicate of existing belief `compact-purges-tombstones`.
 File rotation triggered by `max_file_size` is invisible to readers — all keys remain retrievable across multiple `.data` files because the keydir maps each key to its specific `(file_id, offset)`.
 - Source: entries/2026/05/29/hash-index-storage-tester_test_bitcask.md
 
-### [REJECT] tester-bitcask-delete-nonexistent-safe
+### [ACCEPT] tester-bitcask-delete-nonexistent-safe
 Duplicate of existing belief `bitcask-delete-nonexistent-is-noop`.
 - Source: entries/2026/05/29/hash-index-storage-tester_test_bitcask.md
 
-### [REJECT] recover-replay-order
+### [ACCEPT] recover-replay-order
 Duplicate of existing belief `bitcask-recovery-order-is-ascending`.
 - Source: entries/2026/05/29/log-structured-hash-table-bitcask-_recover.md
 
-### [REJECT] hint-files-skip-crc
+### [ACCEPT] hint-files-skip-crc
 Duplicate of existing belief `hint-file-no-integrity-check`.
 - Source: entries/2026/05/29/log-structured-hash-table-bitcask-_recover.md
 
-### [REJECT] recover-discards-trailing-corruption
+### [ACCEPT] recover-discards-trailing-corruption
 Covered by existing beliefs `corruption-terminates-scan` and `bitcask-partial-write-safe`.
 - Source: entries/2026/05/29/log-structured-hash-table-bitcask-_recover.md
 
-### [REJECT] no-concurrent-writer-protection
+### [ACCEPT] no-concurrent-writer-protection
 Duplicate of existing belief `bitcask-single-active-writer`.
 - Source: entries/2026/05/29/log-structured-hash-table-bitcask-_recover.md
 
-### [REJECT] active-segment-is-highest-id
+### [ACCEPT] active-segment-is-highest-id
 Covered by existing belief `bitcask-compaction-renumbers-active`.
 - Source: entries/2026/05/29/log-structured-hash-table-bitcask-_recover.md
 
 
-### [REJECT] hint-files-skip-tombstones
+### [ACCEPT] hint-files-skip-tombstones
 Duplicates existing `bitcask-hint-files-exclude-tombstones`
 - Source: entries/2026/05/29/log-structured-hash-table-bitcask-create_hint_files.md
 
@@ -1302,15 +1302,15 @@ Hint files are written directly to the final path (not via temp-file-and-rename)
 `put` does not reject the `TOMBSTONE` sentinel as a value; passing it creates a record indistinguishable from a delete, which silently corrupts the key's state on recovery
 - Source: entries/2026/05/29/log-structured-hash-table-bitcask-put.md
 
-### [REJECT] put-triggers-compaction
+### [ACCEPT] put-triggers-compaction
 Substantially overlaps with existing `bitcask-auto-compact-threshold` which already captures the auto-compaction trigger behavior
 - Source: entries/2026/05/29/log-structured-hash-table-bitcask-put.md
 
-### [REJECT] put-not-thread-safe
+### [ACCEPT] put-not-thread-safe
 Covered by existing `no-concurrency-primitives` which applies to the entire codebase
 - Source: entries/2026/05/29/log-structured-hash-table-bitcask-put.md
 
-### [REJECT] put-crash-recovery-gap
+### [ACCEPT] put-crash-recovery-gap
 The crash window between `_write_record` and index update is already covered by `bitcask-partial-write-safe` and `bitcask-crash-recovery-without-hints`
 - Source: entries/2026/05/29/log-structured-hash-table-bitcask-put.md
 
@@ -1318,7 +1318,7 @@ The crash window between `_write_record` and index update is already covered by 
 `tester_test_*.py` files test the public API contract of each implementation, importing only public symbols (plus format constants for fault injection), acting as external conformance harnesses
 - Source: entries/2026/05/29/log-structured-hash-table-tester_test_bitcask.md
 
-### [REJECT] bitcask-get-returns-none-for-missing
+### [ACCEPT] bitcask-get-returns-none-for-missing
 Duplicates existing `bitcask-get-missing-returns-none`
 - Source: entries/2026/05/29/log-structured-hash-table-tester_test_bitcask.md
 
@@ -1326,11 +1326,11 @@ Duplicates existing `bitcask-get-missing-returns-none`
 Reading a record whose payload does not match its CRC32 header raises `CorruptionError` — the store never silently returns corrupt data
 - Source: entries/2026/05/29/log-structured-hash-table-tester_test_bitcask.md
 
-### [REJECT] bitcask-partial-write-silent-discard
+### [ACCEPT] bitcask-partial-write-silent-discard
 Overlaps with existing `bitcask-partial-write-safe` which covers the same recovery behavior
 - Source: entries/2026/05/29/log-structured-hash-table-tester_test_bitcask.md
 
-### [REJECT] bitcask-compaction-preserves-live-data
+### [ACCEPT] bitcask-compaction-preserves-live-data
 Duplicates existing `bitcask-compaction-preserves-observable-state`
 - Source: entries/2026/05/29/log-structured-hash-table-tester_test_bitcask.md
 
@@ -1338,7 +1338,7 @@ Duplicates existing `bitcask-compaction-preserves-observable-state`
 Each `_flush` call creates an SSTable file with a strictly increasing sequence number (zero-padded filename for lexicographic = numeric sort), preserving newest-last ordering in `self._sstables`
 - Source: entries/2026/05/29/log-structured-merge-tree-lsm-_flush.md
 
-### [REJECT] wal-truncated-after-sstable-write
+### [ACCEPT] wal-truncated-after-sstable-write
 Duplicates existing `lsm-wal-truncated-after-sstable-write`
 - Source: entries/2026/05/29/log-structured-merge-tree-lsm-_flush.md
 
@@ -1387,43 +1387,43 @@ Size-tiered compaction triggers when the total SSTable count meets the `min_thre
 Leveled compaction triggers when the L0 SSTable count meets the `l0_compaction_trigger` parameter
 - Source: entries/2026/05/29/sstable-and-compaction-tester_test_sstable.md
 
-### [REJECT] sstable-range-scan-exclusive-end
+### [ACCEPT] sstable-range-scan-exclusive-end
 Duplicates existing belief `sstable-range-scan-end-exclusive`
 - Source: entries/2026/05/29/sstable-and-compaction-tester_test_sstable.md
 
-### [REJECT] sstable-timestamp-conflict-resolution
+### [ACCEPT] sstable-timestamp-conflict-resolution
 Duplicates existing belief `sstable-merge-dedup-newest-timestamp`
 - Source: entries/2026/05/29/sstable-and-compaction-tester_test_sstable.md
 
-### [REJECT] sstable-tombstone-optional-removal
+### [ACCEPT] sstable-tombstone-optional-removal
 Duplicates existing belief `merge-preserves-tombstones-by-default`
 - Source: entries/2026/05/29/sstable-and-compaction-tester_test_sstable.md
 
-### [REJECT] sstable-leveled-compaction-promotes-to-l1
+### [ACCEPT] sstable-leveled-compaction-promotes-to-l1
 Duplicates existing belief `leveled-compaction-promotes-to-l1`
 - Source: entries/2026/05/29/sstable-and-compaction-tester_test_sstable.md
 
-### [REJECT] sstable-tester-tests-happy-path-only
+### [ACCEPT] sstable-tester-tests-happy-path-only
 Meta-observation about test coverage, not a testable architectural invariant about the codebase itself
 - Source: entries/2026/05/29/sstable-and-compaction-tester_test_sstable.md
 
-### [REJECT] compaction-no-manifest
+### [ACCEPT] compaction-no-manifest
 Duplicates existing belief `no-compaction-manifest`
 - Source: entries/2026/05/29/topic-bitcask-crash-safety.md
 
-### [REJECT] recovery-tolerates-partial-writes
+### [ACCEPT] recovery-tolerates-partial-writes
 Duplicates existing belief `bitcask-partial-write-safe` and `corruption-terminates-scan`
 - Source: entries/2026/05/29/topic-bitcask-crash-safety.md
 
-### [REJECT] sstable-header-written-twice
+### [ACCEPT] sstable-header-written-twice
 Duplicates existing belief `sstable-writer-append-then-patch`
 - Source: entries/2026/05/29/topic-bitcask-crash-safety.md
 
-### [REJECT] delete-before-rename-in-bitcask
+### [ACCEPT] delete-before-rename-in-bitcask
 Duplicates existing belief `delete-before-rename-ordering`
 - Source: entries/2026/05/29/topic-bitcask-crash-safety.md
 
-### [REJECT] no-fsync-on-compaction-output
+### [ACCEPT] no-fsync-on-compaction-output
 Covered by existing beliefs `lsm-compaction-deletes-without-fsync-barrier` and `hint-file-no-fsync`
 - Source: entries/2026/05/29/topic-bitcask-crash-safety.md
 
@@ -1431,15 +1431,15 @@ Covered by existing beliefs `lsm-compaction-deletes-without-fsync-barrier` and `
 `_load_hint_file` in both Bitcask implementations treats a short read as end-of-file (breaks out of the read loop without error), silently dropping all keys that would have appeared after the truncation point
 - Source: entries/2026/05/29/topic-bitcask-hint-durability.md
 
-### [REJECT] hint-file-no-checksum
+### [ACCEPT] hint-file-no-checksum
 Duplicates existing belief `hint-file-no-integrity-check`
 - Source: entries/2026/05/29/topic-bitcask-hint-durability.md
 
-### [REJECT] hint-presence-suppresses-scan
+### [ACCEPT] hint-presence-suppresses-scan
 Duplicates existing belief `bitcask-hint-files-skip-scan`
 - Source: entries/2026/05/29/topic-bitcask-hint-durability.md
 
-### [REJECT] orphaned-data-unreachable
+### [ACCEPT] orphaned-data-unreachable
 Duplicates existing belief `hint-file-orphan-crash-risk`
 - Source: entries/2026/05/29/topic-bitcask-hint-durability.md
 
@@ -1455,7 +1455,7 @@ In `log-structured-hash-table/bitcask.py`, hint file creation requires an explic
 `log-structured-hash-table/bitcask.py` uses only `flush()` without `os.fsync()` on data writes, unlike `hash-index-storage` which calls `os.fsync` per record when `sync_writes` is enabled
 - Source: entries/2026/05/29/topic-bitcask-paper-design.md
 
-### [REJECT] hint-files-produced-by-merge-only
+### [ACCEPT] hint-files-produced-by-merge-only
 Duplicates existing belief `hint-written-only-during-compaction`
 - Source: entries/2026/05/29/topic-bitcask-paper.md
 
@@ -1500,7 +1500,7 @@ The B-tree WAL places its CRC32 checksum as a trailer after `page_data`, while t
 The standalone WAL uniquely includes `op_type_byte` in its CRC input alongside key and value, protecting against silent operation-type corruption (e.g., PUT flipped to DELETE) that the other CRC implementations leave undetected
 - Source: entries/2026/05/29/topic-crc-scope-comparison-across-implementations.md
 
-### [REJECT] hash-index-bitcask-has-no-integrity-check
+### [ACCEPT] hash-index-bitcask-has-no-integrity-check
 Duplicate of existing belief `bitcask-no-checksum-validation`
 - Source: entries/2026/05/29/topic-crc-scope-comparison-across-implementations.md
 
@@ -1508,31 +1508,31 @@ Duplicate of existing belief `bitcask-no-checksum-validation`
 The Merkle tree uses SHA-256 (`merkle_tree.py:11`) for tamper-evident cross-replica verification via `verify_proof`, while all storage engines use CRC32 — reflecting the split between accidental-corruption detection on trusted local disk and adversarial-integrity across trust boundaries
 - Source: entries/2026/05/29/topic-crc32-vs-cryptographic-hash.md
 
-### [REJECT] sstable-has-no-integrity-check
+### [ACCEPT] sstable-has-no-integrity-check
 Duplicate of existing belief `sstable-no-checksums`
 - Source: entries/2026/05/29/topic-crc32-vs-cryptographic-hash.md
 
-### [REJECT] hash-index-bitcask-lacks-crc
+### [ACCEPT] hash-index-bitcask-lacks-crc
 Duplicate of existing belief `bitcask-no-checksum-validation`
 - Source: entries/2026/05/29/topic-crc32-vs-cryptographic-hash.md
 
-### [REJECT] wal-crc-covers-payload-not-header
+### [ACCEPT] wal-crc-covers-payload-not-header
 Duplicate of existing beliefs `wal-protects-data-not-metadata` and `wal-crc-does-not-cover-seqnum`
 - Source: entries/2026/05/29/topic-crc32-vs-cryptographic-hash.md
 
-### [REJECT] no-dir-fsync-after-unlink
+### [ACCEPT] no-dir-fsync-after-unlink
 Duplicate of existing belief `no-directory-fsync-anywhere`
 - Source: entries/2026/05/29/topic-directory-fsync-after-unlink.md
 
-### [REJECT] all-fsyncs-target-file-fds
+### [ACCEPT] all-fsyncs-target-file-fds
 Logically equivalent to existing belief `no-directory-fsync-anywhere`
 - Source: entries/2026/05/29/topic-directory-fsync-after-unlink.md
 
-### [REJECT] compaction-deletion-not-crash-safe
+### [ACCEPT] compaction-deletion-not-crash-safe
 Duplicate of existing beliefs `lsm-compaction-deletes-without-fsync-barrier` and `bitcask-compact-not-crash-safe`
 - Source: entries/2026/05/29/topic-directory-fsync-after-unlink.md
 
-### [REJECT] rename-not-crash-durable
+### [ACCEPT] rename-not-crash-durable
 Duplicate of existing belief `rename-without-dir-barrier`
 - Source: entries/2026/05/29/topic-directory-fsync-after-unlink.md
 
@@ -1545,11 +1545,11 @@ B-tree PageManager overwrites pages at fixed offsets within a pre-allocated file
 None of the 13 `os.fsync()` call sites have callers that depend on mtime or ctime metadata being accurate; all syncs exist purely for data durability, making every site a valid `fdatasync` candidate
 - Source: entries/2026/05/29/topic-fdatasync-vs-fsync-tradeoffs.md
 
-### [REJECT] lsm-wal-missing-fsync
+### [ACCEPT] lsm-wal-missing-fsync
 Duplicate of existing belief `lsm-wal-has-no-fsync`
 - Source: entries/2026/05/29/topic-fdatasync-vs-fsync-tradeoffs.md
 
-### [REJECT] no-directory-fsync-after-file-creation
+### [ACCEPT] no-directory-fsync-after-file-creation
 Duplicate of existing belief `no-directory-fsync-anywhere`
 - Source: entries/2026/05/29/topic-fdatasync-vs-fsync-tradeoffs.md
 
@@ -1573,7 +1573,7 @@ The WAL `_rotate()` method unconditionally calls `flush()` and `os.fsync()` befo
 The WAL `_write_count` counter only resets when the batch threshold triggers a sync (line 133), not when a forced sync occurs, which may cause counter drift between forced and threshold-triggered syncs
 - Source: entries/2026/05/29/topic-fsync-semantics-by-mode.md
 
-### [REJECT] lsm-compact-removes-all-tombstones
+### [ACCEPT] lsm-compact-removes-all-tombstones
 Covered by existing beliefs `lsm-compact-removes-tombstones-safely` and `lsm-compaction-is-full-merge` together
 - Source: entries/2026/05/29/topic-leveled-compaction-tombstone-policy.md
 
@@ -1585,7 +1585,7 @@ Covered by existing beliefs `lsm-compact-removes-tombstones-safely` and `lsm-com
 The `CompactionManager` tracks `_max_levels` (default 7) but has no logic to check whether lower levels contain overlapping key ranges before deciding tombstone removal, unlike LevelDB/RocksDB which use `VersionSet` metadata for this
 - Source: entries/2026/05/29/topic-leveled-compaction-tombstone-policy.md
 
-### [REJECT] premature-tombstone-removal-causes-data-resurrection
+### [ACCEPT] premature-tombstone-removal-causes-data-resurrection
 General correctness principle already covered by existing belief `tombstone-removal-requires-full-key-coverage`
 - Source: entries/2026/05/29/topic-leveled-compaction-tombstone-policy.md
 
@@ -1593,19 +1593,19 @@ General correctness principle already covered by existing belief `tombstone-remo
 Size-tiered compaction allows multiple SSTables at the same tier to contain overlapping key ranges, requiring point lookups to check all SSTables in a tier
 - Source: entries/2026/05/29/topic-leveled-vs-size-tiered-compaction.md
 
-### [REJECT] leveled-promotes-to-numbered-levels
+### [ACCEPT] leveled-promotes-to-numbered-levels
 Duplicate of existing belief `leveled-compaction-promotes-to-l1`
 - Source: entries/2026/05/29/topic-leveled-vs-size-tiered-compaction.md
 
-### [REJECT] timestamp-resolves-merge-conflicts
+### [ACCEPT] timestamp-resolves-merge-conflicts
 Duplicate of existing belief `sstable-merge-dedup-newest-timestamp`
 - Source: entries/2026/05/29/topic-leveled-vs-size-tiered-compaction.md
 
-### [REJECT] lsm-compact-is-full-merge
+### [ACCEPT] lsm-compact-is-full-merge
 Duplicate of existing belief `lsm-compaction-is-full-merge`
 - Source: entries/2026/05/29/topic-leveled-vs-size-tiered-compaction.md
 
-### [REJECT] sparse-index-bounds-scan-cost
+### [ACCEPT] sparse-index-bounds-scan-cost
 Covered by existing beliefs `sstable-sparse-index-every-nth` and `lsm-sparse-index-default-16`
 - Source: entries/2026/05/29/topic-leveled-vs-size-tiered-compaction.md
 
@@ -1638,19 +1638,19 @@ The LSM tree at `lsm.py:314` calls `self._wal.truncate()` with no sequence argum
 The WAL module has no tests for truncated records, CRC mismatches, or partial writes; the B-tree module tests CRC corruption explicitly but the WAL does not
 - Source: entries/2026/05/29/topic-partial-write-detection.md
 
-### [REJECT] wal-record-length-prefix-guards-short-writes
+### [ACCEPT] wal-record-length-prefix-guards-short-writes
 Duplicate of existing `wal-partial-read-is-eof` and `wal-record-length-prefixed`
 - Source: entries/2026/05/29/topic-partial-write-detection.md
 
-### [REJECT] lsm-full-compaction-only
+### [ACCEPT] lsm-full-compaction-only
 Duplicate of existing `lsm-compaction-is-full-merge`
 - Source: entries/2026/05/29/topic-sstable-tombstone-gc-safety.md
 
-### [REJECT] sstable-merge-tombstone-opt-in
+### [ACCEPT] sstable-merge-tombstone-opt-in
 Duplicate of existing `merge-preserves-tombstones-by-default`
 - Source: entries/2026/05/29/topic-sstable-tombstone-gc-safety.md
 
-### [REJECT] bitcask-immutable-only-compaction
+### [ACCEPT] bitcask-immutable-only-compaction
 Duplicate of existing `bitcask-compact-skips-active-file-keys`
 - Source: entries/2026/05/29/topic-sstable-tombstone-gc-safety.md
 
@@ -1686,15 +1686,15 @@ At least 6 `tester_test_*.py` files import pytest despite being designed for sta
 A concurrent `append()` writing to a file the iterator is reading can produce a partial record that `_read_record` interprets as CRC failure, terminating the entire iterator and dropping all remaining valid records across subsequent files
 - Source: entries/2026/05/29/topic-wal-concurrency-safety.md
 
-### [REJECT] wal-iterate-replay-lock-scope
+### [ACCEPT] wal-iterate-replay-lock-scope
 Duplicate of existing `replay-not-lock-protected-during-read` combined with `replay-flush-before-read`
 - Source: entries/2026/05/29/topic-wal-concurrency-safety.md
 
-### [REJECT] lsm-range-scan-zero-concurrency-protection
+### [ACCEPT] lsm-range-scan-zero-concurrency-protection
 Duplicate of existing `range-scan-no-concurrency-protection`
 - Source: entries/2026/05/29/topic-wal-concurrency-safety.md
 
-### [REJECT] wal-flush-not-fsync-before-iteration
+### [ACCEPT] wal-flush-not-fsync-before-iteration
 Duplicate of existing `iterate-flushes-without-fsync`
 - Source: entries/2026/05/29/topic-wal-concurrency-safety.md
 
@@ -1706,11 +1706,11 @@ The SSTable format (`sstable.py:10-11`) uses a 4-byte magic `b"SSTB"` and a 2-by
 A corrupted `record_length` in the WAL causes `_read_record` to misframe all subsequent records; there is no magic-byte or scan-forward recovery mechanism to re-synchronize
 - Source: entries/2026/05/29/topic-wal-record-format-evolution.md
 
-### [REJECT] wal-crc-excludes-header
+### [ACCEPT] wal-crc-excludes-header
 Duplicate of existing `wal-protects-data-not-metadata` and `wal-crc-does-not-cover-seqnum`
 - Source: entries/2026/05/29/topic-wal-record-format-evolution.md
 
-### [REJECT] bitcask-no-integrity-check
+### [ACCEPT] bitcask-no-integrity-check
 Contradicts existing accepted belief `bitcask-crc-covers-payload-only` which asserts Bitcask does have a CRC
 - Source: entries/2026/05/29/topic-wal-record-format-evolution.md
 
@@ -1727,7 +1727,7 @@ Neither the WAL reader nor any visible consumer checks for sequence number gaps 
 `append_batch` writes the entire batch buffer in one `_fd.write` call before `_maybe_rotate`, so a batch never spans two WAL files under normal operation
 - Source: entries/2026/05/29/topic-wal-recovery-semantics.md
 
-### [REJECT] wal-tail-corruption-safe
+### [ACCEPT] wal-tail-corruption-safe
 Covered by existing `wal-corruption-returns-valid-prefix` and `wal-partial-read-is-eof` which together establish that partial/torn writes at EOF are handled safely
 - Source: entries/2026/05/29/topic-wal-recovery-semantics.md
 
@@ -1735,7 +1735,7 @@ Covered by existing `wal-corruption-returns-valid-prefix` and `wal-partial-read-
 The B-tree WAL in `btree.py` stores full after-image page data (physical WAL) and supports only redo recovery; there is no undo capability
 - Source: entries/2026/05/29/topic-write-ahead-logging-fsync-ordering.md
 
-### [REJECT] commit-means-data-sync-then-wal-truncate
+### [ACCEPT] commit-means-data-sync-then-wal-truncate
 Duplicates existing `wal-commit-sync-before-truncate` which already captures the ordering invariant that data is fsynced before the WAL is truncated
 - Source: entries/2026/05/29/topic-write-ahead-logging-fsync-ordering.md
 
@@ -1751,7 +1751,7 @@ The standalone `wal.py` uses a logical WAL (keyed PUT/DELETE operations with COM
 No SSTable writer or compaction routine in any implementation uses the write-temp/fsync/rename pattern; all write directly to the final file path
 - Source: entries/2026/05/29/topic-write-to-temp-then-rename-pattern.md
 
-### [REJECT] compaction-deletes-before-fsync
+### [ACCEPT] compaction-deletes-before-fsync
 Covered by existing `lsm-compaction-deletes-without-fsync-barrier` which captures the same missing fsync barrier between output write and input deletion
 - Source: entries/2026/05/29/topic-write-to-temp-then-rename-pattern.md
 
@@ -1783,15 +1783,15 @@ An EOF or partial read within a single WAL file causes `_read_all_records` to ad
 `_recover_seq_num` uses `break` on corruption (continues to next file) while `_read_all_records` uses `return` (stops everything) — recovery is lenient to maximize the sequence counter, replay is strict to avoid replaying past corruption
 - Source: entries/2026/05/29/write-ahead-log-wal-_read_all_records.md
 
-### [REJECT] wal-corruption-stops-all-files
+### [ACCEPT] wal-corruption-stops-all-files
 Duplicates existing `wal-crc-mismatch-halts-all-replay` which already captures that CRC mismatch terminates the entire replay/iteration
 - Source: entries/2026/05/29/write-ahead-log-wal-_read_all_records.md
 
-### [REJECT] wal-read-all-requires-caller-flush
+### [ACCEPT] wal-read-all-requires-caller-flush
 Covered by existing `replay-flush-before-read` (replay flushes before reading) and `iterate-flushes-without-fsync` (iterate flushes without fsync)
 - Source: entries/2026/05/29/write-ahead-log-wal-_read_all_records.md
 
-### [REJECT] wal-read-all-no-lock
+### [ACCEPT] wal-read-all-no-lock
 Covered by existing `replay-not-lock-protected-during-read` which captures the same locking gap
 - Source: entries/2026/05/29/write-ahead-log-wal-_read_all_records.md
 
@@ -1804,11 +1804,11 @@ Covered by existing `replay-not-lock-protected-during-read` which captures the s
 `_recover_seq_num` treats CRC errors as file-local (abandons the corrupted file, continues scanning subsequent files), unlike `_read_all_records` which stops all scanning on corruption.
 - Source: entries/2026/05/29/write-ahead-log-wal-_recover_seq_num.md
 
-### [REJECT] seq-num-zero-means-empty
+### [ACCEPT] seq-num-zero-means-empty
 Derivative of existing belief `wal-seq-starts-at-one` — if seq starts at 1, a recovery result of 0 trivially means no records exist.
 - Source: entries/2026/05/29/write-ahead-log-wal-_recover_seq_num.md
 
-### [REJECT] recover-is-read-only
+### [ACCEPT] recover-is-read-only
 Trivially expected of a recovery scan function; this is not an invariant that could be accidentally violated or that constrains design decisions.
 - Source: entries/2026/05/29/write-ahead-log-wal-_recover_seq_num.md
 
@@ -1876,7 +1876,7 @@ _NO_DEFAULT is a sentinel object distinguishing "no default provided" from a Non
 SchemaRegistry prepends a 4-byte big-endian unsigned int schema ID (struct.pack('>I', id)) to encoded payloads, modeling Confluent's Schema Registry wire format; schema IDs are limited to [0, 2^32).
 - Source: entries/2026/05/29/avro-serializer-avro_serializer.md
 
-### [REJECT] iter-yields-sorted-pairs
+### [ACCEPT] iter-yields-sorted-pairs
 Covered by existing beliefs `btree-leaf-sibling-chain` and `range-scan-follows-sibling-chain`; __iter__ uses the same leaf-chain mechanism.
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-__iter__.md
 
@@ -1884,15 +1884,15 @@ Covered by existing beliefs `btree-leaf-sibling-chain` and `range-scan-follows-s
 Unlike get, put, delete, and range_scan, BTree.__iter__ does not call reset_counters() before running, so I/O page-read stats accumulate on top of any prior count — a gotcha when benchmarking iteration.
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-__iter__.md
 
-### [REJECT] leaf-chain-invariant
+### [ACCEPT] leaf-chain-invariant
 Substantially covered by existing belief `btree-leaf-sibling-chain`.
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-__iter__.md
 
-### [REJECT] iter-not-mutation-safe
+### [ACCEPT] iter-not-mutation-safe
 Duplicate of existing belief `iterate-not-snapshot-isolated`.
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-__iter__.md
 
-### [REJECT] leaf-wire-format-is-header-sibling-then-kv-pairs
+### [ACCEPT] leaf-wire-format-is-header-sibling-then-kv-pairs
 Duplicate of existing belief `leaf-wire-format-is-header-sibling-entries`.
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-_deserialize_leaf.md
 
@@ -1900,7 +1900,7 @@ Duplicate of existing belief `leaf-wire-format-is-header-sibling-entries`.
 Leaf deserialization always decodes keys as UTF-8 strings while values remain raw bytes; invalid UTF-8 in key bytes causes UnicodeDecodeError at read time, not write time (since serialize accepts both str and bytes).
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-_deserialize_leaf.md
 
-### [REJECT] max-key-or-value-size-is-65535-bytes
+### [ACCEPT] max-key-or-value-size-is-65535-bytes
 Key side covered by existing belief `key-length-cap-uint16`; value side uses the same uint16 length prefix but page size is the practical limit.
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-_deserialize_leaf.md
 
@@ -1908,11 +1908,11 @@ Key side covered by existing belief `key-length-cap-uint16`; value side uses the
 Both _deserialize_leaf and _deserialize_internal perform no validation of page type, sort order, or buffer length; they trust that WAL CRC checks and the serialize functions guarantee well-formed pages, so corruption produces silent wrong results rather than errors.
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-_deserialize_leaf.md
 
-### [REJECT] sibling-pointer-enables-sequential-scan-without-parent-traversal
+### [ACCEPT] sibling-pointer-enables-sequential-scan-without-parent-traversal
 Covered by existing beliefs `btree-leaf-sibling-chain` and `range-scan-follows-sibling-chain`.
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-_deserialize_leaf.md
 
-### [REJECT] find-leaf-read-count
+### [ACCEPT] find-leaf-read-count
 Covered by existing belief `btree-lookup-reads-bounded-by-height`; _find_leaf has the same height-proportional I/O cost.
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-_find_leaf.md
 
@@ -1936,11 +1936,11 @@ _serialize_internal assumes len(children) == len(keys) + 1 but does not assert i
 Internal page wire format is [type:1B][num_keys:2B][child0:4B] followed by repeating [keylen:2B][key:varB][child:4B], all big-endian with no alignment padding; this interleaved layout mirrors the logical separator-pointer structure.
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-_serialize_internal.md
 
-### [REJECT] serialize-internal-is-pure
+### [ACCEPT] serialize-internal-is-pure
 Trivially analogous to existing belief `serialize-leaf-is-pure`.
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-_serialize_internal.md
 
-### [REJECT] key-length-cap-uint16
+### [ACCEPT] key-length-cap-uint16
 Already exists as an accepted belief.
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-_serialize_internal.md
 
@@ -1953,11 +1953,11 @@ Neither _serialize_internal nor _serialize_leaf checks whether the serialized ou
 `_wal_write_page` pads data to exactly `page_size` with null bytes before passing it to both `wal.log_write` and `pm.write_page`, ensuring the WAL record and data file page are byte-identical.
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-_wal_write_page.md
 
-### [REJECT] wal-before-data-invariant
+### [ACCEPT] wal-before-data-invariant
 Duplicate of existing `btree-wal-before-data`.
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-_wal_write_page.md
 
-### [REJECT] wal-commit-required
+### [ACCEPT] wal-commit-required
 The mechanics are covered by `wal-commit-clears-all-entries` and `wal-commit-sync-before-truncate`; caller responsibility is implied by `btree-insert-no-wal-commit`.
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-_wal_write_page.md
 
@@ -1965,11 +1965,11 @@ The mechanics are covered by `wal-commit-clears-all-entries` and `wal-commit-syn
 The BTree class never calls `pm.write_page` directly for data pages; all data page writes are routed through `_wal_write_page` (or `_wal_write_meta` for page 0) to maintain the write-ahead invariant.
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-_wal_write_page.md
 
-### [REJECT] btree-delete-no-rebalance
+### [ACCEPT] btree-delete-no-rebalance
 Duplicate of existing `btree-no-underflow-rebalancing` and `btree-delete-cleanup-depth2-only`.
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-delete.md
 
-### [REJECT] btree-delete-wal-gap
+### [ACCEPT] btree-delete-wal-gap
 Duplicate of existing `btree-free-page-bypasses-wal`.
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-delete.md
 
@@ -1977,7 +1977,7 @@ Duplicate of existing `btree-free-page-bypasses-wal`.
 `delete` re-reads metadata after `_delete` returns to pick up `next_free`/`free_head` changes made by `pm.free_page`, rather than threading updated values through the recursive call stack.
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-delete.md
 
-### [REJECT] btree-delete-bool-coercion
+### [ACCEPT] btree-delete-bool-coercion
 Too implementation-specific; the `'empty'` sentinel coercion via `bool(found)` is a trivial return-value detail, not an architectural invariant.
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-delete.md
 
@@ -1989,11 +1989,11 @@ When the key is not found, `delete` writes no WAL entries and performs no commit
 The page free list is LIFO: `free_page` pushes to the head and `allocate_page` pops from the head, so the most recently freed page is reused first.
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-free_page.md
 
-### [REJECT] free-page-not-wal-protected
+### [ACCEPT] free-page-not-wal-protected
 Duplicate of existing `btree-free-page-bypasses-wal` and `btree-delete-leaks-pages`.
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-free_page.md
 
-### [REJECT] free-list-intrusive-storage
+### [ACCEPT] free-list-intrusive-storage
 Duplicate of existing `btree-free-list-intrusive`.
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-free_page.md
 
@@ -2005,11 +2005,11 @@ Calling `free_page` twice on the same page creates a cycle in the free list, whi
 `PageManager.free_page` is only invoked by `BTree._delete` when removing an emptied leaf node; no other code path frees pages.
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-free_page.md
 
-### [REJECT] wal-append-only-until-commit
+### [ACCEPT] wal-append-only-until-commit
 Duplicate of existing `wal-commit-clears-all-entries` and `wal-is-redo-only`.
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-log_write.md
 
-### [REJECT] wal-checksum-covers-data-only
+### [ACCEPT] wal-checksum-covers-data-only
 Duplicate of existing `all-three-implementations-use-payload-only-crc` and `wal-crc-does-not-cover-seqnum`.
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-log_write.md
 
@@ -2017,19 +2017,19 @@ Duplicate of existing `all-three-implementations-use-payload-only-crc` and `wal-
 Each `log_write` call forces an `os.fsync`, guaranteeing per-entry durability at the cost of one sync syscall per logged page write.
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-log_write.md
 
-### [REJECT] wal-seq-monotonic-per-session
+### [ACCEPT] wal-seq-monotonic-per-session
 Duplicate of existing `wal-seq-reset-on-commit` and `wal-seq-starts-at-one`.
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-log_write.md
 
-### [REJECT] wal-single-writer-assumed
+### [ACCEPT] wal-single-writer-assumed
 Duplicate of existing `wal-single-writer-fd` and `wal-provides-crash-safety-not-concurrency`.
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-log_write.md
 
-### [REJECT] btree-put-wal-atomicity
+### [ACCEPT] btree-put-wal-atomicity
 Covered by existing `btree-wal-before-data`, `btree-wal-provides-split-atomicity`, and `btree-wal-replay-is-idempotent`.
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-put.md
 
-### [REJECT] btree-put-three-outcomes
+### [ACCEPT] btree-put-three-outcomes
 Duplicate of existing `btree-recursive-insert-returns-union`.
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-put.md
 
@@ -2037,7 +2037,7 @@ Duplicate of existing `btree-recursive-insert-returns-union`.
 `put` (and `delete`) assume single-threaded access: metadata is re-read after `_insert`/`_delete` without any locking or compare-and-swap, creating a TOCTOU window under concurrent writers.
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-put.md
 
-### [REJECT] btree-root-split-grows-height
+### [ACCEPT] btree-root-split-grows-height
 Substantially covered by existing `tree-height-monotonically-increases`.
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-put.md
 
@@ -2046,7 +2046,7 @@ Substantially covered by existing `tree-height-monotonically-increases`.
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-put.md
 
 
-### [REJECT] wal-recover-checksum-gate
+### [ACCEPT] wal-recover-checksum-gate
 Duplicate of existing `btree-crc32-skips-corrupt-entries`
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-recover.md
 
@@ -2054,7 +2054,7 @@ Duplicate of existing `btree-crc32-skips-corrupt-entries`
 WAL recovery fsyncs the data file via `page_manager.sync()` before truncating the WAL, so a crash during recovery itself leaves the WAL intact for re-replay
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-recover.md
 
-### [REJECT] wal-recover-idempotent
+### [ACCEPT] wal-recover-idempotent
 Duplicate of existing `btree-wal-replay-is-idempotent`
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-recover.md
 
@@ -2187,15 +2187,15 @@ Projection snapshots are stored in `store._snapshots` (an in-memory dict), not p
 `test_verify.py` runs as a standalone Python script with inline assertions and a final print statement, not through a test framework like pytest
 - Source: entries/2026/05/29/event-sourcing-store-test_verify.md
 
-### [REJECT] es-projection-position-tracks-global-offset
+### [ACCEPT] es-projection-position-tracks-global-offset
 Duplicates existing belief `es-global-position-tracks-all-streams` which already covers that projection position is a global offset across all streams
 - Source: entries/2026/05/29/event-sourcing-store-test_verify.md
 
-### [REJECT] es-expected-version-is-optimistic-lock
+### [ACCEPT] es-expected-version-is-optimistic-lock
 Duplicates existing belief `es-optimistic-concurrency-via-expected-version`
 - Source: entries/2026/05/29/event-sourcing-store-test_verify.md
 
-### [REJECT] es-snapshot-preserves-position-and-state
+### [ACCEPT] es-snapshot-preserves-position-and-state
 Duplicates existing belief `es-snapshot-saves-state-and-position`
 - Source: entries/2026/05/29/event-sourcing-store-test_verify.md
 
@@ -2244,11 +2244,11 @@ When receiving gossip, unknown nodes that arrive with `dead` status are silently
 `_write_record` in `hash-index-storage/bitcask.py` does not modify `keydir`; the caller (`put` or `delete`) is responsible for updating the in-memory index after the write returns.
 - Source: entries/2026/05/29/hash-index-storage-bitcask-_write_record.md
 
-### [REJECT] write-record-is-append-only
+### [ACCEPT] write-record-is-append-only
 Duplicates existing belief `put-append-only`.
 - Source: entries/2026/05/29/hash-index-storage-bitcask-_write_record.md
 
-### [REJECT] tombstone-convention-empty-value
+### [ACCEPT] tombstone-convention-empty-value
 Duplicates existing belief `bitcask-tombstone-is-empty-string`.
 - Source: entries/2026/05/29/hash-index-storage-bitcask-_write_record.md
 
@@ -2264,11 +2264,11 @@ In hash-index-storage Bitcask, the `sync_writes` flag controls whether each `_wr
 `_write_record` timestamps use `time.time()`, which is not monotonic — NTP adjustments or manual clock changes can cause a newer write to carry an older timestamp, confusing compaction's latest-wins conflict resolution.
 - Source: entries/2026/05/29/hash-index-storage-bitcask-_write_record.md
 
-### [REJECT] no-crc-on-records
+### [ACCEPT] no-crc-on-records
 Subsumed by the more specific `hash-index-bitcask-no-checksum` proposed above.
 - Source: entries/2026/05/29/hash-index-storage-bitcask-_write_record.md
 
-### [REJECT] fsync-controlled-by-sync-writes
+### [ACCEPT] fsync-controlled-by-sync-writes
 Subsumed by `hash-index-sync-writes-controls-fsync` proposed above.
 - Source: entries/2026/05/29/hash-index-storage-bitcask-_write_record.md
 
@@ -2346,7 +2346,7 @@ Split-brain is detected and resolved by `_resolve_split_brain` in the cluster ha
 When a failed node recovers via `recover_node`, it immediately starts an election, potentially preempting the current leader — this is the defining "bully" behavior.
 - Source: entries/2026/05/29/leader-election-leader_election.md
 
-### [REJECT] bully-no-external-dependencies
+### [ACCEPT] bully-no-external-dependencies
 Subsumed by existing beliefs `ddia-pure-python-stdlib` and `ddia-modules-self-contained` which already capture the repo-wide pattern of zero external dependencies.
 - Source: entries/2026/05/29/leader-election-leader_election.md
 
@@ -2356,7 +2356,7 @@ Candidates wait `election_timeout // 2` for ALIVE responses before deciding, sho
 
 ---
 
-### [REJECT] hint-file-no-tombstones
+### [ACCEPT] hint-file-no-tombstones
 Duplicates existing belief `bitcask-hint-files-exclude-tombstones`.
 - Source: entries/2026/05/29/log-structured-hash-table-bitcask-_load_hint_file.md
 
@@ -2364,7 +2364,7 @@ Duplicates existing belief `bitcask-hint-files-exclude-tombstones`.
 The `offset` value stored in a hint entry is a byte position in the corresponding `.dat` segment file, not a position within the hint file itself; `get()` uses this offset to seek directly into the segment.
 - Source: entries/2026/05/29/log-structured-hash-table-bitcask-_load_hint_file.md
 
-### [REJECT] recovery-order-correctness
+### [ACCEPT] recovery-order-correctness
 Duplicates existing belief `bitcask-recovery-order-is-ascending`.
 - Source: entries/2026/05/29/log-structured-hash-table-bitcask-_load_hint_file.md
 
@@ -2381,15 +2381,15 @@ Hint entry format uses `!II` (two `u32` network-order integers), capping segment
 `_write_record` only appends to disk and returns a byte offset; it never modifies `self._index`, leaving index management entirely to callers (`put`, `delete`, `compact`)
 - Source: entries/2026/05/29/log-structured-hash-table-bitcask-_write_record.md
 
-### [REJECT] crc-covers-payload-not-header
+### [ACCEPT] crc-covers-payload-not-header
 Duplicate of existing `bitcask-crc-covers-payload-only` and `all-three-implementations-use-payload-only-crc`
 - Source: entries/2026/05/29/log-structured-hash-table-bitcask-_write_record.md
 
-### [REJECT] flush-not-fsync
+### [ACCEPT] flush-not-fsync
 Duplicate of existing `log-structured-bitcask-no-fsync`
 - Source: entries/2026/05/29/log-structured-hash-table-bitcask-_write_record.md
 
-### [REJECT] record-format-self-describing
+### [ACCEPT] record-format-self-describing
 Covered by existing `record-format-is-length-prefixed`; the key_size/value_size fields making records self-describing is the direct consequence of length-prefixing
 - Source: entries/2026/05/29/log-structured-hash-table-bitcask-_write_record.md
 
@@ -2401,7 +2401,7 @@ Covered by existing `record-format-is-length-prefixed`; the key_size/value_size 
 `get()` performs exactly one disk seek per call; the key-to-offset mapping is resolved entirely in memory via `self._index`, making reads O(1) index lookup plus one disk read
 - Source: entries/2026/05/29/log-structured-hash-table-bitcask-get.md
 
-### [REJECT] bitcask-get-fresh-handle
+### [ACCEPT] bitcask-get-fresh-handle
 Duplicate of existing `bitcask-get-opens-fresh-handle`
 - Source: entries/2026/05/29/log-structured-hash-table-bitcask-get.md
 
@@ -2409,7 +2409,7 @@ Duplicate of existing `bitcask-get-opens-fresh-handle`
 `get()` never encounters tombstone records because `delete()` removes the key from `self._index`; tombstone handling is solely a recovery and compaction concern
 - Source: entries/2026/05/29/log-structured-hash-table-bitcask-get.md
 
-### [REJECT] bitcask-crc-covers-payload-not-header
+### [ACCEPT] bitcask-crc-covers-payload-not-header
 Duplicate of existing `bitcask-crc-covers-payload-only`
 - Source: entries/2026/05/29/log-structured-hash-table-bitcask-get.md
 
@@ -2417,7 +2417,7 @@ Duplicate of existing `bitcask-crc-covers-payload-only`
 If a segment file is deleted out-of-band or by a crash during compaction, `get()` raises an unhandled `FileNotFoundError` rather than returning `None` or a graceful error
 - Source: entries/2026/05/29/log-structured-hash-table-bitcask-get.md
 
-### [REJECT] wal-no-fsync
+### [ACCEPT] wal-no-fsync
 Duplicate of existing `lsm-wal-has-no-fsync`
 - Source: entries/2026/05/29/log-structured-merge-tree-lsm-WAL.md
 
@@ -2429,15 +2429,15 @@ LSM WAL `replay()` silently discards any trailing partial record by checking rem
 The LSM WAL format has no checksums or magic bytes; it can detect truncation (incomplete length-prefixed records) but not corruption of existing bytes
 - Source: entries/2026/05/29/log-structured-merge-tree-lsm-WAL.md
 
-### [REJECT] wal-truncate-after-flush
+### [ACCEPT] wal-truncate-after-flush
 Duplicate of existing `lsm-wal-truncated-after-sstable-write`
 - Source: entries/2026/05/29/log-structured-merge-tree-lsm-WAL.md
 
-### [REJECT] wal-append-before-memtable
+### [ACCEPT] wal-append-before-memtable
 Duplicate of existing `lsm-wal-before-memtable`
 - Source: entries/2026/05/29/log-structured-merge-tree-lsm-WAL.md
 
-### [REJECT] wal-truncate-clears-file
+### [ACCEPT] wal-truncate-clears-file
 Duplicate of existing `lsm-wal-truncate-destroys-immediately`
 - Source: entries/2026/05/29/log-structured-merge-tree-lsm-truncate.md
 
@@ -2445,7 +2445,7 @@ Duplicate of existing `lsm-wal-truncate-destroys-immediately`
 `WAL.truncate()` uses a two-open sequence — open in `"wb"` mode to truncate the file, then reopen in `"ab"` mode for appending — because `"wb"` positions the cursor at offset 0 which is unsafe for a WAL
 - Source: entries/2026/05/29/log-structured-merge-tree-lsm-truncate.md
 
-### [REJECT] wal-truncate-called-after-flush
+### [ACCEPT] wal-truncate-called-after-flush
 Duplicate of existing `lsm-wal-truncated-after-sstable-write`
 - Source: entries/2026/05/29/log-structured-merge-tree-lsm-truncate.md
 
@@ -2453,7 +2453,7 @@ Duplicate of existing `lsm-wal-truncated-after-sstable-write`
 If any `open()` or `close()` call within `WAL.truncate()` fails, the exception propagates uncaught and can leave `self._fd` holding a closed handle, breaking subsequent `append()` calls
 - Source: entries/2026/05/29/log-structured-merge-tree-lsm-truncate.md
 
-### [REJECT] wal-no-fsync-truncate
+### [ACCEPT] wal-no-fsync-truncate
 Duplicate of existing `lsm-wal-has-no-fsync`
 - Source: entries/2026/05/29/log-structured-merge-tree-lsm-truncate.md
 
@@ -2530,19 +2530,19 @@ Successive `put()` calls on the same `ReplicaNode` yield strictly increasing Lam
 Conflicts are recorded in `conflict_log` with metadata including the key and the `ConflictStrategy` enum value that resolved them.
 - Source: entries/2026/05/29/multi-leader-replication-test_multi_leader.md
 
-### [REJECT] lww-tiebreak-uses-node-id
+### [ACCEPT] lww-tiebreak-uses-node-id
 Duplicates existing belief `multi-leader-lww-deterministic-tiebreak`.
 - Source: entries/2026/05/29/multi-leader-replication-test_multi_leader.md
 
-### [REJECT] custom-merge-replaces-lww
+### [ACCEPT] custom-merge-replaces-lww
 Overlaps with existing belief `multi-leader-custom-merge-new-timestamp` which already covers the custom merge strategy behavior.
 - Source: entries/2026/05/29/multi-leader-replication-test_multi_leader.md
 
-### [REJECT] sync-is-idempotent
+### [ACCEPT] sync-is-idempotent
 Duplicates existing belief `multi-leader-idempotent-apply`.
 - Source: entries/2026/05/29/multi-leader-replication-test_multi_leader.md
 
-### [REJECT] delete-propagates-as-tombstone
+### [ACCEPT] delete-propagates-as-tombstone
 Duplicates existing belief `multi-leader-tombstone-delete`.
 - Source: entries/2026/05/29/multi-leader-replication-test_multi_leader.md
 
@@ -2691,11 +2691,11 @@ For level N→N+1 compaction, the SSTable with the most overlapping neighbors in
 L0 compaction always includes every L0 SSTable in the merge set (not just a subset), which can cause large write spikes when many L0 SSTables accumulate before the trigger fires.
 - Source: entries/2026/05/29/sstable-and-compaction-sstable-_lcs_compact.md
 
-### [REJECT] lcs-picks-most-overlap
+### [ACCEPT] lcs-picks-most-overlap
 Duplicates `lcs-picks-max-overlap-sstable` from the CompactionManager entry — same claim about the same code path.
 - Source: entries/2026/05/29/sstable-and-compaction-sstable-_lcs_compact.md
 
-### [REJECT] lcs-no-old-file-cleanup
+### [ACCEPT] lcs-no-old-file-cleanup
 Duplicates `compaction-manager-never-deletes-old-files` from the CompactionManager entry — same claim about the same class.
 - Source: entries/2026/05/29/sstable-and-compaction-sstable-_lcs_compact.md
 
@@ -2744,37 +2744,37 @@ The join processor's watermark only advances forward via `max(current, event.tim
 Both `append` and `append_batch` call `_maybe_rotate()` after write and sync complete; rotation never interrupts an in-progress write, and the file only rotates on the next operation
 - Source: entries/2026/05/29/topic-batch-atomicity-across-rotation.md
 
-### [REJECT] wal-batch-never-splits
+### [ACCEPT] wal-batch-never-splits
 Duplicates existing `wal-batch-single-file`
 - Source: entries/2026/05/29/topic-batch-atomicity-across-rotation.md
 
-### [REJECT] wal-batch-forces-fsync
+### [ACCEPT] wal-batch-forces-fsync
 Duplicates existing `wal-batch-always-fsyncs`
 - Source: entries/2026/05/29/topic-batch-atomicity-across-rotation.md
 
-### [REJECT] wal-commit-record-is-atomicity-marker
+### [ACCEPT] wal-commit-record-is-atomicity-marker
 Duplicates existing `wal-batch-commit-sentinel`
 - Source: entries/2026/05/29/topic-batch-atomicity-across-rotation.md
 
 ## Batch Write Durability (`topic-batch-write-durability.md`)
 
-### [REJECT] wal-append-batch-uses-commit-sentinel
+### [ACCEPT] wal-append-batch-uses-commit-sentinel
 Duplicates existing `wal-batch-commit-sentinel`
 - Source: entries/2026/05/29/topic-batch-write-durability.md
 
-### [REJECT] wal-force-true-bypasses-batch-sync
+### [ACCEPT] wal-force-true-bypasses-batch-sync
 Duplicates existing `force-true-bypasses-sync-mode`
 - Source: entries/2026/05/29/topic-batch-write-durability.md
 
-### [REJECT] wal-crc-per-record
+### [ACCEPT] wal-crc-per-record
 Covered by existing `wal-crc-includes-op-type` and `wal-crc-does-not-cover-seqnum`
 - Source: entries/2026/05/29/topic-batch-write-durability.md
 
-### [REJECT] wal-append-batch-and-checkpoint-always-fsync
+### [ACCEPT] wal-append-batch-and-checkpoint-always-fsync
 Partially covered by existing `wal-batch-always-fsyncs` and `wal-commit-sync-before-truncate`; also incomplete since `rotation-always-fsyncs` also fsyncs
 - Source: entries/2026/05/29/topic-batch-write-durability.md
 
-### [REJECT] wal-atomicity-depends-on-consumer
+### [ACCEPT] wal-atomicity-depends-on-consumer
 Duplicates existing `replay-does-not-enforce-batch-atomicity`
 - Source: entries/2026/05/29/topic-batch-write-durability.md
 
@@ -2788,19 +2788,19 @@ The log-structured hash table's `HEADER_FMT = "!III"` produces a fixed 12-byte h
 In the log-structured hash table, CRC32 validation occurs only during `get()` and `_scan_segment()`; writes compute and store the CRC but never verify it back, so a corrupted write is not caught until read time
 - Source: entries/2026/05/29/topic-bitcask-binary-format.md
 
-### [REJECT] crc-covers-payload-not-header
+### [ACCEPT] crc-covers-payload-not-header
 Duplicates existing `all-three-implementations-use-payload-only-crc`
 - Source: entries/2026/05/29/topic-bitcask-binary-format.md
 
-### [REJECT] record-size-formula
+### [ACCEPT] record-size-formula
 Trivially derived from `bitcask-header-is-12-bytes`
 - Source: entries/2026/05/29/topic-bitcask-binary-format.md
 
-### [REJECT] segment-rotation-threshold-depends-on-record-size
+### [ACCEPT] segment-rotation-threshold-depends-on-record-size
 Test design detail explaining magic numbers, not an architectural invariant
 - Source: entries/2026/05/29/topic-bitcask-binary-format.md
 
-### [REJECT] corruption-detection-on-read-not-write
+### [ACCEPT] corruption-detection-on-read-not-write
 Subsumed by the more specific `bitcask-crc-validated-on-read-only` above
 - Source: entries/2026/05/29/topic-bitcask-binary-format.md
 
@@ -2814,23 +2814,23 @@ Subsumed by the more specific `bitcask-crc-validated-on-read-only` above
 The LSM `_flush()` truncates the WAL after writing an SSTable, but since neither the SSTable write nor the truncation is fsynced, a crash can lose both the WAL source data and the SSTable destination simultaneously — making the data irrecoverable
 - Source: entries/2026/05/29/topic-bitcask-crash-recovery-guarantees.md
 
-### [REJECT] lsm-wal-no-fsync
+### [ACCEPT] lsm-wal-no-fsync
 Duplicates existing `lsm-wal-has-no-fsync`
 - Source: entries/2026/05/29/topic-bitcask-crash-recovery-guarantees.md
 
-### [REJECT] log-hash-table-no-durability-guarantee
+### [ACCEPT] log-hash-table-no-durability-guarantee
 Duplicates existing `log-structured-bitcask-no-fsync`
 - Source: entries/2026/05/29/topic-bitcask-crash-recovery-guarantees.md
 
-### [REJECT] btree-wal-is-reference-implementation
+### [ACCEPT] btree-wal-is-reference-implementation
 Comparative judgment across implementations rather than a testable factual claim about a specific module
 - Source: entries/2026/05/29/topic-bitcask-crash-recovery-guarantees.md
 
-### [REJECT] bitcask-sync-writes-default-true
+### [ACCEPT] bitcask-sync-writes-default-true
 Duplicates existing `bitcask-fsync-per-record-default`
 - Source: entries/2026/05/29/topic-bitcask-crash-recovery-guarantees.md
 
-### [REJECT] sstable-wal-truncation-race
+### [ACCEPT] sstable-wal-truncation-race
 Subsumed by the more specific `lsm-flush-double-loss-window` above
 - Source: entries/2026/05/29/topic-bitcask-crash-recovery-guarantees.md
 
@@ -2839,23 +2839,23 @@ Subsumed by the more specific `lsm-flush-double-loss-window` above
 `checkpoint()` calls `_do_sync(force=True)`, making checkpoint markers always durable on disk regardless of the configured sync mode
 - Source: entries/2026/05/29/topic-bitcask-crash-recovery-semantics.md
 
-### [REJECT] wal-break-on-corruption-discards-tail
+### [ACCEPT] wal-break-on-corruption-discards-tail
 Duplicates `wal-crc-mismatch-halts-all-replay` and `wal-no-resync-after-corruption`
 - Source: entries/2026/05/29/topic-bitcask-crash-recovery-semantics.md
 
-### [REJECT] wal-partial-header-treated-as-eof
+### [ACCEPT] wal-partial-header-treated-as-eof
 Duplicates `wal-partial-read-is-eof`
 - Source: entries/2026/05/29/topic-bitcask-crash-recovery-semantics.md
 
-### [REJECT] wal-batch-commit-always-synced
+### [ACCEPT] wal-batch-commit-always-synced
 Duplicates `wal-batch-always-fsyncs`
 - Source: entries/2026/05/29/topic-bitcask-crash-recovery-semantics.md
 
-### [REJECT] wal-none-mode-no-flush-no-fsync
+### [ACCEPT] wal-none-mode-no-flush-no-fsync
 Duplicates `none-mode-never-syncs-on-append`
 - Source: entries/2026/05/29/topic-bitcask-crash-recovery-semantics.md
 
-### [REJECT] wal-crc-covers-content-not-header
+### [ACCEPT] wal-crc-covers-content-not-header
 Duplicates `all-three-implementations-use-payload-only-crc` combined with `wal-crc-does-not-cover-seqnum`
 - Source: entries/2026/05/29/topic-bitcask-crash-recovery-semantics.md
 
@@ -2863,19 +2863,19 @@ Duplicates `all-three-implementations-use-payload-only-crc` combined with `wal-c
 The `hash-index-storage` hint file contains all four keydir fields (file_id, offset, size, timestamp), making it sufficient to fully reconstruct the in-memory index without reading data files
 - Source: entries/2026/05/29/topic-bitcask-hint-file-format.md
 
-### [REJECT] log-structured-hint-incomplete
+### [ACCEPT] log-structured-hint-incomplete
 Duplicates `log-structured-index-omits-size-and-timestamp`
 - Source: entries/2026/05/29/topic-bitcask-hint-file-format.md
 
-### [REJECT] no-hint-integrity-checking
+### [ACCEPT] no-hint-integrity-checking
 Duplicates `hint-file-no-integrity-check`
 - Source: entries/2026/05/29/topic-bitcask-hint-file-format.md
 
-### [REJECT] hint-files-compaction-only
+### [ACCEPT] hint-files-compaction-only
 Duplicates `hint-written-only-during-compaction`
 - Source: entries/2026/05/29/topic-bitcask-hint-file-format.md
 
-### [REJECT] log-structured-data-crc-hint-gap
+### [ACCEPT] log-structured-data-crc-hint-gap
 Duplicates `hint-file-no-integrity-check` combined with `bitcask-crc32-raises-corruption-error`
 - Source: entries/2026/05/29/topic-bitcask-hint-file-format.md
 
@@ -2883,39 +2883,39 @@ Duplicates `hint-file-no-integrity-check` combined with `bitcask-crc32-raises-co
 The `hash-index-storage/bitcask.py` `compact()` must be called explicitly by the caller; there is no auto-compact trigger, threshold tracking, or background compaction unlike the `log-structured-hash-table` variant
 - Source: entries/2026/05/29/topic-bitcask-paper-comparison.md
 
-### [REJECT] python-bitcask-no-writer-locking
+### [ACCEPT] python-bitcask-no-writer-locking
 Duplicates `bitcask-single-active-writer` combined with `compact-no-concurrency-safety`
 - Source: entries/2026/05/29/topic-bitcask-paper-comparison.md
 
-### [REJECT] keydir-rebuilt-on-every-open
+### [ACCEPT] keydir-rebuilt-on-every-open
 Duplicates `bitcask-keydir-is-sole-index` combined with `bitcask-no-parallel-rebuild`
 - Source: entries/2026/05/29/topic-bitcask-paper-comparison.md
 
-### [REJECT] compaction-is-synchronous-and-blocking
+### [ACCEPT] compaction-is-synchronous-and-blocking
 Duplicates `compact-single-threaded-assumption`
 - Source: entries/2026/05/29/topic-bitcask-paper-comparison.md
 
-### [REJECT] only-log-structured-variant-has-crc
+### [ACCEPT] only-log-structured-variant-has-crc
 Duplicates `bitcask-no-checksum-validation` (hash-index) and `bitcask-crc32-raises-corruption-error` (log-structured)
 - Source: entries/2026/05/29/topic-bitcask-paper-comparison.md
 
-### [REJECT] auto-compact-trigger-uses-segment-count-only
+### [ACCEPT] auto-compact-trigger-uses-segment-count-only
 Duplicates `bitcask-auto-compact-threshold`
 - Source: entries/2026/05/29/topic-bitcask-paper-comparison.md
 
-### [REJECT] hint-files-are-embarrassingly-parallel
+### [ACCEPT] hint-files-are-embarrassingly-parallel
 Describes Erlang/Riak's optimization strategy, not a testable property of this Python codebase
 - Source: entries/2026/05/29/topic-bitcask-parallel-hint-loading.md
 
-### [REJECT] ets-enables-concurrent-keydir-writes
+### [ACCEPT] ets-enables-concurrent-keydir-writes
 Describes Erlang ETS internals, not this Python codebase
 - Source: entries/2026/05/29/topic-bitcask-parallel-hint-loading.md
 
-### [REJECT] parallel-hint-loading-requires-barrier
+### [ACCEPT] parallel-hint-loading-requires-barrier
 Describes Erlang startup protocol, not this Python codebase
 - Source: entries/2026/05/29/topic-bitcask-parallel-hint-loading.md
 
-### [REJECT] slow-path-parallelism-requires-ordered-merge
+### [ACCEPT] slow-path-parallelism-requires-ordered-merge
 Tombstone ordering during recovery already covered by `bitcask-recovery-order-is-ascending`
 - Source: entries/2026/05/29/topic-bitcask-parallel-hint-loading.md
 
@@ -2927,11 +2927,11 @@ Both Bitcask implementations require every live key to be held in a Python dict 
 Neither Bitcask implementation has any range query, ordered iteration, or prefix scan capability; the hash-based keydir only supports exact-key point lookups
 - Source: entries/2026/05/29/topic-bitcask-vs-lsm-tree.md
 
-### [REJECT] bitcask-recovery-requires-full-scan-without-hints
+### [ACCEPT] bitcask-recovery-requires-full-scan-without-hints
 Duplicates `bitcask-crash-recovery-without-hints`
 - Source: entries/2026/05/29/topic-bitcask-vs-lsm-tree.md
 
-### [REJECT] lsm-wal-limits-recovery-to-unflushed-writes
+### [ACCEPT] lsm-wal-limits-recovery-to-unflushed-writes
 Duplicates `lsm-wal-truncated-after-sstable-write` (which implies only unflushed data needs recovery)
 - Source: entries/2026/05/29/topic-bitcask-vs-lsm-tree.md
 
@@ -2944,15 +2944,15 @@ A Bitcask `get()` does one dict lookup plus one positioned disk read (O(1)), whi
 `NO_SIBLING = 0xFFFFFFFF` marks the end of the leaf sibling chain; a leaf with this value is the rightmost at its level
 - Source: entries/2026/05/29/topic-blink-tree-paper.md
 
-### [REJECT] leaf-pages-carry-sibling-pointers
+### [ACCEPT] leaf-pages-carry-sibling-pointers
 Duplicates existing beliefs `btree-leaf-sibling-chain` and `leaf-wire-format-is-header-sibling-entries`
 - Source: entries/2026/05/29/topic-blink-tree-paper.md
 
-### [REJECT] no-concurrency-control-exists
+### [ACCEPT] no-concurrency-control-exists
 Duplicates existing belief `no-concurrency-primitives`
 - Source: entries/2026/05/29/topic-blink-tree-paper.md
 
-### [REJECT] sibling-links-serve-range-scans-not-concurrency
+### [ACCEPT] sibling-links-serve-range-scans-not-concurrency
 Duplicates existing belief `sibling-field-is-structural-only`
 - Source: entries/2026/05/29/topic-blink-tree-paper.md
 
@@ -2976,11 +2976,11 @@ None of the WAL implementations use block-aligned or page-aligned record layouts
 Both SSTable implementations store the sparse index at the end of the file with a footer pointer, meaning bloom filters could be co-located in the same footer region without changing the file layout
 - Source: entries/2026/05/29/topic-bloom-filter-optimization.md
 
-### [REJECT] bloom-filter-uses-double-hashing
+### [ACCEPT] bloom-filter-uses-double-hashing
 Duplicates existing belief `bloom-double-hashing`
 - Source: entries/2026/05/29/topic-bloom-filter-optimization.md
 
-### [REJECT] bloom-serialization-exists
+### [ACCEPT] bloom-serialization-exists
 Duplicates existing belief `bloom-serialization-footer-ready`
 - Source: entries/2026/05/29/topic-bloom-filter-optimization.md
 
@@ -2988,15 +2988,15 @@ Duplicates existing belief `bloom-serialization-footer-ready`
 `LSMTree.get()` iterates through every SSTable in reverse sequence order and returns only after checking all of them when a key is absent; without bloom filters, missing-key lookups are O(N) in SSTable count
 - Source: entries/2026/05/29/topic-bloom-filters-for-read-optimization.md
 
-### [REJECT] sstable-sparse-index-no-bloom
+### [ACCEPT] sstable-sparse-index-no-bloom
 Duplicates existing belief `bloom-filter-not-integrated`
 - Source: entries/2026/05/29/topic-bloom-filters-for-read-optimization.md
 
-### [REJECT] bloom-filter-exists-but-unused
+### [ACCEPT] bloom-filter-exists-but-unused
 Duplicates existing belief `bloom-filter-not-integrated`
 - Source: entries/2026/05/29/topic-bloom-filters-for-read-optimization.md
 
-### [REJECT] size-tiered-compaction-overlapping-ranges
+### [ACCEPT] size-tiered-compaction-overlapping-ranges
 Duplicates existing belief `stcs-overlapping-key-ranges`
 - Source: entries/2026/05/29/topic-bloom-filters-for-read-optimization.md
 
@@ -3021,35 +3021,35 @@ PREPARE and COMMIT messages with non-matching digests are silently dropped and n
 `OP_COMMIT` is written exclusively by `append_batch()` in `write-ahead-log/wal.py`; single `append()` calls never produce a COMMIT record, so individual operations are their own atomic unit
 - Source: entries/2026/05/29/topic-checkpoint-vs-commit-semantics.md
 
-### [REJECT] checkpoint-and-commit-force-sync
+### [ACCEPT] checkpoint-and-commit-force-sync
 Covered by existing `wal-batch-always-fsyncs` and `force-true-bypasses-sync-mode`
 - Source: entries/2026/05/29/topic-checkpoint-vs-commit-semantics.md
 
-### [REJECT] replay-filters-markers
+### [ACCEPT] replay-filters-markers
 Covered by existing `wal-iterate-preserves-all-ops` and `wal-replay-ignores-commit`
 - Source: entries/2026/05/29/topic-checkpoint-vs-commit-semantics.md
 
-### [REJECT] checkpoint-seq-gates-truncate
+### [ACCEPT] checkpoint-seq-gates-truncate
 Covered by existing `wal-checkpoint-returns-seq`, `wal-truncate-requires-explicit-seq`, and `checkpoint-record-unused-for-truncation`
 - Source: entries/2026/05/29/topic-checkpoint-vs-commit-semantics.md
 
-### [REJECT] batch-write-is-single-call
+### [ACCEPT] batch-write-is-single-call
 Duplicate of existing `wal-batch-single-write`
 - Source: entries/2026/05/29/topic-checkpoint-vs-commit-semantics.md
 
-### [REJECT] hash-index-deletes-before-rename
+### [ACCEPT] hash-index-deletes-before-rename
 Duplicate of existing `delete-before-rename-ordering`
 - Source: entries/2026/05/29/topic-compaction-input-deletion-ordering.md
 
-### [REJECT] log-structured-no-fsync-on-write
+### [ACCEPT] log-structured-no-fsync-on-write
 Duplicate of existing `log-structured-bitcask-no-fsync`
 - Source: entries/2026/05/29/topic-compaction-input-deletion-ordering.md
 
-### [REJECT] hash-index-conditional-fsync
+### [ACCEPT] hash-index-conditional-fsync
 Duplicate of existing `bitcask-fsync-per-record-default`
 - Source: entries/2026/05/29/topic-compaction-input-deletion-ordering.md
 
-### [REJECT] neither-impl-fsyncs-directory
+### [ACCEPT] neither-impl-fsyncs-directory
 Duplicate of existing `no-directory-fsync-anywhere`
 - Source: entries/2026/05/29/topic-compaction-input-deletion-ordering.md
 
@@ -3061,19 +3061,19 @@ In `hash-index-storage/bitcask.py`, cached file readers for old immutable files 
 In `log-structured-hash-table/bitcask.py`, compaction closes `_active_file` during its write phase, making all reads and writes to the active segment impossible until the active file is reopened under a new name at the end of compaction
 - Source: entries/2026/05/29/topic-concurrent-merge-safety.md
 
-### [REJECT] neither-bitcask-has-atomic-switchover
+### [ACCEPT] neither-bitcask-has-atomic-switchover
 Covered by existing `delete-before-rename-ordering`, `bitcask-compact-not-crash-safe`, and `compaction-not-atomic`
 - Source: entries/2026/05/29/topic-concurrent-merge-safety.md
 
-### [REJECT] crash-between-delete-and-rename-loses-data
+### [ACCEPT] crash-between-delete-and-rename-loses-data
 Duplicate of existing `bitcask-compact-not-crash-safe` and `bitcask-compaction-not-crash-safe`
 - Source: entries/2026/05/29/topic-concurrent-merge-safety.md
 
-### [REJECT] bitcask-crc-excludes-header
+### [ACCEPT] bitcask-crc-excludes-header
 Duplicate of existing `bitcask-crc-covers-payload-only`
 - Source: entries/2026/05/29/topic-crc-coverage-audit.md
 
-### [REJECT] wal-crc-excludes-seq-and-lengths
+### [ACCEPT] wal-crc-excludes-seq-and-lengths
 Covered by existing `wal-crc-does-not-cover-seqnum` and `wal-protects-data-not-metadata`
 - Source: entries/2026/05/29/topic-crc-coverage-audit.md
 
@@ -3085,7 +3085,7 @@ In `b-tree-storage-engine/btree.py`, the WAL entry checksum covers only `page_da
 Neither `log-structured-merge-tree/lsm.py` nor `sstable-and-compaction/sstable.py` compute or verify any checksums; a single bit-flip in a length-prefix field causes cascading misframing of all subsequent records
 - Source: entries/2026/05/29/topic-crc-coverage-audit.md
 
-### [REJECT] no-component-has-full-record-crc
+### [ACCEPT] no-component-has-full-record-crc
 Subsumed by existing `all-three-implementations-use-payload-only-crc` combined with the new `lsm-and-sstable-have-no-checksums`
 - Source: entries/2026/05/29/topic-crc-coverage-audit.md
 
@@ -3093,11 +3093,11 @@ Subsumed by existing `all-three-implementations-use-payload-only-crc` combined w
 CRC32 is computed per individual record or page (typically hundreds of bytes to a few KB), not per file; file-level corruption is detected only indirectly by failing to decode a record, not by any file-wide checksum
 - Source: entries/2026/05/29/topic-crc32-vs-xxhash-choice.md
 
-### [REJECT] sstable-lacks-checksums
+### [ACCEPT] sstable-lacks-checksums
 Covered by accepted `lsm-and-sstable-have-no-checksums` which includes both components
 - Source: entries/2026/05/29/topic-crc32-vs-xxhash-choice.md
 
-### [REJECT] crc32-input-excludes-metadata
+### [ACCEPT] crc32-input-excludes-metadata
 Covered by existing `wal-crc-does-not-cover-seqnum`, `wal-protects-data-not-metadata`, and `bitcask-crc-covers-payload-only`
 - Source: entries/2026/05/29/topic-crc32-vs-xxhash-choice.md
 
@@ -3110,7 +3110,7 @@ The codebase consistently uses `zlib.crc32` for corruption detection in storage 
 Both Bitcask implementations keep every live key in an in-memory dict (`keydir` / `_index`), meaning the key set must fit in RAM; there is no disk-based fallback for partial index spill.
 - Source: entries/2026/05/29/topic-ddia-chapter3-hash-indexes.md
 
-### [REJECT] sstable-sparse-index-reduces-memory
+### [ACCEPT] sstable-sparse-index-reduces-memory
 Already captured by `sstable-sparse-index-every-nth` and `lsm-sparse-index-default-16`.
 - Source: entries/2026/05/29/topic-ddia-chapter3-hash-indexes.md
 
@@ -3122,27 +3122,27 @@ Neither hash index implementation (`hash-index-storage/bitcask.py` or `log-struc
 The LSM tree uses a separate WAL (`lsm.py:14-64`) for crash recovery because its memtable is volatile; the hash index writes directly to the append-only data file, which serves as its own recovery log and needs no WAL.
 - Source: entries/2026/05/29/topic-ddia-chapter3-hash-indexes.md
 
-### [REJECT] crc-integrity-only-in-log-structured-variant
+### [ACCEPT] crc-integrity-only-in-log-structured-variant
 Already captured by `bitcask-no-checksum-validation` (hash-index-storage has no CRC) and `bitcask-crc-covers-payload-only` (log-structured variant does).
 - Source: entries/2026/05/29/topic-ddia-chapter3-hash-indexes.md
 
-### [REJECT] no-dir-fsync-anywhere
+### [ACCEPT] no-dir-fsync-anywhere
 Already exists as `no-directory-fsync-anywhere`.
 - Source: entries/2026/05/29/topic-directory-fsync-after-rename.md
 
-### [REJECT] rename-without-durability
+### [ACCEPT] rename-without-durability
 Already exists as `rename-without-dir-barrier`.
 - Source: entries/2026/05/29/topic-directory-fsync-after-rename.md
 
-### [REJECT] file-data-fsync-is-correct
+### [ACCEPT] file-data-fsync-is-correct
 Already captured by `all-fsync-sites-data-integrity-only`.
 - Source: entries/2026/05/29/topic-directory-fsync-after-rename.md
 
-### [REJECT] wal-rotation-creates-unfsynced-entries
+### [ACCEPT] wal-rotation-creates-unfsynced-entries
 Already exists as `wal-no-directory-fsync`.
 - Source: entries/2026/05/29/topic-directory-fsync-after-rename.md
 
-### [REJECT] allocate-page-not-wal-protected
+### [ACCEPT] allocate-page-not-wal-protected
 Already exists as `btree-allocate-page-outside-wal`.
 - Source: entries/2026/05/29/topic-free-list-corruption-risks.md
 
@@ -3150,7 +3150,7 @@ Already exists as `btree-allocate-page-outside-wal`.
 `PageManager._write_meta` calls `flush()` but not `os.fsync()`, so metadata updates (`next_free_page`, `free_list_head`) are not durable against power loss — compounding the WAL bypass with a durability gap on the direct write path.
 - Source: entries/2026/05/29/topic-free-list-corruption-risks.md
 
-### [REJECT] wal-recover-ignores-metadata
+### [ACCEPT] wal-recover-ignores-metadata
 Already exists as `wal-protects-data-not-metadata`.
 - Source: entries/2026/05/29/topic-free-list-corruption-risks.md
 
@@ -3158,15 +3158,15 @@ Already exists as `wal-protects-data-not-metadata`.
 The B-tree has no allocation bitmap, page-reachability check, or post-recovery consistency scan to detect leaked or orphaned pages; once a page is lost between the tree and the free list, it is silently unrecoverable.
 - Source: entries/2026/05/29/topic-free-list-corruption-risks.md
 
-### [REJECT] free-page-non-atomic
+### [ACCEPT] free-page-non-atomic
 Covered by existing `btree-free-page-bypasses-wal` (root cause) and `btree-delete-leaks-pages` (consequence).
 - Source: entries/2026/05/29/topic-free-list-corruption-risks.md
 
-### [REJECT] free-list-is-intrusive-singly-linked
+### [ACCEPT] free-list-is-intrusive-singly-linked
 Already exists as `btree-free-list-intrusive`.
 - Source: entries/2026/05/29/topic-free-list-reuse-under-churn.md
 
-### [REJECT] allocate-prefers-free-list
+### [ACCEPT] allocate-prefers-free-list
 Already exists as `allocate-page-prefers-free-list`.
 - Source: entries/2026/05/29/topic-free-list-reuse-under-churn.md
 
@@ -3178,52 +3178,52 @@ The `next_free_page` metadata field only ever increases — it is the high-water
 `PageManager.free_page()` overwrites the freed page's content with a zero header and a free-list pointer, destroying the original leaf/internal node data so freed pages cannot be accidentally read as valid tree nodes.
 - Source: entries/2026/05/29/topic-free-list-reuse-under-churn.md
 
-### [REJECT] two-rename-sites-in-compaction
+### [ACCEPT] two-rename-sites-in-compaction
 Covered by `rename-without-dir-barrier`; the specific count/location of rename call sites is unstable detail.
 - Source: entries/2026/05/29/topic-fsync-directory-durability.md
 
-### [REJECT] wal-rotation-creates-files-without-dir-fsync (entry 5)
+### [ACCEPT] wal-rotation-creates-files-without-dir-fsync (entry 5)
 Already exists as `wal-no-directory-fsync`.
 - Source: entries/2026/05/29/topic-fsync-directory-durability.md
 
-### [REJECT] file-content-fsync-is-thorough
+### [ACCEPT] file-content-fsync-is-thorough
 Already captured by `all-fsync-sites-data-integrity-only`.
 - Source: entries/2026/05/29/topic-fsync-directory-durability.md
 
 
-### [REJECT] wal-flush-fsync-pairing
+### [ACCEPT] wal-flush-fsync-pairing
 Covered by existing `rotation-always-fsyncs`, `wal-batch-always-fsyncs`, and `wal-commit-sync-before-truncate` which together establish the consistent pairing across all WAL sync points.
 - Source: entries/2026/05/29/topic-fsync-durability-guarantees.md
 
-### [REJECT] lsm-wal-no-fsync
+### [ACCEPT] lsm-wal-no-fsync
 Duplicate of existing `lsm-wal-has-no-fsync`.
 - Source: entries/2026/05/29/topic-fsync-durability-guarantees.md
 
-### [REJECT] no-directory-fsync
+### [ACCEPT] no-directory-fsync
 Duplicate of existing `no-directory-fsync-anywhere`.
 - Source: entries/2026/05/29/topic-fsync-durability-guarantees.md
 
-### [REJECT] no-platform-specific-sync
+### [ACCEPT] no-platform-specific-sync
 The F_FULLFSYNC claim is covered by existing `apfs-masks-linux-fsync-bugs`; the fdatasync claim is captured below as `fdatasync-never-used`.
 - Source: entries/2026/05/29/topic-fsync-durability-guarantees.md
 
-### [REJECT] batch-sync-commit-override
+### [ACCEPT] batch-sync-commit-override
 Covered by existing `force-true-bypasses-sync-mode` and `wal-batch-always-fsyncs`.
 - Source: entries/2026/05/29/topic-fsync-durability-guarantees.md
 
-### [REJECT] lsm-wal-missing-fsync
+### [ACCEPT] lsm-wal-missing-fsync
 Duplicate of existing `lsm-wal-has-no-fsync`.
 - Source: entries/2026/05/29/topic-fsync-flush-distinction.md
 
-### [REJECT] log-hash-table-missing-fsync
+### [ACCEPT] log-hash-table-missing-fsync
 Duplicate of existing `log-structured-bitcask-no-fsync`.
 - Source: entries/2026/05/29/topic-fsync-flush-distinction.md
 
-### [REJECT] flush-only-no-durability
+### [ACCEPT] flush-only-no-durability
 General OS/systems principle, not a codebase-specific invariant. Well-known prerequisite knowledge, not a claim about this code that could break if violated.
 - Source: entries/2026/05/29/topic-fsync-flush-distinction.md
 
-### [REJECT] correct-sync-pattern
+### [ACCEPT] correct-sync-pattern
 Already captured by individual per-implementation beliefs: `rotation-always-fsyncs`, `wal-batch-always-fsyncs`, `btree-wal-before-data`, `bitcask-fsync-per-record-default`.
 - Source: entries/2026/05/29/topic-fsync-flush-distinction.md
 
@@ -3231,23 +3231,23 @@ Already captured by individual per-implementation beliefs: `rotation-always-fsyn
 No implementation uses `os.fdatasync()`, missing a safe optimization for append-only WALs where only data (not metadata like mtime) needs to reach disk.
 - Source: entries/2026/05/29/topic-fsync-flush-distinction.md
 
-### [REJECT] lsm-wal-never-fsyncs
+### [ACCEPT] lsm-wal-never-fsyncs
 Duplicate of existing `lsm-wal-has-no-fsync`.
 - Source: entries/2026/05/29/topic-fsync-guarantees-across-implementations.md
 
-### [REJECT] btree-durability-via-wal-commit
+### [ACCEPT] btree-durability-via-wal-commit
 Covered by existing `btree-wal-no-data-fsync` (page writes intentionally not fsynced) and `wal-commit-sync-before-truncate` (commit is the durability barrier).
 - Source: entries/2026/05/29/topic-fsync-guarantees-across-implementations.md
 
-### [REJECT] wal-py-always-pairs-flush-fsync
+### [ACCEPT] wal-py-always-pairs-flush-fsync
 Already captured distributively by `rotation-always-fsyncs`, `wal-batch-always-fsyncs`, `wal-truncate-fsyncs-before-scan`, and `wal-commit-sync-before-truncate`.
 - Source: entries/2026/05/29/topic-fsync-guarantees-across-implementations.md
 
-### [REJECT] bitcask-sync-writes-flag-controls-fsync
+### [ACCEPT] bitcask-sync-writes-flag-controls-fsync
 Duplicate of existing `bitcask-fsync-per-record-default`.
 - Source: entries/2026/05/29/topic-fsync-guarantees-across-implementations.md
 
-### [REJECT] log-structured-hash-table-no-fsync
+### [ACCEPT] log-structured-hash-table-no-fsync
 Duplicate of existing `log-structured-bitcask-no-fsync`.
 - Source: entries/2026/05/29/topic-fsync-guarantees-across-implementations.md
 
@@ -3255,27 +3255,27 @@ Duplicate of existing `log-structured-bitcask-no-fsync`.
 `sstable-and-compaction/sstable.py:SSTableWriter.finish()` closes the file without calling `flush()` or `os.fsync()`, relying on implicit Python close-time buffer flush with no disk durability guarantee.
 - Source: entries/2026/05/29/topic-fsync-guarantees-across-implementations.md
 
-### [REJECT] no-dir-fsync-anywhere
+### [ACCEPT] no-dir-fsync-anywhere
 Duplicate of existing `no-directory-fsync-anywhere`.
 - Source: entries/2026/05/29/topic-fsync-on-directory.md
 
-### [REJECT] hint-file-loss-is-safe
+### [ACCEPT] hint-file-loss-is-safe
 Covered by existing `hint-files-are-optimization-only` which establishes that hints carry no unique data.
 - Source: entries/2026/05/29/topic-fsync-on-directory.md
 
-### [REJECT] data-file-dir-entry-same-gap-as-hint
+### [ACCEPT] data-file-dir-entry-same-gap-as-hint
 Derivable from existing `no-directory-fsync-anywhere` (the gap is universal) combined with `hint-files-are-optimization-only` (hints are safe to lose, data files are not).
 - Source: entries/2026/05/29/topic-fsync-on-directory.md
 
-### [REJECT] lsm-flush-double-gap
+### [ACCEPT] lsm-flush-double-gap
 Derivable from existing `lsm-wal-truncated-after-sstable-write` (ordering) + `no-directory-fsync-anywhere` (neither directory entry durable) + `lsm-wal-truncate-destroys-immediately` (WAL gone immediately).
 - Source: entries/2026/05/29/topic-fsync-on-directory.md
 
-### [REJECT] no-temp-rename-pattern
+### [ACCEPT] no-temp-rename-pattern
 Duplicate of existing `no-atomic-file-creation`.
 - Source: entries/2026/05/29/topic-fsync-on-directory.md
 
-### [REJECT] wal-rotate-no-dir-fsync
+### [ACCEPT] wal-rotate-no-dir-fsync
 Duplicate of existing `wal-no-directory-fsync`.
 - Source: entries/2026/05/29/topic-fsync-on-new-file-creation.md
 
@@ -3283,16 +3283,16 @@ Duplicate of existing `wal-no-directory-fsync`.
 WAL segment discovery during recovery uses `os.listdir()`, so any segment whose parent directory entry was not fsynced becomes invisible after a crash — connecting the dir-fsync gap to concrete data loss.
 - Source: entries/2026/05/29/topic-fsync-on-new-file-creation.md
 
-### [REJECT] rotate-called-from-three-paths
+### [ACCEPT] rotate-called-from-three-paths
 Call-graph detail that establishes blast radius but is derivable from `wal-no-directory-fsync` (which already implies all rotation-dependent write paths are affected) and is fragile to refactoring.
 - Source: entries/2026/05/29/topic-fsync-on-new-file-creation.md
 
 
-### [REJECT] wal-replay-stops-at-corruption
+### [ACCEPT] wal-replay-stops-at-corruption
 Already covered by existing `wal-crc-mismatch-halts-all-replay`, `wal-no-resync-after-corruption`, and `wal-corruption-stops-per-file`
 - Source: entries/2026/05/29/topic-gap-detection-during-replay.md
 
-### [REJECT] no-sequence-continuity-check
+### [ACCEPT] no-sequence-continuity-check
 Already covered by existing `wal-no-gap-detection` and `recover-seq-no-gap-detection`
 - Source: entries/2026/05/29/topic-gap-detection-during-replay.md
 
@@ -3300,7 +3300,7 @@ Already covered by existing `wal-no-gap-detection` and `recover-seq-no-gap-detec
 The LSM tree's `replay` method (`lsm.py:28`) returns `List[Tuple[str, bytes]]`, discarding WAL sequence numbers and making gap detection impossible at the LSM layer
 - Source: entries/2026/05/29/topic-gap-detection-during-replay.md
 
-### [REJECT] recover-seq-num-vulnerable-to-early-corruption
+### [ACCEPT] recover-seq-num-vulnerable-to-early-corruption
 Already covered by existing `recover-seq-skips-corrupt-files`
 - Source: entries/2026/05/29/topic-gap-detection-during-replay.md
 
@@ -3312,7 +3312,7 @@ Already covered by existing `recover-seq-skips-corrupt-files`
 A bit-flip in a value region of `hash-index-storage/bitcask.py` causes `get()` to return corrupted data with no error; the only partial integrity check is the key-equality assertion
 - Source: entries/2026/05/29/topic-hash-index-bitcask-no-crc.md
 
-### [REJECT] crc-mismatch-halts-scan
+### [ACCEPT] crc-mismatch-halts-scan
 Already covered by existing `corruption-terminates-scan` and `bitcask-crc32-raises-corruption-error`
 - Source: entries/2026/05/29/topic-hash-index-bitcask-no-crc.md
 
@@ -3324,11 +3324,11 @@ Already covered by existing `corruption-terminates-scan` and `bitcask-crc32-rais
 A corrupted `key_size` or `val_size` in `hash-index-storage/bitcask.py` causes `_scan_data_file` to read wrong byte boundaries, potentially misinterpreting all subsequent records in that file
 - Source: entries/2026/05/29/topic-hash-index-bitcask-no-crc.md
 
-### [REJECT] immutable-memtables-never-populated
+### [ACCEPT] immutable-memtables-never-populated
 Already covered by existing `flush-skips-immutable-memtable-stage`
 - Source: entries/2026/05/29/topic-immutable-memtable-gap.md
 
-### [REJECT] flush-bypasses-freeze-step
+### [ACCEPT] flush-bypasses-freeze-step
 Already covered by existing `flush-skips-immutable-memtable-stage`
 - Source: entries/2026/05/29/topic-immutable-memtable-gap.md
 
@@ -3340,11 +3340,11 @@ Both `get()` (line 254) and `range_scan()` (line 286) check `_immutable_memtable
 In the synchronous single-threaded LSM execution model, the missing immutable memtable lifecycle step causes no observable data loss because `_flush()` completes atomically within the caller's execution flow
 - Source: entries/2026/05/29/topic-immutable-memtable-gap.md
 
-### [REJECT] no-concurrency-control
+### [ACCEPT] no-concurrency-control
 Already covered by existing `no-concurrency-primitives`
 - Source: entries/2026/05/29/topic-latch-coupling-postgres.md
 
-### [REJECT] sibling-links-for-scans-not-splits
+### [ACCEPT] sibling-links-for-scans-not-splits
 Already covered by existing `sibling-field-is-structural-only` and `range-scan-follows-sibling-chain`
 - Source: entries/2026/05/29/topic-latch-coupling-postgres.md
 
@@ -3352,11 +3352,11 @@ Already covered by existing `sibling-field-is-structural-only` and `range-scan-f
 All six bugs documented in `fix-plan.md` concern single-writer WAL/fsync crash safety; none involve concurrent access races, illustrating that even without concurrency the WAL protocol has subtle correctness requirements
 - Source: entries/2026/05/29/topic-latch-coupling-postgres.md
 
-### [REJECT] wal-provides-durability-not-isolation
+### [ACCEPT] wal-provides-durability-not-isolation
 Already covered by existing `wal-provides-crash-safety-not-concurrency`
 - Source: entries/2026/05/29/topic-latch-coupling-postgres.md
 
-### [REJECT] dynamo-no-delete-method
+### [ACCEPT] dynamo-no-delete-method
 Already covered by existing `dynamo-no-delete-support`
 - Source: entries/2026/05/29/topic-leaderless-deletion-gap.md
 
@@ -3377,19 +3377,19 @@ The `VersionedValue` dataclass (`dynamo.py:14-18`) carries only `value`, `versio
 When a leaf splits, the new page inherits the old page's `next_sibling` pointer and the old page's `next_sibling` is updated to point to the new page — two field writes during an operation that already rewrites both pages
 - Source: entries/2026/05/29/topic-leaf-sibling-chains.md
 
-### [REJECT] btree-leaf-pages-have-forward-sibling-pointer
+### [ACCEPT] btree-leaf-pages-have-forward-sibling-pointer
 Duplicates existing beliefs `btree-leaf-sibling-chain` and `leaf-wire-format-is-header-sibling-entries`
 - Source: entries/2026/05/29/topic-leaf-sibling-chains.md
 
-### [REJECT] range-scan-walks-sibling-chain
+### [ACCEPT] range-scan-walks-sibling-chain
 Duplicates existing belief `range-scan-follows-sibling-chain`
 - Source: entries/2026/05/29/topic-leaf-sibling-chains.md
 
-### [REJECT] wal-protects-sibling-pointer-consistency
+### [ACCEPT] wal-protects-sibling-pointer-consistency
 Duplicates existing belief `btree-wal-provides-split-atomicity`
 - Source: entries/2026/05/29/topic-leaf-sibling-chains.md
 
-### [REJECT] delete-before-rename-in-bitcask
+### [ACCEPT] delete-before-rename-in-bitcask
 Duplicates existing belief `delete-before-rename-ordering`
 - Source: entries/2026/05/29/topic-leveldb-manifest-pattern.md
 
@@ -3405,7 +3405,7 @@ SSTable iterators (`scan`, `scan_all`) support only forward iteration; there is 
 Compaction uses `heapq`-based k-way merge with `prev_key` deduplication (lsm.py ~line 323), while `range_scan` uses a dict-based materialize-everything approach (lines 275–298) — two fundamentally different merge strategies in the same codebase
 - Source: entries/2026/05/29/topic-leveldb-merging-iterator.md
 
-### [REJECT] lsm-no-snapshot-isolation
+### [ACCEPT] lsm-no-snapshot-isolation
 Covered by existing beliefs `iterate-not-snapshot-isolated` and `range-scan-no-concurrency-protection`
 - Source: entries/2026/05/29/topic-leveldb-merging-iterator.md
 
@@ -3417,15 +3417,15 @@ Covered by existing beliefs `iterate-not-snapshot-isolated` and `range-scan-no-c
 `SSTableWriter.finish()` hardcodes `level=0` (sstable.py:104), matching LevelDB's invariant that flushed memtables always produce L0 files
 - Source: entries/2026/05/29/topic-leveldb-version-set.md
 
-### [REJECT] sstable-metadata-tracks-key-range-and-level
+### [ACCEPT] sstable-metadata-tracks-key-range-and-level
 Field existence is already implied by `sstable-metadata-level-field-unused`; the key range tracking is a minor structural detail
 - Source: entries/2026/05/29/topic-leveldb-version-set.md
 
-### [REJECT] no-manifest-or-durable-version-tracking
+### [ACCEPT] no-manifest-or-durable-version-tracking
 Duplicates existing belief `lsm-no-manifest`
 - Source: entries/2026/05/29/topic-leveldb-version-set.md
 
-### [REJECT] leveled-compaction-promotes-to-next-level
+### [ACCEPT] leveled-compaction-promotes-to-next-level
 Duplicates existing belief `leveled-compaction-promotes-to-l1`
 - Source: entries/2026/05/29/topic-leveldb-version-set.md
 
@@ -3454,11 +3454,11 @@ Event subscriber notification in `EventStore` blocks the `append()` caller — p
 `OP_CHECKPOINT` records are written to the WAL but recovery (`_recover_seq_num`) does not search for them; the caller must supply the checkpoint sequence number externally via `replay(after_seq=)`
 - Source: entries/2026/05/29/topic-log-compaction-vs-persistence.md
 
-### [REJECT] lsm-wal-truncate-is-full-wipe
+### [ACCEPT] lsm-wal-truncate-is-full-wipe
 Duplicated by existing `lsm-wal-truncate-destroys-immediately` and `lsm-wal-truncate-no-arg` which together capture that the LSM WAL truncation unconditionally wipes the file with no arguments
 - Source: entries/2026/05/29/topic-log-compaction-vs-persistence.md
 
-### [REJECT] no-fsync-before-wal-truncation
+### [ACCEPT] no-fsync-before-wal-truncation
 Already covered by existing `btree-wal-truncate-before-data-sync` and `lsm-compaction-deletes-without-fsync-barrier` which document this missing fsync gap in both engines
 - Source: entries/2026/05/29/topic-log-compaction-vs-persistence.md
 
@@ -3470,7 +3470,7 @@ When a `CountingBloomFilter` counter reaches `_max_val` (default 15), it is neve
 `CountingBloomFilter.remove()` raises `ValueError` if any hash position has a zero counter, providing a safety check against removing items that were never added
 - Source: entries/2026/05/29/topic-memtable-bloom-filter-lifecycle.md
 
-### [REJECT] lsm-memtable-has-no-bloom-filter
+### [ACCEPT] lsm-memtable-has-no-bloom-filter
 Duplicated by existing `bloom-filter-not-integrated` which already captures that the bloom filter is not wired into the LSM tree
 - Source: entries/2026/05/29/topic-memtable-bloom-filter-lifecycle.md
 
@@ -3498,11 +3498,11 @@ Garbage collection removes only versions unreachable by any active transaction, 
 `SSIDatabase` adds a `_dependency_graph` and `_predicate_locks` on top of MVCC to detect read-write conflicts (write skew) that basic snapshot isolation permits
 - Source: entries/2026/05/29/topic-mvcc-snapshot-isolation.md
 
-### [REJECT] lsm-compact-no-snapshot-safety
+### [ACCEPT] lsm-compact-no-snapshot-safety
 Duplicated by existing `compact-no-concurrency-safety` which already captures that compaction has no protection for concurrent operations
 - Source: entries/2026/05/29/topic-mvcc-version-lifetime.md
 
-### [REJECT] mvcc-visibility-is-logical-superversion
+### [ACCEPT] mvcc-visibility-is-logical-superversion
 This is an analogy between two systems rather than a testable factual claim about the code — it asserts conceptual equivalence rather than observable behavior
 - Source: entries/2026/05/29/topic-mvcc-version-lifetime.md
 
@@ -3510,7 +3510,7 @@ This is an analogy between two systems rather than a testable factual claim abou
 No file in the repository implements reference counting on SSTable files, Version objects, or any storage-layer snapshot structure
 - Source: entries/2026/05/29/topic-mvcc-version-lifetime.md
 
-### [REJECT] lsm-scan-race-window
+### [ACCEPT] lsm-scan-race-window
 Duplicated by existing `range-scan-no-concurrency-protection` which already documents the lack of concurrency safety for range scans
 - Source: entries/2026/05/29/topic-mvcc-version-lifetime.md
 
@@ -3518,11 +3518,11 @@ Duplicated by existing `range-scan-no-concurrency-protection` which already docu
 No file in the ddia-implementations codebase uses `O_DIRECT`, `os.open()`, or any `os.O_` flags; all I/O goes through Python's buffered `open()` and the kernel page cache
 - Source: entries/2026/05/29/topic-o-direct-and-dio.md
 
-### [REJECT] fsync-is-durability-primitive
+### [ACCEPT] fsync-is-durability-primitive
 Too broad — the role of fsync is already documented by multiple specific existing beliefs including `all-fsync-sites-data-integrity-only`, `fsync-used-only-for-appends`, `batch-mode-defers-fsync`, and per-engine fsync beliefs
 - Source: entries/2026/05/29/topic-o-direct-and-dio.md
 
-### [REJECT] wal-three-sync-modes
+### [ACCEPT] wal-three-sync-modes
 Already covered by existing `batch-mode-defers-fsync` and `none-mode-never-syncs-on-append` which document the individual sync mode behaviors
 - Source: entries/2026/05/29/topic-o-direct-and-dio.md
 
@@ -3551,7 +3551,7 @@ The `max_keys_per_page` parameter bounds entries per node so that serialized out
 `PageManager.free_page` adds a page to the free list without removing the parent's downlink to it, creating a dangling-pointer risk on crash
 - Source: entries/2026/05/29/topic-postgres-nbtree-half-dead-state-machine.md
 
-### [REJECT] btree-no-merge-or-rebalance
+### [ACCEPT] btree-no-merge-or-rebalance
 Duplicate of existing `btree-no-underflow-rebalancing`
 - Source: entries/2026/05/29/topic-postgres-nbtree-half-dead-state-machine.md
 
@@ -3571,19 +3571,19 @@ The repository contains no `pyproject.toml`, `pytest.ini`, `setup.cfg`, or root 
 No `collect_ignore`, `norecursedirs`, `testpaths`, or `python_files` directive exists anywhere in the repo, so `tester_test_*.py` files will be collected by pytest's default `*_test.py` glob
 - Source: entries/2026/05/29/topic-pytest-configuration.md
 
-### [REJECT] gitignore-is-minimal
+### [ACCEPT] gitignore-is-minimal
 Trivial project scaffolding detail; not an architectural invariant a developer needs to know
 - Source: entries/2026/05/29/topic-pytest-configuration.md
 
-### [REJECT] default-pytest-collection-applies
+### [ACCEPT] default-pytest-collection-applies
 Redundant with `no-pytest-config-exists` — the default collection behavior is a direct consequence of the absence of configuration
 - Source: entries/2026/05/29/topic-pytest-configuration.md
 
-### [REJECT] wal-stop-at-first-error
+### [ACCEPT] wal-stop-at-first-error
 Duplicate of existing `wal-crc-mismatch-halts-all-replay` and `corruption-terminates-scan`
 - Source: entries/2026/05/29/topic-record-boundary-recovery.md
 
-### [REJECT] wal-no-resync-capability
+### [ACCEPT] wal-no-resync-capability
 Duplicate of existing `wal-no-resync-after-corruption`
 - Source: entries/2026/05/29/topic-record-boundary-recovery.md
 
@@ -3595,15 +3595,15 @@ The LSM tree's WAL (`lsm.py:14-53`) uses only length-prefixed framing with no ch
 Both Bitcask implementations rotate to new segment files at a configurable size threshold, bounding the maximum data loss from stop-at-first-error to the records trailing the corruption within a single segment
 - Source: entries/2026/05/29/topic-record-boundary-recovery.md
 
-### [REJECT] bitcask-compaction-rename-not-durable
+### [ACCEPT] bitcask-compaction-rename-not-durable
 Duplicate of existing `rename-without-dir-barrier`
 - Source: entries/2026/05/29/topic-rename-durability-guarantees.md
 
-### [REJECT] wal-rotation-same-gap
+### [ACCEPT] wal-rotation-same-gap
 Duplicate of existing `wal-no-directory-fsync`
 - Source: entries/2026/05/29/topic-rename-durability-guarantees.md
 
-### [REJECT] file-content-fsync-is-thorough
+### [ACCEPT] file-content-fsync-is-thorough
 Duplicate of existing `all-fsync-sites-data-integrity-only`
 - Source: entries/2026/05/29/topic-rename-durability-guarantees.md
 
@@ -3620,7 +3620,7 @@ Every accepted remote change in `apply_remote_change` is appended to `_pending`,
 Both `put` and `delete` call `_record_seen` with the local node's ID, ensuring the originating node drops its own changes when they loop back through the ring
 - Source: entries/2026/05/29/topic-ring-topology-propagation.md
 
-### [REJECT] custom-merge-creates-new-identity
+### [ACCEPT] custom-merge-creates-new-identity
 Duplicates existing belief `multi-leader-custom-merge-new-timestamp`
 - Source: entries/2026/05/29/topic-ring-topology-propagation.md
 
@@ -3632,19 +3632,19 @@ Duplicates existing belief `multi-leader-custom-merge-new-timestamp`
 `LSMTree.compact()` in `lsm.py` merges all SSTables into one without level hierarchy, making every compaction implicitly a bottommost-level operation where tombstone removal is always safe
 - Source: entries/2026/05/29/topic-rocksdb-bottommost-compaction.md
 
-### [REJECT] sstable-merge-tombstone-flag-is-caller-controlled
+### [ACCEPT] sstable-merge-tombstone-flag-is-caller-controlled
 Duplicates existing belief `merge-sstables-tombstone-flag-is-caller-controlled`
 - Source: entries/2026/05/29/topic-rocksdb-bottommost-compaction.md
 
-### [REJECT] leveled-compaction-promotes-to-level-1
+### [ACCEPT] leveled-compaction-promotes-to-level-1
 Duplicates existing belief `leveled-compaction-promotes-to-l1`
 - Source: entries/2026/05/29/topic-rocksdb-bottommost-compaction.md
 
-### [REJECT] no-bottommost-level-detection-exists
+### [ACCEPT] no-bottommost-level-detection-exists
 Duplicates existing belief `sstable-compaction-manager-lacks-bottommost-detection`
 - Source: entries/2026/05/29/topic-rocksdb-bottommost-compaction.md
 
-### [REJECT] seq-num-corruption-causes-silent-data-loss
+### [ACCEPT] seq-num-corruption-causes-silent-data-loss
 Duplicates existing belief `seq-num-corruption-is-silent` — the specific truncate/replay failure modes are consequences of the already-documented gap
 - Source: entries/2026/05/29/topic-seq-num-integrity-gap.md
 
@@ -3652,7 +3652,7 @@ Duplicates existing belief `seq-num-corruption-is-silent` — the specific trunc
 Adding `seq_num` to the CRC input requires changing two lines (`_encode_record` and `_read_record`) with no measurable runtime overhead, since CRC32 over 9 extra bytes is negligible
 - Source: entries/2026/05/29/topic-seq-num-integrity-gap.md
 
-### [REJECT] record-length-corruption-is-implicitly-caught
+### [ACCEPT] record-length-corruption-is-implicitly-caught
 Duplicates existing belief `record-length-implicitly-validated`
 - Source: entries/2026/05/29/topic-seq-num-integrity-gap.md
 
@@ -3676,11 +3676,11 @@ Each projection's snapshot is stored under `self.name` in `_store._snapshots`, s
 `save_snapshot` uses `copy.deepcopy` to isolate the stored snapshot from subsequent mutations to `_state`
 - Source: entries/2026/05/29/topic-snapshot-storage-format.md
 
-### [REJECT] event-log-persists-but-snapshots-do-not
+### [ACCEPT] event-log-persists-but-snapshots-do-not
 Redundant given `snapshots-are-in-memory-only` (proposed above) combined with existing belief `es-persistence-uses-jsonl`
 - Source: entries/2026/05/29/topic-snapshot-storage-format.md
 
-### [REJECT] btree-wal-is-redo-only
+### [ACCEPT] btree-wal-is-redo-only
 Duplicates existing belief `btree-wal-is-physical-redo-only`
 - Source: entries/2026/05/29/topic-split-atomicity-via-wal.md
 
@@ -3688,7 +3688,7 @@ Duplicates existing belief `btree-wal-is-physical-redo-only`
 Each `WAL.log_write()` call performs an `fsync`, guaranteeing that WAL entries are durable before any data page writes proceed
 - Source: entries/2026/05/29/topic-split-atomicity-via-wal.md
 
-### [REJECT] btree-page-writes-not-individually-durable
+### [ACCEPT] btree-page-writes-not-individually-durable
 Duplicates existing belief `btree-wal-no-data-fsync` — both capture that `PageManager.write_page()` does not fsync
 - Source: entries/2026/05/29/topic-split-atomicity-via-wal.md
 
@@ -3696,7 +3696,7 @@ Duplicates existing belief `btree-wal-no-data-fsync` — both capture that `Page
 The WAL truncation in `commit()` is the atomic linearization point: before truncation, recovery will redo the transaction; after truncation, the transaction is committed
 - Source: entries/2026/05/29/topic-split-atomicity-via-wal.md
 
-### [REJECT] btree-has-separate-wal-from-standalone
+### [ACCEPT] btree-has-separate-wal-from-standalone
 Duplicates existing belief `two-wal-designs-in-repo`
 - Source: entries/2026/05/29/topic-split-atomicity-via-wal.md
 
@@ -3715,7 +3715,7 @@ Tests universally use `block_size=4` while `SSTableWriter` defaults to 64 and `l
 `lsm.py` (using `sparse_index_interval=16` and `bisect`) and `sstable.py` (using `block_size=64` and manual binary search) implement the same sparse-index-with-block-scan pattern with different defaults, naming, and file format maturity
 - Source: entries/2026/05/29/topic-sstable-block-format.md
 
-### [REJECT] block-size-controls-index-density
+### [ACCEPT] block-size-controls-index-density
 Duplicates existing belief `sstable-sparse-index-every-nth` which already captures that every Nth entry is recorded in the sparse index
 - Source: entries/2026/05/29/topic-sstable-block-format.md
 
@@ -3731,15 +3731,15 @@ No CI pipeline (no `.github/` directory), Makefile, or orchestration script exis
 The `tester_test_*.py` files are generated by the code-expert workflow's tester stage from implementation specs, distinct from hand-written `test_*.py` pytest files
 - Source: entries/2026/05/29/topic-tester-runner-system.md
 
-### [REJECT] tester-output-is-human-readable
+### [ACCEPT] tester-output-is-human-readable
 Duplicates existing belief `tester-files-use-stdout-validation` which already captures the stdout PASSED/FAILED reporting convention
 - Source: entries/2026/05/29/topic-tester-runner-system.md
 
-### [REJECT] tester-tests-are-zero-dependency
+### [ACCEPT] tester-tests-are-zero-dependency
 Duplicates existing belief `tester-files-are-standalone-runnable` which already captures that these files run independently of any test framework
 - Source: entries/2026/05/29/topic-tester-runner-system.md
 
-### [REJECT] assert-abort-is-failure-signal
+### [ACCEPT] assert-abort-is-failure-signal
 Trivial Python runtime behavior — `assert` raising and halting execution is not a codebase-specific invariant
 - Source: entries/2026/05/29/topic-tester-runner-system.md
 
@@ -3755,15 +3755,15 @@ The tester/test split uses at least three naming patterns across directories: `t
 Both `tester_test_*.py` and `test_*.py` naming conventions match pytest's default collection patterns (`test_*.py` and `*_test_*.py`), so `pytest` in any project directory runs the combined suite — **note: this contradicts existing belief `tester-naming-avoids-pytest-discovery`; one should be retracted**
 - Source: entries/2026/05/29/topic-tester-test-pattern.md
 
-### [REJECT] tester-files-are-spec-verification
+### [ACCEPT] tester-files-are-spec-verification
 Duplicates existing beliefs `tester-tests-public-contract` (tester files test only the public API) and `pytest-files-have-broader-coverage` (pytest files cover more including internals)
 - Source: entries/2026/05/29/topic-tester-test-pattern.md
 
-### [REJECT] tester-files-never-import-internals
+### [ACCEPT] tester-files-never-import-internals
 Duplicates existing belief `tester-tests-public-contract` which already captures that tester files use only the public interface
 - Source: entries/2026/05/29/topic-tester-test-pattern.md
 
-### [REJECT] tester-files-run-standalone
+### [ACCEPT] tester-files-run-standalone
 Duplicates existing belief `tester-files-are-standalone-runnable` which already captures the `__main__` block / independent execution
 - Source: entries/2026/05/29/topic-tester-test-pattern.md
 
@@ -3783,7 +3783,7 @@ The `log-structured-hash-table` hint entry format (`!II` = key_size + offset) ha
 `hash-index-storage/bitcask.py`'s `get()` checks `if value == "": return None`, providing a defense-in-depth layer against tombstone leaks that `log-structured-hash-table`'s `get()` lacks
 - Source: entries/2026/05/29/topic-tombstone-handling-in-hint-files.md
 
-### [REJECT] lsht-recovery-path-divergence
+### [ACCEPT] lsht-recovery-path-divergence
 Duplicates existing belief `bitcask-tombstone-handling-asymmetry` which already captures the divergent behavior between hint-based and scan-based recovery paths
 - Source: entries/2026/05/29/topic-tombstone-handling-in-hint-files.md
 
@@ -3795,15 +3795,15 @@ Duplicates existing belief `bitcask-tombstone-handling-asymmetry` which already 
 `log-structured-hash-table/bitcask.py` uses `TOMBSTONE = b"__BITCASK_TOMBSTONE__"` as an in-band sentinel in the value space; storing those exact bytes as a value causes silent data loss on recovery when the record is misinterpreted as a deletion
 - Source: entries/2026/05/29/topic-tombstone-semantics.md
 
-### [REJECT] hash-index-empty-string-is-tombstone
+### [ACCEPT] hash-index-empty-string-is-tombstone
 Duplicates existing belief `bitcask-tombstone-is-empty-string` which already captures that empty-string values are indistinguishable from deletions
 - Source: entries/2026/05/29/topic-tombstone-semantics.md
 
-### [REJECT] hash-index-no-crc
+### [ACCEPT] hash-index-no-crc
 Duplicates existing belief `bitcask-no-checksum-validation` which already captures the absence of integrity checking in `hash-index-storage`
 - Source: entries/2026/05/29/topic-tombstone-semantics.md
 
-### [REJECT] header-flag-zero-value-collision
+### [ACCEPT] header-flag-zero-value-collision
 Design recommendation rather than a testable factual claim about the code — "neither implementation uses X" is better expressed through the existing per-implementation beliefs about their actual tombstone encoding
 - Source: entries/2026/05/29/topic-tombstone-semantics.md
 
@@ -3824,7 +3824,7 @@ In MVCCDatabase, uncommitted transaction writes exist only as in-memory Version 
 Aborting a transaction in both MVCC and SSI implementations sets a status flag (`_aborted` set or status marker); no disk writes are reversed because uncommitted data never reached disk
 - Source: entries/2026/05/29/topic-undo-logging-and-steal-policy.md
 
-### [REJECT] btree-wal-is-redo-only
+### [ACCEPT] btree-wal-is-redo-only
 Duplicates existing belief `btree-wal-is-physical-redo-only`
 - Source: entries/2026/05/29/topic-undo-logging-and-steal-policy.md
 
@@ -3832,15 +3832,15 @@ Duplicates existing belief `btree-wal-is-physical-redo-only`
 `PageManager._write_meta` calls `flush()` but never `os.fsync()`, so metadata updates to page 0 are not guaranteed durable even when they appear to have been written; the `sync()` method does call `os.fsync()` but nothing in the allocation path invokes it
 - Source: entries/2026/05/29/topic-wal-atomicity-gap.md
 
-### [REJECT] allocate-page-bypasses-wal
+### [ACCEPT] allocate-page-bypasses-wal
 Duplicates existing beliefs `btree-allocate-page-outside-wal` and `btree-metadata-bypasses-wal`
 - Source: entries/2026/05/29/topic-wal-atomicity-gap.md
 
-### [REJECT] wal-is-redo-only-for-page-data
+### [ACCEPT] wal-is-redo-only-for-page-data
 Duplicates existing beliefs `btree-wal-is-physical-redo-only` and `wal-protects-data-not-metadata`
 - Source: entries/2026/05/29/topic-wal-atomicity-gap.md
 
-### [REJECT] free-page-same-vulnerability
+### [ACCEPT] free-page-same-vulnerability
 Duplicates existing belief `btree-free-page-bypasses-wal`
 - Source: entries/2026/05/29/topic-wal-atomicity-gap.md
 
@@ -3848,27 +3848,27 @@ Duplicates existing belief `btree-free-page-bypasses-wal`
 The `replay()` docstring claims it "skips uncommitted batches" (describing the DDIA concept), but the inline comments and implementation show it returns all PUT/DELETE records regardless of COMMIT presence; the docstring is aspirational, the comments are accurate
 - Source: entries/2026/05/29/topic-wal-batch-atomicity-gap.md
 
-### [REJECT] iterate-enables-correct-replay
+### [ACCEPT] iterate-enables-correct-replay
 Duplicates existing belief `wal-iterate-preserves-all-ops`
 - Source: entries/2026/05/29/topic-wal-batch-atomicity-gap.md
 
-### [REJECT] batch-atomicity-is-fsync-level-only
+### [ACCEPT] batch-atomicity-is-fsync-level-only
 Duplicates existing belief `wal-batch-relies-on-practical-atomicity`
 - Source: entries/2026/05/29/topic-wal-batch-atomicity-gap.md
 
-### [REJECT] wal-tail-corruption-silent-truncation
+### [ACCEPT] wal-tail-corruption-silent-truncation
 Duplicates existing beliefs `wal-partial-read-is-eof` and `wal-corruption-returns-valid-prefix`
 - Source: entries/2026/05/29/topic-wal-corruption-models.md
 
-### [REJECT] wal-mid-corruption-stops-replay
+### [ACCEPT] wal-mid-corruption-stops-replay
 Duplicates existing beliefs `wal-crc-mismatch-halts-all-replay` and `wal-no-resync-after-corruption`
 - Source: entries/2026/05/29/topic-wal-corruption-models.md
 
-### [REJECT] wal-crc-excludes-length-and-seqnum
+### [ACCEPT] wal-crc-excludes-length-and-seqnum
 Duplicates existing beliefs `wal-crc-does-not-cover-seqnum` and `all-three-implementations-use-payload-only-crc`
 - Source: entries/2026/05/29/topic-wal-corruption-models.md
 
-### [REJECT] bitcask-has-no-integrity-checks
+### [ACCEPT] bitcask-has-no-integrity-checks
 Contradicts existing beliefs `bitcask-crc-covers-payload-only` and `bitcask-crc32-raises-corruption-error` which indicate Bitcask does have CRC checksums
 - Source: entries/2026/05/29/topic-wal-corruption-models.md
 
@@ -3876,11 +3876,11 @@ Contradicts existing beliefs `bitcask-crc-covers-payload-only` and `bitcask-crc3
 The LSM tree's WAL (`lsm.py:13-63`) uses length-prefixed records with no CRC, relying solely on short-read detection for crash recovery; distinct from the separate `lsm-wal-has-no-fsync` issue
 - Source: entries/2026/05/29/topic-wal-corruption-models.md
 
-### [REJECT] wal-seq-num-monotonic
+### [ACCEPT] wal-seq-num-monotonic
 Duplicates existing belief `wal-seq-nums-strictly-monotonic`
 - Source: entries/2026/05/29/topic-wal-crash-recovery-semantics.md
 
-### [REJECT] wal-crc-guards-replay
+### [ACCEPT] wal-crc-guards-replay
 Duplicates existing belief `wal-crc-mismatch-halts-all-replay`
 - Source: entries/2026/05/29/topic-wal-crash-recovery-semantics.md
 
@@ -3888,11 +3888,11 @@ Duplicates existing belief `wal-crc-mismatch-halts-all-replay`
 `_open_latest` opens WAL files in `"ab"` (append-binary) mode, making it impossible for post-crash writes to overwrite pre-crash records; this is the bridge between recovery and forward progress
 - Source: entries/2026/05/29/topic-wal-crash-recovery-semantics.md
 
-### [REJECT] wal-batch-commit-always-fsynced
+### [ACCEPT] wal-batch-commit-always-fsynced
 Duplicates existing belief `wal-batch-always-fsyncs`
 - Source: entries/2026/05/29/topic-wal-crash-recovery-semantics.md
 
-### [REJECT] wal-file-ordering-invariant
+### [ACCEPT] wal-file-ordering-invariant
 Duplicates existing beliefs `wal-files-sorted-lexicographic` and `wal-segment-naming-zero-padded`
 - Source: entries/2026/05/29/topic-wal-crash-recovery-semantics.md
 
@@ -3909,11 +3909,11 @@ All three storage implementations (WAL, hash-index Bitcask, log-structured Bitca
 Bitcask compaction output is itself subject to `max_file_size` rotation, so smaller size limits produce more post-compaction files — feeding back into recovery cost.
 - Source: entries/2026/05/29/topic-wal-segment-sizing-tradeoffs.md
 
-### [REJECT] auto-compact-triggers-on-frozen-count
+### [ACCEPT] auto-compact-triggers-on-frozen-count
 Duplicates existing belief `bitcask-auto-compact-threshold`.
 - Source: entries/2026/05/29/topic-wal-segment-sizing-tradeoffs.md
 
-### [REJECT] hint-files-skip-value-scanning
+### [ACCEPT] hint-files-skip-value-scanning
 Duplicates existing belief `bitcask-hint-files-skip-scan`.
 - Source: entries/2026/05/29/topic-wal-segment-sizing-tradeoffs.md
 
@@ -3921,23 +3921,23 @@ Duplicates existing belief `bitcask-hint-files-skip-scan`.
 `WriteAheadLog` defaults to `sync_mode="sync"`, calling `flush()` + `os.fsync()` after every single `append` call — the safest and slowest mode.
 - Source: entries/2026/05/29/topic-wal-sync-modes.md
 
-### [REJECT] wal-batch-force-sync
+### [ACCEPT] wal-batch-force-sync
 Duplicates existing beliefs `force-true-bypasses-sync-mode` and `wal-batch-always-fsyncs`.
 - Source: entries/2026/05/29/topic-wal-sync-modes.md
 
-### [REJECT] wal-batch-counter-reset
+### [ACCEPT] wal-batch-counter-reset
 Misleading given the known bug documented in `batch-write-count-not-reset-on-forced-sync` — the counter does NOT always reflect actual unsynced writes after forced syncs.
 - Source: entries/2026/05/29/topic-wal-sync-modes.md
 
-### [REJECT] wal-none-mode-no-sync
+### [ACCEPT] wal-none-mode-no-sync
 Duplicates existing belief `none-mode-never-syncs-on-append`.
 - Source: entries/2026/05/29/topic-wal-sync-modes.md
 
-### [REJECT] wal-crc-detects-torn-writes
+### [ACCEPT] wal-crc-detects-torn-writes
 Duplicates existing belief `crc-detects-not-prevents-data-loss`.
 - Source: entries/2026/05/29/topic-wal-sync-modes.md
 
-### [REJECT] wal-write-count-not-reset-on-forced-sync
+### [ACCEPT] wal-write-count-not-reset-on-forced-sync
 Duplicates existing belief `batch-write-count-not-reset-on-forced-sync`.
 - Source: entries/2026/05/29/topic-write-count-reset-semantics.md
 
@@ -3945,7 +3945,7 @@ Duplicates existing belief `batch-write-count-not-reset-on-forced-sync`.
 The `_do_sync` method's `if`/`elif` structure means forced syncs in batch mode skip all counter logic entirely — the counter is neither incremented nor reset, which is the structural root cause of the premature batch-sync bug.
 - Source: entries/2026/05/29/topic-write-count-reset-semantics.md
 
-### [REJECT] wal-rotate-bypasses-do-sync
+### [ACCEPT] wal-rotate-bypasses-do-sync
 Overlaps with existing belief `rotation-always-fsyncs`; the counter-reset implication is a second-order effect of the broader issue already captured in `batch-write-count-not-reset-on-forced-sync`.
 - Source: entries/2026/05/29/topic-write-count-reset-semantics.md
 
@@ -3973,7 +3973,7 @@ A derived system added with `catch_up=True` receives all historical CDC events t
 The unbundled database's WAL supports optional file-backed persistence via a `.jsonl` file path, and a new `WriteAheadLog` instance recovers entries from that file on init.
 - Source: entries/2026/05/29/unbundled-database-test_unbundled_database.md
 
-### [REJECT] unbundled-db-flush-is-consistency-boundary
+### [ACCEPT] unbundled-db-flush-is-consistency-boundary
 Duplicates `unbundled-db-flush-required-for-derived` proposed above from the companion test file.
 - Source: entries/2026/05/29/unbundled-database-tester_test_unbundled_database.md
 
@@ -3981,11 +3981,11 @@ Duplicates `unbundled-db-flush-required-for-derived` proposed above from the com
 Every update and delete CDC event includes the previous value (`old_value`), enabling derived systems to undo prior state; inserts have `old_value=None`.
 - Source: entries/2026/05/29/unbundled-database-tester_test_unbundled_database.md
 
-### [REJECT] unbundled-db-rebuild-is-idempotent
+### [ACCEPT] unbundled-db-rebuild-is-idempotent
 Duplicates `unbundled-db-rebuild-equals-live` proposed above from the companion test file.
 - Source: entries/2026/05/29/unbundled-database-tester_test_unbundled_database.md
 
-### [REJECT] unbundled-db-catch-up-replays-full-log
+### [ACCEPT] unbundled-db-catch-up-replays-full-log
 Duplicates `unbundled-db-catch-up-replays-history` proposed above from the companion test file.
 - Source: entries/2026/05/29/unbundled-database-tester_test_unbundled_database.md
 
@@ -4018,7 +4018,7 @@ The unbundled database WAL assigns LSNs starting from 1 (not 0), with `latest_ls
 `WriteAheadLog` accepts any string as `sync_mode` without validation; values other than `"sync"` and `"batch"` silently disable all fsync.
 - Source: entries/2026/05/29/write-ahead-log-wal-_do_sync.md
 
-### [REJECT] wal-force-sync-skips-batch-counter-reset
+### [ACCEPT] wal-force-sync-skips-batch-counter-reset
 Duplicates existing belief `batch-write-count-not-reset-on-forced-sync`.
 - Source: entries/2026/05/29/write-ahead-log-wal-_do_sync.md
 
@@ -4054,15 +4054,15 @@ After `_maybe_rotate` returns, `self._fd` is guaranteed non-None and open for wr
 A WAL file whose size equals `_max_file_size` triggers rotation in `_open_latest`; only files strictly smaller are reused.
 - Source: entries/2026/05/29/write-ahead-log-wal-_open_latest.md
 
-### [REJECT] wal-open-latest-postcondition
+### [ACCEPT] wal-open-latest-postcondition
 Substantially overlaps with `rotation-preserves-fd-invariant`; same postcondition pattern for a closely related method.
 - Source: entries/2026/05/29/write-ahead-log-wal-_open_latest.md
 
-### [REJECT] wal-open-latest-two-callers
+### [ACCEPT] wal-open-latest-two-callers
 Call site enumeration is unstable and more trivia than invariant; not something that would break if violated.
 - Source: entries/2026/05/29/write-ahead-log-wal-_open_latest.md
 
-### [REJECT] wal-append-sequence-gap-free
+### [ACCEPT] wal-append-sequence-gap-free
 Duplicates existing belief `wal-seq-nums-strictly-monotonic`.
 - Source: entries/2026/05/29/write-ahead-log-wal-append.md
 
@@ -4070,7 +4070,7 @@ Duplicates existing belief `wal-seq-nums-strictly-monotonic`.
 Individual `append` calls are not wrapped in any transaction boundary; for atomic multi-operation writes, `append_batch` must be used instead.
 - Source: entries/2026/05/29/write-ahead-log-wal-append.md
 
-### [REJECT] wal-sync-mode-durability
+### [ACCEPT] wal-sync-mode-durability
 Covered by existing beliefs `wal-sync-mode-survives-crash` and `batch-mode-defers-fsync`.
 - Source: entries/2026/05/29/write-ahead-log-wal-append.md
 
@@ -4078,16 +4078,16 @@ Covered by existing beliefs `wal-sync-mode-survives-crash` and `batch-mode-defer
 `append` performs no validation of `op_type` against `OP_BYTES`; invalid operation names raise `KeyError` from the dictionary lookup, not a descriptive error.
 - Source: entries/2026/05/29/write-ahead-log-wal-append.md
 
-### [REJECT] wal-rotation-on-size
+### [ACCEPT] wal-rotation-on-size
 The core claim (WAL rotates based on file size) is obvious from the code structure; the more interesting ordering invariant is captured by `wal-rotation-is-post-write`.
 - Source: entries/2026/05/29/write-ahead-log-wal-append.md
 
 
-### [REJECT] checkpoint-force-syncs
+### [ACCEPT] checkpoint-force-syncs
 Duplicate of existing `force-true-bypasses-sync-mode` which already captures that `force=True` unconditionally syncs regardless of sync mode setting
 - Source: entries/2026/05/29/write-ahead-log-wal-checkpoint.md
 
-### [REJECT] checkpoint-shares-sequence-space
+### [ACCEPT] checkpoint-shares-sequence-space
 Duplicate of existing `wal-checkpoint-consumes-sequence` which already captures that checkpoint records consume from the shared monotonic sequence counter
 - Source: entries/2026/05/29/write-ahead-log-wal-checkpoint.md
 
@@ -4113,7 +4113,7 @@ Checkpoint records are encoded with zero-length key and value fields; the record
 `_resolve_record` uses a two-pass algorithm: pass 1 consumes all writer fields from the buffer in wire order (decoding or skipping each), pass 2 assembles the result dict in reader field order from decoded values and defaults
 - Source: entries/2026/05/29/avro-serializer-avro_serializer-_resolve_record.md
 
-### [REJECT] resolve-record-default-fill
+### [ACCEPT] resolve-record-default-fill
 Duplicates existing belief `avro-missing-reader-field-requires-default`
 - Source: entries/2026/05/29/avro-serializer-avro_serializer-_resolve_record.md
 
@@ -4133,19 +4133,19 @@ Default values in `_resolve_record` are inserted by reference without deep copyi
 
 ## Entry: avro-serializer-test_avro.md
 
-### [REJECT] avro-no-field-names-on-wire
+### [ACCEPT] avro-no-field-names-on-wire
 Duplicates existing belief `avro-binary-no-field-names`
 - Source: entries/2026/05/29/avro-serializer-test_avro.md
 
-### [REJECT] avro-backward-compat-requires-defaults
+### [ACCEPT] avro-backward-compat-requires-defaults
 Duplicates existing belief `avro-missing-reader-field-requires-default`
 - Source: entries/2026/05/29/avro-serializer-test_avro.md
 
-### [REJECT] avro-decoder-two-schema-resolution
+### [ACCEPT] avro-decoder-two-schema-resolution
 Duplicates existing belief `avro-writer-reader-dual-schema-resolution`
 - Source: entries/2026/05/29/avro-serializer-test_avro.md
 
-### [REJECT] avro-type-promotion-widening-only
+### [ACCEPT] avro-type-promotion-widening-only
 Duplicates existing belief `avro-promotions-one-directional`
 - Source: entries/2026/05/29/avro-serializer-test_avro.md
 
@@ -4157,11 +4157,11 @@ When a writer sends an enum symbol not in the reader's symbol list, the reader f
 
 ## Entry: avro-serializer-test_avro_serializer.md
 
-### [REJECT] avro-decoder-dual-schema
+### [ACCEPT] avro-decoder-dual-schema
 Duplicates existing belief `avro-writer-reader-dual-schema-resolution`
 - Source: entries/2026/05/29/avro-serializer-test_avro_serializer.md
 
-### [REJECT] avro-binary-no-field-names
+### [ACCEPT] avro-binary-no-field-names
 Already exists as an accepted belief
 - Source: entries/2026/05/29/avro-serializer-test_avro_serializer.md
 
@@ -4185,7 +4185,7 @@ The Avro `int` type enforces 32-bit signed integer range ([-2^31, 2^31-1]) at en
 PageManager calls `flush()` on every `write_page` and `_write_meta` call but only calls `os.fsync()` in `sync()` and `close()`, so individual page writes are not crash-durable without the WAL layer
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-PageManager.md
 
-### [REJECT] page-manager-free-list-is-intrusive
+### [ACCEPT] page-manager-free-list-is-intrusive
 Duplicates existing belief `btree-free-list-intrusive`
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-PageManager.md
 
@@ -4193,7 +4193,7 @@ Duplicates existing belief `btree-free-list-intrusive`
 The page size is not persisted in the data file; reopening with a different `page_size` value silently corrupts all page reads with no error or detection mechanism
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-PageManager.md
 
-### [REJECT] page-manager-allocate-prefers-free-list
+### [ACCEPT] page-manager-allocate-prefers-free-list
 Duplicates existing belief `allocate-page-prefers-free-list`
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-PageManager.md
 
@@ -4209,15 +4209,15 @@ Page 0 is always the metadata page and must never be written directly — only t
 
 ## Entry: b-tree-storage-engine-btree-_checksum.md
 
-### [REJECT] wal-checksum-is-crc32
+### [ACCEPT] wal-checksum-is-crc32
 Already covered by existing beliefs including `btree-wal-uses-trailer-crc` and `all-three-implementations-use-payload-only-crc`
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-_checksum.md
 
-### [REJECT] wal-checksum-covers-data-only
+### [ACCEPT] wal-checksum-covers-data-only
 Duplicates existing belief `btree-wal-checksum-excludes-page-num`
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-_checksum.md
 
-### [REJECT] wal-recovery-skips-bad-checksum
+### [ACCEPT] wal-recovery-skips-bad-checksum
 Duplicates existing belief `btree-crc32-skips-corrupt-entries`
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-_checksum.md
 
@@ -4226,23 +4226,23 @@ The `& 0xFFFFFFFF` mask in `WAL._checksum` is a Python 2 portability idiom — P
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-_checksum.md
 
 
-### [REJECT] internal-node-children-keys-invariant
+### [ACCEPT] internal-node-children-keys-invariant
 Duplicates existing `internal-node-children-invariant`
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-_deserialize_internal.md
 
-### [REJECT] internal-deserialize-no-type-check
+### [ACCEPT] internal-deserialize-no-type-check
 Covered by existing `btree-deserialize-no-validation` which already states neither deserializer validates page type
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-_deserialize_internal.md
 
-### [REJECT] internal-node-binary-layout
+### [ACCEPT] internal-node-binary-layout
 Duplicates existing `internal-page-binary-layout`
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-_deserialize_internal.md
 
-### [REJECT] deserialize-internal-pure-function
+### [ACCEPT] deserialize-internal-pure-function
 Too trivial — a deserialization function having no side effects is expected, not an invariant that would break things if violated
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-_deserialize_internal.md
 
-### [REJECT] internal-keys-utf8-assumption
+### [ACCEPT] internal-keys-utf8-assumption
 Covered by existing `btree-keys-decoded-as-utf8` which already captures that keys are decoded as UTF-8
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-_deserialize_internal.md
 
@@ -4250,11 +4250,11 @@ Covered by existing `btree-keys-decoded-as-utf8` which already captures that key
 `_search` uses `bisect_left` at leaf nodes for exact-match lookup and `bisect_right` at internal nodes for child routing; this asymmetry matches the split convention where the median key is copied up and retained as the first key of the right leaf.
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-_search.md
 
-### [REJECT] btree-search-reads-exactly-height-pages
+### [ACCEPT] btree-search-reads-exactly-height-pages
 Covered by existing `btree-lookup-reads-bounded-by-height`
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-_search.md
 
-### [REJECT] btree-search-is-read-only
+### [ACCEPT] btree-search-is-read-only
 Too trivial — a search/get function being read-only is the expected default
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-_search.md
 
@@ -4266,7 +4266,7 @@ Too trivial — a search/get function being read-only is the expected default
 The B-tree metadata (root, height, total_keys, next_free, free_head) is always stored at file offset 0 in page 0, which is reserved as the superblock and occupies exactly `page_size` bytes.
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-_write_meta.md
 
-### [REJECT] meta-flush-without-fsync
+### [ACCEPT] meta-flush-without-fsync
 Duplicates existing `write-meta-no-fsync`
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-_write_meta.md
 
@@ -4278,7 +4278,7 @@ The metadata payload is exactly 20 bytes (5 big-endian uint32s packed as `'>5I'`
 During initial file creation, `PageManager.__init__` writes metadata and the root leaf page directly via `_write_meta` without WAL protection; acceptable because no user data exists yet to lose.
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-_write_meta.md
 
-### [REJECT] allocate-free-bypass-wal
+### [ACCEPT] allocate-free-bypass-wal
 Covered by existing `btree-allocate-page-outside-wal` and `btree-free-page-bypasses-wal`
 - Source: entries/2026/05/29/b-tree-storage-engine-btree-_write_meta.md
 
@@ -4298,7 +4298,7 @@ Pipeline stages produce and consume lists of `(key, value)` tuples, where key is
 `Sort` with `memory_limit` produces the same output ordering as an in-memory sort — the external merge-sort is a pure implementation optimization with no semantic difference.
 - Source: entries/2026/05/29/batch-word-count-test_pipeline.md
 
-### [REJECT] pipeline-stats-tracks-all-stages
+### [ACCEPT] pipeline-stats-tracks-all-stages
 Minor feature detail rather than an invariant; violating it would not break pipeline correctness
 - Source: entries/2026/05/29/batch-word-count-test_pipeline.md
 
@@ -4314,7 +4314,7 @@ After `BloomFilter.add(x)`, `x in filter` always returns `True`; the data struct
 Bits in `BloomFilter` are only ever set, never cleared; this monotonic property makes the structure append-only, enables union via bitwise OR, and prevents deletion without a counting layer.
 - Source: entries/2026/05/29/bloom-filter-bloom_filter-BloomFilter.md
 
-### [REJECT] bloom-filter-count-is-insertions
+### [ACCEPT] bloom-filter-count-is-insertions
 Covered in spirit by existing `cbf-count-tracks-calls-not-cardinality` — the base `BloomFilter` shares identical `_count` behavior since `CountingBloomFilter` inherits it
 - Source: entries/2026/05/29/bloom-filter-bloom_filter-BloomFilter.md
 
@@ -4323,11 +4323,11 @@ Covered in spirit by existing `cbf-count-tracks-calls-not-cardinality` — the b
 - Source: entries/2026/05/29/bloom-filter-bloom_filter-BloomFilter.md
 
 
-### [REJECT] bloom-double-hashing-two-from-one
+### [ACCEPT] bloom-double-hashing-two-from-one
 Duplicate of existing `bloom-double-hashing` which already captures the Kirsch–Mitzenmacher double hashing scheme
 - Source: entries/2026/05/29/bloom-filter-bloom_filter-_hashes.md
 
-### [REJECT] bloom-hashes-pure-deterministic
+### [ACCEPT] bloom-hashes-pure-deterministic
 Subsumed by `bloom-filter-deterministic-hashing` (proposed below), which captures the same determinism property at the filter level
 - Source: entries/2026/05/29/bloom-filter-bloom_filter-_hashes.md
 
@@ -4347,11 +4347,11 @@ The `k` positions returned by `_hashes` are not guaranteed distinct — duplicat
 `CountingBloomFilter.remove()` validates all hash positions have non-zero counters in a first pass before decrementing any in a second pass, preventing partial state corruption when removing an absent item
 - Source: entries/2026/05/29/bloom-filter-bloom_filter-remove.md
 
-### [REJECT] cbf-saturated-counters-never-decremented
+### [ACCEPT] cbf-saturated-counters-never-decremented
 Duplicate of existing `cbf-saturated-counters-never-decrement`
 - Source: entries/2026/05/29/bloom-filter-bloom_filter-remove.md
 
-### [REJECT] cbf-remove-false-positive-acceptance
+### [ACCEPT] cbf-remove-false-positive-acceptance
 Duplicate of existing `cbf-remove-false-accept`
 - Source: entries/2026/05/29/bloom-filter-bloom_filter-remove.md
 
@@ -4359,15 +4359,15 @@ Duplicate of existing `cbf-remove-false-accept`
 Unlike standard Bloom filters which never have false negatives, `CountingBloomFilter.remove()` can cause false negatives when two items share a hash position — removing one decrements the shared counter, potentially making the other appear absent
 - Source: entries/2026/05/29/bloom-filter-bloom_filter-remove.md
 
-### [REJECT] bloom-filter-double-hashing
+### [ACCEPT] bloom-filter-double-hashing
 Duplicate of existing `bloom-double-hashing`
 - Source: entries/2026/05/29/bloom-filter-bloom_filter.md
 
-### [REJECT] bloom-filter-counting-saturation-leak
+### [ACCEPT] bloom-filter-counting-saturation-leak
 Duplicate of existing `cbf-saturated-counters-are-permanent`
 - Source: entries/2026/05/29/bloom-filter-bloom_filter.md
 
-### [REJECT] bloom-filter-scalable-fpr-geometric
+### [ACCEPT] bloom-filter-scalable-fpr-geometric
 Duplicate of existing `scalable-bloom-tightens-fpr` which already captures the per-slice geometric FPR tightening; the convergence formula `p / (1 - ratio)` is a mathematical consequence
 - Source: entries/2026/05/29/bloom-filter-bloom_filter.md
 
@@ -4375,7 +4375,7 @@ Duplicate of existing `scalable-bloom-tightens-fpr` which already captures the p
 `BloomFilter.union()` sets `_count = self._count + other._count`, which overstates distinct items when filters share elements; `estimate_count()` from bit density is more accurate for unioned filters
 - Source: entries/2026/05/29/bloom-filter-bloom_filter.md
 
-### [REJECT] bloom-filter-remove-is-two-pass
+### [ACCEPT] bloom-filter-remove-is-two-pass
 Duplicate of `cbf-remove-two-pass-atomicity` (proposed above)
 - Source: entries/2026/05/29/bloom-filter-bloom_filter.md
 
@@ -4428,7 +4428,7 @@ The `byzantine_mode` field is set in `__init__` and never modified during protoc
 A `(view, seq)` pair can transition to "prepared" at most once per node, enforced by the `prepared_requests` set guard at the top of `_check_prepared`.
 - Source: entries/2026/05/29/byzantine-fault-tolerance-pbft-_check_prepared.md
 
-### [REJECT] pbft-prepare-digest-match-required
+### [ACCEPT] pbft-prepare-digest-match-required
 Duplicates existing belief `wrong-digest-cannot-reach-quorum` which already captures that mismatched digests are silently dropped and cannot contribute to quorum.
 - Source: entries/2026/05/29/byzantine-fault-tolerance-pbft-_check_prepared.md
 
@@ -4512,11 +4512,11 @@ Every `ChangeEvent` follows a strict before/after convention: INSERT has `before
 A CDC consumer's `_position` tracks the *next* sequence number to read (not the last one read); after processing, it advances to `last_event.sequence_number + 1`.
 - Source: entries/2026/05/29/change-data-capture-cdc.md
 
-### [REJECT] crdt-tests-cover-20-scenarios
+### [ACCEPT] crdt-tests-cover-20-scenarios
 Test count is an unstable implementation detail that changes as tests are added or removed; not a durable architectural claim.
 - Source: entries/2026/05/29/conflict-free-replicated-data-types-test_crdts.md
 
-### [REJECT] lww-tiebreak-by-replica-id
+### [ACCEPT] lww-tiebreak-by-replica-id
 Duplicates existing belief `lww-tiebreak-is-deterministic` which already captures that `LWWRegister.merge` uses `(timestamp, writer_id)` tuple comparison for total ordering.
 - Source: entries/2026/05/29/conflict-free-replicated-data-types-test_crdts.md
 
@@ -4549,15 +4549,15 @@ All four CRDT types implement `__eq__` to compare semantic state (not object ide
 Key lookup via `get_node` is O(log V) where V is total virtual nodes, using `bisect` on the sorted position list; node addition is O(V) per vnode due to `list.insert`.
 - Source: entries/2026/05/29/consistent-hashing-consistent_hashing-ConsistentHashRing.md
 
-### [REJECT] consistent-hash-ring-vnode-count-scaled-by-weight
+### [ACCEPT] consistent-hash-ring-vnode-count-scaled-by-weight
 Duplicates existing belief `ch-vnode-count-is-weighted`.
 - Source: entries/2026/05/29/consistent-hashing-consistent_hashing-ConsistentHashRing.md
 
-### [REJECT] consistent-hash-ring-get-nodes-skips-same-physical
+### [ACCEPT] consistent-hash-ring-get-nodes-skips-same-physical
 Duplicates existing belief `ch-preference-list-skips-duplicates`.
 - Source: entries/2026/05/29/consistent-hashing-consistent_hashing-ConsistentHashRing.md
 
-### [REJECT] consistent-hash-ring-transfer-map-approximate
+### [ACCEPT] consistent-hash-ring-transfer-map-approximate
 Duplicates existing belief `ch-transfer-maps-are-descriptive`.
 - Source: entries/2026/05/29/consistent-hashing-consistent_hashing-ConsistentHashRing.md
 
@@ -4589,7 +4589,7 @@ Adding a node that already exists silently returns an empty transfer map and doe
 `get_nodes()` raises `ValueError` rather than silently under-replicating when `replication_factor` exceeds the number of physical nodes on the ring.
 - Source: entries/2026/05/29/consistent-hashing-test_consistent_hashing.md
 
-### [REJECT] consistent-hash-membership-change-returns-transfer-map
+### [ACCEPT] consistent-hash-membership-change-returns-transfer-map
 Duplicates existing belief `ch-transfer-maps-are-descriptive`.
 - Source: entries/2026/05/29/consistent-hashing-test_consistent_hashing.md
 
@@ -4597,7 +4597,7 @@ Duplicates existing belief `ch-transfer-maps-are-descriptive`.
 Adding an Nth node to the ring moves approximately 1/N of keys, not a full reshuffle — the defining property that makes consistent hashing useful for dynamic cluster membership.
 - Source: entries/2026/05/29/consistent-hashing-test_consistent_hashing.md
 
-### [REJECT] live-projection-synchronous-dispatch
+### [ACCEPT] live-projection-synchronous-dispatch
 Duplicates existing beliefs `live-projection-is-synchronous` and `subscriber-dispatch-is-synchronous`.
 - Source: entries/2026/05/29/event-sourcing-store-event_store-LiveProjection.md
 
@@ -4633,19 +4633,19 @@ Disk persistence via `_persist_event` happens before subscriber notification: an
 The event is appended to `self._events` (in-memory) before `_persist_event` writes it to disk; a disk write failure leaves the in-memory store ahead of the on-disk log with no rollback.
 - Source: entries/2026/05/29/event-sourcing-store-event_store-_persist_event.md
 
-### [REJECT] batch-persist-non-atomic
+### [ACCEPT] batch-persist-non-atomic
 Duplicates existing belief `batch-append-not-crash-safe`.
 - Source: entries/2026/05/29/event-sourcing-store-event_store-_persist_event.md
 
-### [REJECT] append-batch-defers-subscribers
+### [ACCEPT] append-batch-defers-subscribers
 Duplicates existing belief `batch-notifies-after-all-stored`.
 - Source: entries/2026/05/29/event-sourcing-store-event_store-append_batch.md
 
-### [REJECT] append-batch-not-transactional
+### [ACCEPT] append-batch-not-transactional
 Duplicates existing belief `batch-append-not-crash-safe`.
 - Source: entries/2026/05/29/event-sourcing-store-event_store-append_batch.md
 
-### [REJECT] event-id-is-global-sequence
+### [ACCEPT] event-id-is-global-sequence
 Duplicates existing belief `event-ids-are-1-based-sequential`.
 - Source: entries/2026/05/29/event-sourcing-store-event_store-append_batch.md
 
@@ -4682,7 +4682,7 @@ The snapshot interval counter increments for every event processed during `catch
 The fencing token counter is global across all locks, not per-lock; tokens issued for different locks are comparable and strictly ordered by acquisition time
 - Source: entries/2026/05/29/fencing-tokens-test_fencing_tokens.md
 
-### [REJECT] fenced-server-rejects-by-high-water-mark
+### [ACCEPT] fenced-server-rejects-by-high-water-mark
 Duplicates existing belief `fencing-rejects-stale-writes`
 - Source: entries/2026/05/29/fencing-tokens-test_fencing_tokens.md
 
@@ -4690,11 +4690,11 @@ Duplicates existing belief `fencing-rejects-stale-writes`
 Token high-water marks on `FencedResourceServer` are scoped per resource identifier, so a lower token can succeed on a different resource than the one that saw a higher token
 - Source: entries/2026/05/29/fencing-tokens-test_fencing_tokens.md
 
-### [REJECT] lock-renewal-does-not-increment-counter
+### [ACCEPT] lock-renewal-does-not-increment-counter
 Duplicates existing belief `renew-preserves-token-number`
 - Source: entries/2026/05/29/fencing-tokens-test_fencing_tokens.md
 
-### [REJECT] fencing-errors-use-return-values-not-exceptions
+### [ACCEPT] fencing-errors-use-return-values-not-exceptions
 Duplicates existing belief `fencing-no-exceptions-on-denial`
 - Source: entries/2026/05/29/fencing-tokens-test_fencing_tokens.md
 
@@ -4702,11 +4702,11 @@ Duplicates existing belief `fencing-no-exceptions-on-denial`
 Once a node's local status is `dead`, `receive_gossip` will never change it back to `alive`, even if the remote has a higher heartbeat counter — preventing flapping after failure declaration
 - Source: entries/2026/05/29/gossip-protocol-gossip_protocol-receive_gossip.md
 
-### [REJECT] receive-gossip-skips-unknown-dead-nodes
+### [ACCEPT] receive-gossip-skips-unknown-dead-nodes
 Duplicates existing belief `gossip-dead-nodes-filtered-on-receive`
 - Source: entries/2026/05/29/gossip-protocol-gossip_protocol-receive_gossip.md
 
-### [REJECT] receive-gossip-equal-counter-death-acceptance
+### [ACCEPT] receive-gossip-equal-counter-death-acceptance
 Duplicates existing belief `gossip-merge-uses-heartbeat-monotonicity` which already captures the equal-counter death exception
 - Source: entries/2026/05/29/gossip-protocol-gossip_protocol-receive_gossip.md
 
@@ -4718,11 +4718,11 @@ Duplicates existing belief `gossip-merge-uses-heartbeat-monotonicity` which alre
 Unlike `detect_failures` which skips the node's own ID, `receive_gossip` has no self-exclusion guard — if the remote gossip contains an entry for the receiver, it is merged normally
 - Source: entries/2026/05/29/gossip-protocol-gossip_protocol-receive_gossip.md
 
-### [REJECT] gossip-failure-detection-is-three-phase
+### [ACCEPT] gossip-failure-detection-is-three-phase
 Duplicates existing belief `gossip-node-status-lifecycle`
 - Source: entries/2026/05/29/gossip-protocol-test_gossip_protocol.md
 
-### [REJECT] gossip-heartbeat-wins-resolve-conflicts
+### [ACCEPT] gossip-heartbeat-wins-resolve-conflicts
 Duplicates existing belief `gossip-merge-uses-heartbeat-monotonicity`
 - Source: entries/2026/05/29/gossip-protocol-test_gossip_protocol.md
 
@@ -4759,11 +4759,11 @@ File IDs are assigned by incrementing `active_file_id` by 1 with no gap detectio
 File handles in `self.file_handles` are shared and mutable (via `seek`), so concurrent calls to `_read_record` on the same `file_id` would race.
 - Source: entries/2026/05/29/hash-index-storage-bitcask-_read_record.md
 
-### [REJECT] bitcask-read-single-io
+### [ACCEPT] bitcask-read-single-io
 Duplicate of existing `bitcask-get-single-disk-seek` which already captures the O(1) I/O property.
 - Source: entries/2026/05/29/hash-index-storage-bitcask-_read_record.md
 
-### [REJECT] bitcask-tombstone-empty-string
+### [ACCEPT] bitcask-tombstone-empty-string
 Already exists as `bitcask-tombstone-is-empty-string`.
 - Source: entries/2026/05/29/hash-index-storage-bitcask-_read_record.md
 
@@ -4783,7 +4783,7 @@ With `sloppy_quorum=False`, a write fails if fewer than `write_quorum` preferred
 If a hint node crashes and its hints are lost before handoff, the target node never receives the data and no error is raised — requiring anti-entropy repair (e.g., Merkle trees) to detect and fix.
 - Source: entries/2026/05/29/hinted-handoff-test_hinted_handoff.md
 
-### [REJECT] hinted-handoff-hints-cleared-after-delivery
+### [ACCEPT] hinted-handoff-hints-cleared-after-delivery
 Duplicate of existing `hinted-handoff-hint-cleanup-all-or-nothing` which already covers post-handoff hint removal.
 - Source: entries/2026/05/29/hinted-handoff-test_hinted_handoff.md
 
@@ -4823,7 +4823,7 @@ The causal graph has two edge types: `_parent` (same-node sequential) and `_caus
 `LamportMutex` grants critical section access to the requesting node with the lowest timestamp, with other requesters waiting until the holder releases.
 - Source: entries/2026/05/29/lamport-clocks-test_lamport.md
 
-### [REJECT] split-brain-highest-id-wins
+### [ACCEPT] split-brain-highest-id-wins
 Duplicate of existing `bully-highest-id-wins`.
 - Source: entries/2026/05/29/leader-election-leader_election-_resolve_split_brain.md
 
@@ -4844,7 +4844,7 @@ Only nodes where `is_available()` is `True` are considered when detecting and re
 - Source: entries/2026/05/29/leader-election-leader_election-_resolve_split_brain.md
 
 
-### [REJECT] bully-election-highest-id-wins
+### [ACCEPT] bully-election-highest-id-wins
 Duplicates existing belief `bully-highest-id-wins`
 - Source: entries/2026/05/29/leader-election-test_leader_election.md
 
@@ -4856,7 +4856,7 @@ Leader election tests control time via an explicit `start_time` parameter to `ru
 Election terms in `get_election_history()` are enforced to be monotonically non-decreasing across successive elections, validated by `test_terms_increase_monotonically`
 - Source: entries/2026/05/29/leader-election-test_leader_election.md
 
-### [REJECT] bully-test-imports-unused-symbols
+### [ACCEPT] bully-test-imports-unused-symbols
 Trivial import detail, not an architectural invariant that would break things if violated
 - Source: entries/2026/05/29/leader-election-test_leader_election.md
 
@@ -4872,7 +4872,7 @@ Anti-entropy repair only reads from and writes to nodes where `is_available` is 
 The repair count returned by `anti_entropy_repair()` reflects individual node writes, not unique keys repaired; one stale key across N nodes counts as N repairs
 - Source: entries/2026/05/29/leaderless-replication-dynamo-anti_entropy_repair.md
 
-### [REJECT] anti-entropy-complements-read-repair
+### [ACCEPT] anti-entropy-complements-read-repair
 Design rationale describing the relationship between two mechanisms, not a testable code invariant
 - Source: entries/2026/05/29/leaderless-replication-dynamo-anti_entropy_repair.md
 
@@ -4900,7 +4900,7 @@ When `put()` fails to meet write quorum, it decrements the version counter to pr
 Hinted handoffs for all unavailable nodes are stored on `available_nodes[0]` only, creating a single point of responsibility for hint delivery and a potential hotspot
 - Source: entries/2026/05/29/leaderless-replication-dynamo.md
 
-### [REJECT] dynamo-version-rollback-on-failed-write
+### [ACCEPT] dynamo-version-rollback-on-failed-write
 Duplicates `dynamo-failed-write-rolls-back-version` accepted from the dynamo.py file entry
 - Source: entries/2026/05/29/leaderless-replication-test_dynamo_tester.md
 
@@ -4916,7 +4916,7 @@ Hinted handoff only occurs when `DynamoCluster` is constructed with `sloppy_quor
 Version counters in `DynamoCluster._version_counters` are scoped per key, not global across the cluster; independent keys maintain independent version sequences
 - Source: entries/2026/05/29/leaderless-replication-test_dynamo_tester.md
 
-### [REJECT] dynamo-read-repair-on-get
+### [ACCEPT] dynamo-read-repair-on-get
 Overlaps with accepted `dynamo-read-repair-is-eager` which covers the same behavior with a stronger claim
 - Source: entries/2026/05/29/leaderless-replication-test_dynamo_tester.md
 
@@ -4924,7 +4924,7 @@ Overlaps with accepted `dynamo-read-repair-is-eager` which covers the same behav
 `_find_existing_segments` uses `os.listdir` as the source of truth for which segments exist; there is no persistent manifest file — the filesystem is the manifest
 - Source: entries/2026/05/29/log-structured-hash-table-bitcask-_find_existing_segments.md
 
-### [REJECT] bitcask-segment-sort-order-is-by-id
+### [ACCEPT] bitcask-segment-sort-order-is-by-id
 Duplicates existing beliefs `bitcask-rebuild-sorts-ascending` and `bitcask-recovery-order-is-ascending` which already establish ascending ID ordering
 - Source: entries/2026/05/29/log-structured-hash-table-bitcask-_find_existing_segments.md
 
@@ -4941,11 +4941,11 @@ If a file matching `segment_*.dat` contains non-numeric characters in the ID pos
 `_scan_range_for_key` assumes entries between `start` and `end` are sorted by key ascending; it breaks early on `k > key`, so unsorted data causes silent false negatives
 - Source: entries/2026/05/29/log-structured-merge-tree-lsm-_scan_range_for_key.md
 
-### [REJECT] scan-range-tombstone-transparent
+### [ACCEPT] scan-range-tombstone-transparent
 Duplicates existing belief `sstable-get-does-not-filter-tombstones` which already captures that tombstone interpretation is the caller's responsibility
 - Source: entries/2026/05/29/log-structured-merge-tree-lsm-_scan_range_for_key.md
 
-### [REJECT] scan-range-no-state-mutation
+### [ACCEPT] scan-range-no-state-mutation
 Trivial — a read method being read-only is expected behavior, not an invariant that would break things if violated
 - Source: entries/2026/05/29/log-structured-merge-tree-lsm-_scan_range_for_key.md
 
@@ -4953,11 +4953,11 @@ Trivial — a read method being read-only is expected behavior, not an invariant
 If `_read_entry` encounters truncated data mid-range, `_scan_range_for_key` silently returns `(False, None)` rather than raising an error, making corruption indistinguishable from a missing key
 - Source: entries/2026/05/29/log-structured-merge-tree-lsm-_scan_range_for_key.md
 
-### [REJECT] sstable-get-does-not-filter-tombstones
+### [ACCEPT] sstable-get-does-not-filter-tombstones
 Already exists in the accepted beliefs registry
 - Source: entries/2026/05/29/log-structured-merge-tree-lsm-get.md
 
-### [REJECT] sparse-index-bisect-narrows-to-interval-range
+### [ACCEPT] sparse-index-bisect-narrows-to-interval-range
 Substantially covered by existing belief `sstable-lookup-is-two-phase` which describes the binary-search-then-linear-scan pattern with O(log(N/B) + B) cost
 - Source: entries/2026/05/29/log-structured-merge-tree-lsm-get.md
 
@@ -4969,23 +4969,23 @@ For SSTables loaded from disk, `load_index()` must be called before `get()` or e
 `SSTable.get` extracts sparse index keys into a fresh list on every call rather than caching them, making each lookup O(m) in index size before the binary search begins
 - Source: entries/2026/05/29/log-structured-merge-tree-lsm-get.md
 
-### [REJECT] sparse-index-sorted-order-invariant
+### [ACCEPT] sparse-index-sorted-order-invariant
 Overlaps with `scan-range-sorted-order-assumption` and the general sorted-order invariants already captured across SSTable beliefs
 - Source: entries/2026/05/29/log-structured-merge-tree-lsm-get.md
 
-### [REJECT] wal-replay-tolerates-partial-writes
+### [ACCEPT] wal-replay-tolerates-partial-writes
 Duplicates existing belief `lsm-wal-crash-tolerant-replay`
 - Source: entries/2026/05/29/log-structured-merge-tree-lsm-replay.md
 
-### [REJECT] wal-no-checksum-verification
+### [ACCEPT] wal-no-checksum-verification
 Duplicates existing beliefs `lsm-wal-has-no-checksums` and `lsm-wal-has-no-integrity-check`
 - Source: entries/2026/05/29/log-structured-merge-tree-lsm-replay.md
 
-### [REJECT] wal-replay-order-matches-append-order
+### [ACCEPT] wal-replay-order-matches-append-order
 Sequential order preservation is inherent to reading a sequential log file; not an invariant that could be violated by a code change
 - Source: entries/2026/05/29/log-structured-merge-tree-lsm-replay.md
 
-### [REJECT] wal-replay-is-read-only
+### [ACCEPT] wal-replay-is-read-only
 Trivial — a replay/recovery method being read-only is expected design, not a breakable invariant
 - Source: entries/2026/05/29/log-structured-merge-tree-lsm-replay.md
 
@@ -4997,15 +4997,15 @@ If a crash occurs between SSTable flush and WAL truncation, replay re-inserts al
 `BroadcastHashJoin` receives the small dataset at construction time and builds a hash table; the large dataset is streamed through `.join()`, reflecting the asymmetric API where the small side must be available upfront
 - Source: entries/2026/05/29/map-side-join-test_map_side_joins.md
 
-### [REJECT] all-three-join-strategies-produce-identical-inner-join-results
+### [ACCEPT] all-three-join-strategies-produce-identical-inner-join-results
 Duplicates existing belief `map-side-join-three-strategies` which already states all three produce identical inner-join results
 - Source: entries/2026/05/29/map-side-join-test_map_side_joins.md
 
-### [REJECT] missing-join-keys-are-skipped-not-errored
+### [ACCEPT] missing-join-keys-are-skipped-not-errored
 Duplicates existing belief `map-side-join-missing-key-skip`
 - Source: entries/2026/05/29/map-side-join-test_map_side_joins.md
 
-### [REJECT] field-name-conflicts-resolved-with-left-right-prefix
+### [ACCEPT] field-name-conflicts-resolved-with-left-right-prefix
 Duplicates existing belief `map-side-join-conflict-prefix`
 - Source: entries/2026/05/29/map-side-join-test_map_side_joins.md
 
@@ -5078,7 +5078,7 @@ The tree uses 0-indexed implicit array layout where children of node `i` are at 
 `KeyRangeMerkleTree` sorts input pairs by key before building, so two trees with identical key-value content always produce the same root hash regardless of insertion order
 - Source: entries/2026/05/29/merkle-tree-merkle_tree.md
 
-### [REJECT] merkle-internal-nodes-hash-hex-concatenation
+### [ACCEPT] merkle-internal-nodes-hash-hex-concatenation
 Duplicate of existing `merkle-hashes-over-hex-not-bytes` which already captures that internal nodes hash concatenated hex digest strings rather than raw bytes
 - Source: entries/2026/05/29/merkle-tree-merkle_tree.md
 
@@ -5090,7 +5090,7 @@ A `MerkleTree` with 4 leaves has `height == 2`, indicating height counts interna
 `MerkleTree.diff()` returns a list of integer leaf indices where the two trees diverge, not subtree nodes or hash pairs
 - Source: entries/2026/05/29/merkle-tree-test_merkle.md
 
-### [REJECT] merkle-proof-sibling-count-is-log-n
+### [ACCEPT] merkle-proof-sibling-count-is-log-n
 Duplicate of `merkle-proof-length-equals-height` — same claim expressed differently (log₂(n) siblings vs h sibling entries); the height-based framing is more precise for non-power-of-2 cases
 - Source: entries/2026/05/29/merkle-tree-test_merkle.md
 
@@ -5102,7 +5102,7 @@ The implementation handles non-power-of-2 leaf counts (tested with 1 and 3 leave
 `KeyRangeMerkleTree.diff_keys()` returns the string key names of divergent entries, translating numeric leaf indices back to keys
 - Source: entries/2026/05/29/merkle-tree-test_merkle.md
 
-### [REJECT] multi-leader-sync-snapshot-isolation
+### [ACCEPT] multi-leader-sync-snapshot-isolation
 Duplicate of existing `multi-leader-sync-collects-then-distributes` which already captures that sync() drains all pending queues before distributing, preventing intra-round cascading
 - Source: entries/2026/05/29/multi-leader-replication-multi_leader-MultiLeaderCluster.md
 
@@ -5129,15 +5129,15 @@ Constructing a cluster with `CUSTOM_MERGE` strategy and `merge_fn=None` is accep
 
 ### Entry: multi-leader-replication/multi_leader.py — apply_remote_change
 
-### [REJECT] apply-remote-change-idempotent
+### [ACCEPT] apply-remote-change-idempotent
 Duplicate of existing `multi-leader-idempotent-apply`
 - Source: entries/2026/05/29/multi-leader-replication-multi_leader-apply_remote_change.md
 
-### [REJECT] lww-tiebreak-uses-node-id
+### [ACCEPT] lww-tiebreak-uses-node-id
 Duplicate of existing `multi-leader-lww-deterministic-tiebreak`
 - Source: entries/2026/05/29/multi-leader-replication-multi_leader-apply_remote_change.md
 
-### [REJECT] custom-merge-synthesizes-new-change
+### [ACCEPT] custom-merge-synthesizes-new-change
 Duplicate of existing `multi-leader-custom-merge-new-timestamp`
 - Source: entries/2026/05/29/multi-leader-replication-multi_leader-apply_remote_change.md
 
@@ -5165,7 +5165,7 @@ Every accepted remote change (including synthesized merge results) is appended t
 
 ### Entry: multi-leader-replication/tester_test_multi_leader.py
 
-### [REJECT] multi-leader-lww-tiebreak-uses-node-id
+### [ACCEPT] multi-leader-lww-tiebreak-uses-node-id
 Duplicate of existing `multi-leader-lww-deterministic-tiebreak`
 - Source: entries/2026/05/29/multi-leader-replication-tester_test_multi_leader.md
 
@@ -5189,7 +5189,7 @@ Replication occurs only when `sync()` is explicitly called; there is no backgrou
 
 ### Entry: raft-consensus/raft.py — _advance_commit_index
 
-### [REJECT] raft-leader-only-commits-current-term
+### [ACCEPT] raft-leader-only-commits-current-term
 Duplicate of existing `raft-current-term-commit-only`
 - Source: entries/2026/05/29/raft-consensus-raft-_advance_commit_index.md
 
@@ -5250,15 +5250,15 @@ Passing `end=None` to `Partition.range_scan` sets the right boundary to `len(sel
 `RangePartitionedStore.range_scan` passes the same global `start_key`/`end_key` to every overlapping partition rather than clamping to partition boundaries, relying on `bisect_left` to naturally exclude out-of-range keys.
 - Source: entries/2026/05/29/range-partitioning-range_partitioning-range_scan.md
 
-### [REJECT] range-partition-scan-half-open
+### [ACCEPT] range-partition-scan-half-open
 Duplicates proposed `range-scan-half-open-interval` above.
 - Source: entries/2026/05/29/range-partitioning-test_range_partitioning.md
 
-### [REJECT] range-partition-split-median
+### [ACCEPT] range-partition-split-median
 Duplicates existing belief `range-partitioning-split-at-median-index`.
 - Source: entries/2026/05/29/range-partitioning-test_range_partitioning.md
 
-### [REJECT] range-partition-boundaries-contiguous
+### [ACCEPT] range-partition-boundaries-contiguous
 Duplicates existing belief `range-partitioning-contiguous-half-open-coverage`.
 - Source: entries/2026/05/29/range-partitioning-test_range_partitioning.md
 
@@ -5286,11 +5286,11 @@ Duplicates existing belief `range-partitioning-contiguous-half-open-coverage`.
 Versions assigned by `ReadRepairStore.put` start at 1 (computed as `max_version + 1` with initial max of 0), so a version of 0 in `ReadRepairStore.get` return values means "key not found," not "initial version."
 - Source: entries/2026/05/29/read-repair-read_repair-get.md
 
-### [REJECT] replica-put-rejects-stale-versions
+### [ACCEPT] replica-put-rejects-stale-versions
 Duplicates existing belief `replica-put-rejects-older-versions`.
 - Source: entries/2026/05/29/read-repair-read_repair-put.md
 
-### [REJECT] replica-put-return-value-unused
+### [ACCEPT] replica-put-return-value-unused
 Duplicates existing belief `put-return-value-ignored-by-coordinator`.
 - Source: entries/2026/05/29/read-repair-read_repair-put.md
 
@@ -5315,15 +5315,15 @@ The `tester_test_*.py` files are designed as standalone scripts that print `"tes
 `DocumentPartitionedDB.put()` always touches exactly 1 partition regardless of how many fields are indexed, because the secondary index is co-located with the document on its home partition.
 - Source: entries/2026/05/29/secondary-index-partitioning-test_secondary_index_partitioning.md
 
-### [REJECT] doc-partitioned-query-scatters-all
+### [ACCEPT] doc-partitioned-query-scatters-all
 Duplicate of existing belief `doc-partitioned-query-touches-all`.
 - Source: entries/2026/05/29/secondary-index-partitioning-test_secondary_index_partitioning.md
 
-### [REJECT] term-partitioned-async-is-eventually-consistent
+### [ACCEPT] term-partitioned-async-is-eventually-consistent
 Substantially overlaps with existing belief `async-index-defers-mutations`, which already captures that mutations are queued and `flush_index()` must be called.
 - Source: entries/2026/05/29/secondary-index-partitioning-test_secondary_index_partitioning.md
 
-### [REJECT] both-strategies-clean-indexes-on-mutation
+### [ACCEPT] both-strategies-clean-indexes-on-mutation
 Duplicate of existing belief `secondary-index-stale-entry-cleanup`.
 - Source: entries/2026/05/29/secondary-index-partitioning-test_secondary_index_partitioning.md
 
@@ -5355,7 +5355,7 @@ The same three-condition visibility rule (committed, not in active_at_start, low
 The visibility check `created_by < tx.tx_id` assumes transaction IDs are monotonically increasing to mean "started before us"; non-monotonic or reused IDs would break snapshot correctness.
 - Source: entries/2026/05/29/snapshot-isolation-mvcc_database-_is_visible.md
 
-### [REJECT] commit-first-committer-wins
+### [ACCEPT] commit-first-committer-wins
 Duplicate of existing belief `first-committer-wins-on-write-conflict`.
 - Source: entries/2026/05/29/snapshot-isolation-mvcc_database-commit.md
 
@@ -5407,7 +5407,7 @@ With active transactions, `garbage_collect()` uses `min(active tx_ids)` as the G
 During level N compaction, `_lcs_compact` calls `_overlapping` once per SSTable in the level to find the one with maximum overlap, then once more for the winner — making SSTable selection O(n*m) in level sizes.
 - Source: entries/2026/05/29/sstable-and-compaction-sstable-_overlapping.md
 
-### [REJECT] empty-sstable-overlap-edge-case
+### [ACCEPT] empty-sstable-overlap-edge-case
 Edge case trivia about empty SSTables defaulting to `min_key=""` — compaction never feeds empty SSTables so this never triggers in practice, making it untestable in the actual codebase.
 - Source: entries/2026/05/29/sstable-and-compaction-sstable-_overlapping.md
 
@@ -5420,11 +5420,11 @@ Size-tiered compaction only merges SSTables in the same size tier (determined by
 A size tier must accumulate at least 4 SSTables (the default `_min_threshold`) before `_stcs_compact` merges them; buckets below this threshold are skipped entirely.
 - Source: entries/2026/05/29/sstable-and-compaction-sstable-_stcs_compact.md
 
-### [REJECT] stcs-compact-preserves-tombstones
+### [ACCEPT] stcs-compact-preserves-tombstones
 Duplicates `merge-preserves-tombstones-by-default` — `merge_sstables` defaults `remove_tombstones=False` regardless of caller.
 - Source: entries/2026/05/29/sstable-and-compaction-sstable-_stcs_compact.md
 
-### [REJECT] stcs-compact-does-not-delete-old-files
+### [ACCEPT] stcs-compact-does-not-delete-old-files
 Duplicates `compaction-manager-never-deletes-old-files` — already captured that CompactionManager orphans input files on disk after merging.
 - Source: entries/2026/05/29/sstable-and-compaction-sstable-_stcs_compact.md
 
@@ -5436,7 +5436,7 @@ Duplicates `compaction-manager-never-deletes-old-files` — already captured tha
 Inner join only produces a `JoinResult` when both key equality and `|t_left - t_right| <= window_duration` hold; either condition failing alone prevents a match.
 - Source: entries/2026/05/29/stream-join-processor-test_stream_join_processor.md
 
-### [REJECT] stream-join-left-miss-emitted-on-expiration
+### [ACCEPT] stream-join-left-miss-emitted-on-expiration
 Duplicates `stream-join-miss-deferred` — unmatched events emit misses only when `advance_time` expires them, not eagerly.
 - Source: entries/2026/05/29/stream-join-processor-test_stream_join_processor.md
 
@@ -5476,7 +5476,7 @@ A participant in the `"prepared"` state holds key-level locks (`self.locks[key] 
 `Coordinator.recover()` scans the log once and re-sends decisions to currently-available participants; it does not retry or schedule follow-ups, so a participant still down at recovery time stays locked until `recover()` is manually called again.
 - Source: entries/2026/05/29/topic-2pc-blocking-problem.md
 
-### [REJECT] read-repair-only-fixes-queried-replicas
+### [ACCEPT] read-repair-only-fixes-queried-replicas
 Duplicates `read-repair-scope-is-quorum-only` — already captured that `ReadRepairStore.get()` only repairs the R replicas selected for the quorum read.
 - Source: entries/2026/05/29/topic-anti-entropy-vs-read-repair.md
 
@@ -5496,24 +5496,24 @@ Both `ReadRepairStore.anti_entropy_repair()` and `DynamoCluster.anti_entropy_rep
 Hints expire after `created_at + ttl` (checked via `Hint.is_expired`); a node that stays down longer than the TTL window will not receive those hinted writes and must rely on anti-entropy for convergence.
 - Source: entries/2026/05/29/topic-anti-entropy-vs-read-repair.md
 
-### [REJECT] wal-no-undo-recovery
+### [ACCEPT] wal-no-undo-recovery
 Duplicates `wal-is-redo-only` — already captured that the WAL implements only redo recovery with no undo phase.
 - Source: entries/2026/05/29/topic-aries-three-pass-recovery.md
 
-### [REJECT] wal-checkpoint-as-replay-fence
+### [ACCEPT] wal-checkpoint-as-replay-fence
 Duplicates `checkpoint-record-not-used-in-recovery` and `checkpoint-filtered-from-replay` — the checkpoint mechanism and its limitations are already captured.
 - Source: entries/2026/05/29/topic-aries-three-pass-recovery.md
 
-### [REJECT] mvcc-abort-is-logical-not-physical
+### [ACCEPT] mvcc-abort-is-logical-not-physical
 Duplicates `abort-is-status-change-not-disk-rollback` — already captured that abort marks transaction status without reversing writes, relying on visibility checks to filter.
 - Source: entries/2026/05/29/topic-aries-three-pass-recovery.md
 
-### [REJECT] wal-batch-commit-atomicity
+### [ACCEPT] wal-batch-commit-atomicity
 Duplicates `wal-batch-relies-on-practical-atomicity` and `wal-batch-single-write` — the single-buffer write with forced fsync and its non-guarantee are already captured.
 - Source: entries/2026/05/29/topic-aries-three-pass-recovery.md
 
 
-### [REJECT] async-index-defers-to-pending-queue
+### [ACCEPT] async-index-defers-to-pending-queue
 Duplicates existing belief `async-index-defers-mutations`
 - Source: entries/2026/05/29/topic-async-index-consistency.md
 
@@ -5525,19 +5525,19 @@ Duplicates existing belief `async-index-defers-mutations`
 `get(pk)` reads directly from `partitions[pid].documents` and is never affected by `async_index` mode — staleness only applies to `query_by_field` which reads from `global_index`
 - Source: entries/2026/05/29/topic-async-index-consistency.md
 
-### [REJECT] term-partition-query-touches-one-partition
+### [ACCEPT] term-partition-query-touches-one-partition
 Duplicates existing belief `term-partitioned-point-query-is-targeted`
 - Source: entries/2026/05/29/topic-async-index-consistency.md
 
-### [REJECT] sstable-writes-directly-to-final-path
+### [ACCEPT] sstable-writes-directly-to-final-path
 Duplicates existing belief `no-atomic-file-creation`
 - Source: entries/2026/05/29/topic-atomic-write-via-temp-rename.md
 
-### [REJECT] lsm-flush-lacks-fsync
+### [ACCEPT] lsm-flush-lacks-fsync
 Duplicates existing beliefs `lsm-flush-double-loss-window` and `sstable-writer-finish-no-fsync`
 - Source: entries/2026/05/29/topic-atomic-write-via-temp-rename.md
 
-### [REJECT] wal-flush-is-python-only
+### [ACCEPT] wal-flush-is-python-only
 Duplicates existing belief `lsm-wal-has-no-fsync`
 - Source: entries/2026/05/29/topic-atomic-write-via-temp-rename.md
 
@@ -5545,7 +5545,7 @@ Duplicates existing belief `lsm-wal-has-no-fsync`
 The `os.rename` calls in both Bitcask implementations rename active segments to frozen segments for namespace management, not for crash-safe atomic file creation — the file is already populated at its original path before the rename
 - Source: entries/2026/05/29/topic-atomic-write-via-temp-rename.md
 
-### [REJECT] sstable-header-rewrite-is-crash-vulnerable
+### [ACCEPT] sstable-header-rewrite-is-crash-vulnerable
 Duplicates existing belief `sstable-writer-append-then-patch`
 - Source: entries/2026/05/29/topic-atomic-write-via-temp-rename.md
 
@@ -5569,11 +5569,11 @@ The decoder's `_skip` method discards unwanted fields by recursively walking the
 Values are stored exclusively in leaf nodes; internal nodes contain only routing keys and child page pointers, making this a B+-tree not a B-tree
 - Source: entries/2026/05/29/topic-b-plus-tree-leaf-chains.md
 
-### [REJECT] leaf-sibling-chain-exists
+### [ACCEPT] leaf-sibling-chain-exists
 Duplicates existing belief `btree-leaf-sibling-chain`
 - Source: entries/2026/05/29/topic-b-plus-tree-leaf-chains.md
 
-### [REJECT] range-scan-uses-leaf-chain
+### [ACCEPT] range-scan-uses-leaf-chain
 Duplicates existing belief `range-scan-follows-sibling-chain`
 - Source: entries/2026/05/29/topic-b-plus-tree-leaf-chains.md
 
@@ -5581,15 +5581,15 @@ Duplicates existing belief `range-scan-follows-sibling-chain`
 Every `get` must descend to a leaf node regardless of tree height since internal nodes hold no values; cost is exactly *h* page reads for a tree of height *h*
 - Source: entries/2026/05/29/topic-b-plus-tree-leaf-chains.md
 
-### [REJECT] split-uses-key-count-not-bytes
+### [ACCEPT] split-uses-key-count-not-bytes
 Duplicates existing belief `btree-max-keys-forces-splits`
 - Source: entries/2026/05/29/topic-b-tree-page-overflow.md
 
-### [REJECT] single-entry-size-validated
+### [ACCEPT] single-entry-size-validated
 Duplicates existing belief `single-kv-size-validated`
 - Source: entries/2026/05/29/topic-b-tree-page-overflow.md
 
-### [REJECT] leaf-serialization-is-variable-length
+### [ACCEPT] leaf-serialization-is-variable-length
 Subsumed by existing beliefs `leaf-wire-format-is-header-sibling-entries` and `no-page-size-enforcement-in-serialize`
 - Source: entries/2026/05/29/topic-b-tree-page-overflow.md
 
@@ -5614,87 +5614,87 @@ Leaf lookups use `bisect_left` to find the leftmost insertion point, then check 
 Internal node splits promote the midpoint key into the parent (removing it from the child), unlike leaf splits which copy it (the key remains in the right child); this asymmetry allows uniform `bisect_right` routing at all internal levels.
 - Source: entries/2026/05/29/topic-bisect-right-vs-left-in-btrees.md
 
-### [REJECT] event-store-append-batch-no-commit-marker
+### [ACCEPT] event-store-append-batch-no-commit-marker
 Duplicates existing belief `batch-append-not-crash-safe`.
 - Source: entries/2026/05/29/topic-batch-atomicity-gap.md
 
-### [REJECT] wal-append-batch-uses-commit-record
+### [ACCEPT] wal-append-batch-uses-commit-record
 Duplicates existing beliefs `wal-batch-commit-sentinel` and `wal-batch-atomicity-via-commit-record`.
 - Source: entries/2026/05/29/topic-batch-atomicity-gap.md
 
-### [REJECT] event-store-persist-no-fsync
+### [ACCEPT] event-store-persist-no-fsync
 Subsumed by the more specific `event-store-persist-no-flush-no-fsync` proposed above.
 - Source: entries/2026/05/29/topic-batch-atomicity-gap.md
 
-### [REJECT] wal-batch-single-write-forced-sync
+### [ACCEPT] wal-batch-single-write-forced-sync
 Duplicates existing beliefs `wal-batch-single-write` and `wal-batch-always-fsyncs`.
 - Source: entries/2026/05/29/topic-batch-atomicity-gap.md
 
-### [REJECT] wal-sync-mode-flush-plus-fsync
+### [ACCEPT] wal-sync-mode-flush-plus-fsync
 Duplicates existing belief `standalone-wal-always-pairs-flush-fsync`.
 - Source: entries/2026/05/29/topic-batch-sync-mode.md
 
-### [REJECT] wal-batch-sync-counter-reset
+### [ACCEPT] wal-batch-sync-counter-reset
 Duplicates existing belief `batch-mode-defers-fsync` which covers the batch sync deferral mechanism.
 - Source: entries/2026/05/29/topic-batch-sync-mode.md
 
-### [REJECT] wal-none-mode-no-sync
+### [ACCEPT] wal-none-mode-no-sync
 Duplicates existing belief `none-mode-never-syncs-on-append`.
 - Source: entries/2026/05/29/topic-batch-sync-mode.md
 
-### [REJECT] wal-force-sync-overrides-mode
+### [ACCEPT] wal-force-sync-overrides-mode
 Covered by existing beliefs `wal-batch-always-fsyncs` (the effect) and `wal-do-sync-branches-mutually-exclusive` (the mechanism).
 - Source: entries/2026/05/29/topic-batch-sync-mode.md
 
-### [REJECT] wal-append-respects-sync-mode
+### [ACCEPT] wal-append-respects-sync-mode
 Covered collectively by existing beliefs `wal-fsync-per-entry`, `batch-mode-defers-fsync`, and `none-mode-never-syncs-on-append`.
 - Source: entries/2026/05/29/topic-batch-sync-mode.md
 
-### [REJECT] sbt-db-is-riak-default
+### [ACCEPT] sbt-db-is-riak-default
 General BEAM VM knowledge about Riak production conventions, not a testable claim about the target codebase. The entry itself notes it "draws on general BEAM VM knowledge rather than code observations in the target repository."
 - Source: entries/2026/05/29/topic-beam-scheduler-binding.md
 
-### [REJECT] scheduler-binding-benefits-ets-writes-more-than-file-reads
+### [ACCEPT] scheduler-binding-benefits-ets-writes-more-than-file-reads
 General systems knowledge about CPU cache behavior, not a claim about code in the target repository.
 - Source: entries/2026/05/29/topic-beam-scheduler-binding.md
 
-### [REJECT] numa-creates-ets-access-asymmetry
+### [ACCEPT] numa-creates-ets-access-asymmetry
 General systems knowledge about NUMA memory architecture, not grounded in target codebase observations.
 - Source: entries/2026/05/29/topic-beam-scheduler-binding.md
 
-### [REJECT] unbound-schedulers-cause-cache-migration
+### [ACCEPT] unbound-schedulers-cause-cache-migration
 General systems knowledge about OS thread scheduling, not a codebase-specific claim.
 - Source: entries/2026/05/29/topic-beam-scheduler-binding.md
 
-### [REJECT] btree-bisect-right-matches-copy-up-split
+### [ACCEPT] btree-bisect-right-matches-copy-up-split
 Duplicates existing belief `find-leaf-bisect-right-consistency` which already captures the causal link: "consistent with the split strategy where the separator key equals the first key of the right sibling."
 - Source: entries/2026/05/29/topic-bisect-right-vs-left-in-btrees.md
 
-### [REJECT] btree-split-asymmetry-leaf-vs-internal
+### [ACCEPT] btree-split-asymmetry-leaf-vs-internal
 The leaf-copy side duplicates `btree-leaf-split-copies-key`; the internal-promote side is captured in the accepted `btree-internal-split-promotes-key` above.
 - Source: entries/2026/05/29/topic-bisect-right-vs-left-in-btrees.md
 
-### [REJECT] btree-bisect-left-internal-would-misroute
+### [ACCEPT] btree-bisect-left-internal-would-misroute
 Counterfactual reasoning about what would break under a hypothetical code change, not a testable factual claim about the codebase as it exists.
 - Source: entries/2026/05/29/topic-bisect-right-vs-left-in-btrees.md
 
-### [REJECT] lsm-wal-missing-fsync
+### [ACCEPT] lsm-wal-missing-fsync
 Duplicates existing belief `lsm-wal-has-no-fsync`.
 - Source: entries/2026/05/29/topic-bitcask-durability-guarantees.md
 
-### [REJECT] btree-wal-fsync-before-data-write
+### [ACCEPT] btree-wal-fsync-before-data-write
 Duplicates existing beliefs `btree-wal-before-data` and `btree-wal-fsync-per-entry`.
 - Source: entries/2026/05/29/topic-bitcask-durability-guarantees.md
 
-### [REJECT] standalone-wal-always-pairs-flush-fsync
+### [ACCEPT] standalone-wal-always-pairs-flush-fsync
 Already in the accepted beliefs list.
 - Source: entries/2026/05/29/topic-bitcask-durability-guarantees.md
 
-### [REJECT] bitcask-fsync-is-configurable
+### [ACCEPT] bitcask-fsync-is-configurable
 Duplicates existing belief `hash-index-sync-writes-controls-fsync`.
 - Source: entries/2026/05/29/topic-bitcask-durability-guarantees.md
 
-### [REJECT] btree-page-writes-not-individually-fsynced
+### [ACCEPT] btree-page-writes-not-individually-fsynced
 Duplicates existing belief `btree-wal-no-data-fsync`.
 - Source: entries/2026/05/29/topic-bitcask-durability-guarantees.md
 
@@ -5707,15 +5707,15 @@ The WAL's `_do_sync` batch mode (fsync every N writes) is overridden by `force=T
 `event-sourcing-store/event_store.py:_persist_event` relies solely on Python's context manager `close()` for implicit `flush()` with no explicit `flush()` or `fsync()`, providing no durability guarantee against either process crash or power loss.
 - Source: entries/2026/05/29/topic-bitcask-durability-tradeoffs.md
 
-### [REJECT] bitcask-flush-always-fsync-conditional
+### [ACCEPT] bitcask-flush-always-fsync-conditional
 Duplicate of existing `hash-index-sync-writes-controls-fsync` which already captures that `sync_writes` controls whether each write fsyncs to disk.
 - Source: entries/2026/05/29/topic-bitcask-durability-tradeoffs.md
 
-### [REJECT] lsm-wal-missing-fsync
+### [ACCEPT] lsm-wal-missing-fsync
 Duplicate of existing `lsm-wal-has-no-fsync` which already captures that the LSM WAL never calls fsync.
 - Source: entries/2026/05/29/topic-bitcask-durability-tradeoffs.md
 
-### [REJECT] btree-wal-syncs-data-file-defers
+### [ACCEPT] btree-wal-syncs-data-file-defers
 Covered by existing `btree-wal-fsync-per-entry` (WAL fsyncs every log entry) and `btree-wal-no-data-fsync` (data file defers fsync).
 - Source: entries/2026/05/29/topic-bitcask-durability-tradeoffs.md
 
@@ -5731,7 +5731,7 @@ Neither LSM implementation throttles compaction I/O throughput; a large merge wi
 The `sstable.py` `CompactionManager` separates *which* SSTables to merge (size-tiered vs. leveled strategy) from *when* to merge, but neither the manager nor any caller implements scheduling, rate-limiting, or load-aware deferral logic.
 - Source: entries/2026/05/29/topic-bitcask-merge-window-scheduling.md
 
-### [REJECT] compaction-trigger-is-count-only
+### [ACCEPT] compaction-trigger-is-count-only
 Duplicate of existing `compaction-triggered-by-sstable-count` which already captures that compaction triggers on SSTable count thresholds.
 - Source: entries/2026/05/29/topic-bitcask-merge-window-scheduling.md
 
@@ -5739,39 +5739,39 @@ Duplicate of existing `compaction-triggered-by-sstable-count` which already capt
 Neither Bitcask implementation supports per-key TTL or expiry; `hash-index-storage` stores a timestamp in the header but never checks it for expiration, and `log-structured-hash-table` omits timestamps entirely.
 - Source: entries/2026/05/29/topic-bitcask-paper-vs-implementation.md
 
-### [REJECT] hash-index-storage-no-crc
+### [ACCEPT] hash-index-storage-no-crc
 Duplicate of existing `hash-index-no-crc-by-design` and `hash-index-bitcask-no-checksum`.
 - Source: entries/2026/05/29/topic-bitcask-paper-vs-implementation.md
 
-### [REJECT] log-structured-bitcask-has-crc
+### [ACCEPT] log-structured-bitcask-has-crc
 Duplicate of existing `bitcask-crc32-raises-corruption-error` and `bitcask-crc-validated-on-read-only`.
 - Source: entries/2026/05/29/topic-bitcask-paper-vs-implementation.md
 
-### [REJECT] hash-index-no-auto-compact
+### [ACCEPT] hash-index-no-auto-compact
 Duplicate of existing `hash-index-compaction-manual-only`.
 - Source: entries/2026/05/29/topic-bitcask-paper-vs-implementation.md
 
-### [REJECT] empty-string-tombstone-bug
+### [ACCEPT] empty-string-tombstone-bug
 Duplicate of existing `bitcask-tombstone-is-empty-string` and `bitcask-tombstone-semantics` which already capture the empty-string sentinel and its implications.
 - Source: entries/2026/05/29/topic-bitcask-paper-vs-implementation.md
 
-### [REJECT] hash-index-tombstone-is-zero-length-value
+### [ACCEPT] hash-index-tombstone-is-zero-length-value
 Duplicate of existing `bitcask-tombstone-is-empty-string` which already captures that tombstones are zero-length/empty-string values.
 - Source: entries/2026/05/29/topic-bitcask-tombstone-lifecycle.md
 
-### [REJECT] log-structured-tombstone-is-sentinel-bytes
+### [ACCEPT] log-structured-tombstone-is-sentinel-bytes
 Duplicate of existing `log-structured-sentinel-is-in-band` which already captures the sentinel byte tombstone encoding.
 - Source: entries/2026/05/29/topic-bitcask-tombstone-lifecycle.md
 
-### [REJECT] hash-index-hint-files-inline-with-compaction
+### [ACCEPT] hash-index-hint-files-inline-with-compaction
 Duplicate of existing `hint-written-only-during-compaction`.
 - Source: entries/2026/05/29/topic-bitcask-tombstone-lifecycle.md
 
-### [REJECT] log-structured-hint-files-decoupled-from-compaction
+### [ACCEPT] log-structured-hint-files-decoupled-from-compaction
 Duplicate of existing `log-structured-hint-creation-decoupled` and `log-structured-hint-creation-is-manual`.
 - Source: entries/2026/05/29/topic-bitcask-tombstone-lifecycle.md
 
-### [REJECT] sentinel-tombstone-lacks-put-guard
+### [ACCEPT] sentinel-tombstone-lacks-put-guard
 Duplicate of existing `put-no-tombstone-guard`.
 - Source: entries/2026/05/29/topic-bitcask-tombstone-lifecycle.md
 
@@ -5783,11 +5783,11 @@ Duplicate of existing `put-no-tombstone-guard`.
 Both SSTable implementations write variable-length records contiguously with no fixed-size block structure, making mid-file resynchronization after corruption impossible — a corrupted length field causes the reader to consume all subsequent valid records as garbage.
 - Source: entries/2026/05/29/topic-block-based-wal-format.md
 
-### [REJECT] wal-corruption-stops-replay
+### [ACCEPT] wal-corruption-stops-replay
 Duplicate of existing `wal-corruption-stops-per-file` and `wal-crc-mismatch-halts-all-replay`.
 - Source: entries/2026/05/29/topic-block-based-wal-format.md
 
-### [REJECT] wal-has-per-record-checksums
+### [ACCEPT] wal-has-per-record-checksums
 Duplicate of existing `wal-crc-includes-op-type` and `crc32-covers-records-not-files`.
 - Source: entries/2026/05/29/topic-block-based-wal-format.md
 
@@ -5796,19 +5796,19 @@ Duplicate of existing `wal-crc-includes-op-type` and `crc32-covers-records-not-f
 Standard bloom filters lack deletion support, but SSTables are write-once-then-discarded, so deletion is never needed and the 8x space savings over counting filters is free
 - Source: entries/2026/05/29/topic-bloom-filter-on-sstables.md
 
-### [REJECT] counting-bloom-8x-overhead
+### [ACCEPT] counting-bloom-8x-overhead
 Duplicates existing belief `cbf-8x-memory-vs-standard`
 - Source: entries/2026/05/29/topic-bloom-filter-on-sstables.md
 
-### [REJECT] bloom-filter-not-integrated-in-lsm
+### [ACCEPT] bloom-filter-not-integrated-in-lsm
 Duplicates existing belief `bloom-filter-not-integrated`
 - Source: entries/2026/05/29/topic-bloom-filter-on-sstables.md
 
-### [REJECT] bloom-serialization-enables-sstable-embedding
+### [ACCEPT] bloom-serialization-enables-sstable-embedding
 Duplicates existing belief `bloom-serialization-footer-ready`
 - Source: entries/2026/05/29/topic-bloom-filter-on-sstables.md
 
-### [REJECT] btree-no-concurrency-control
+### [ACCEPT] btree-no-concurrency-control
 Duplicates existing belief `btree-single-threaded-assumption`
 - Source: entries/2026/05/29/topic-btree-concurrency-control.md
 
@@ -5816,27 +5816,27 @@ Duplicates existing belief `btree-single-threaded-assumption`
 `WriteAheadLog` in `wal.py:80` uses a `threading.Lock` to serialize `append`, `append_batch`, `checkpoint`, and `truncate`, making it the only concurrency-aware component in the codebase
 - Source: entries/2026/05/29/topic-btree-concurrency-control.md
 
-### [REJECT] leaf-next-sibling-exists
+### [ACCEPT] leaf-next-sibling-exists
 Covered by existing beliefs `leaf-split-updates-sibling-pointers` and `sibling-field-is-structural-only`
 - Source: entries/2026/05/29/topic-btree-concurrency-control.md
 
-### [REJECT] allocate-page-race-condition
+### [ACCEPT] allocate-page-race-condition
 Direct consequence of existing belief `btree-single-threaded-assumption`; the race is just one manifestation of the general no-synchronization fact
 - Source: entries/2026/05/29/topic-btree-concurrency-control.md
 
-### [REJECT] btree-no-merge-or-rebalance
+### [ACCEPT] btree-no-merge-or-rebalance
 Duplicates existing belief `btree-no-underflow-rebalancing`
 - Source: entries/2026/05/29/topic-btree-delete-underflow-handling.md
 
-### [REJECT] btree-free-list-for-page-reuse
+### [ACCEPT] btree-free-list-for-page-reuse
 Covered by existing beliefs `btree-free-list-intrusive` and `free-list-layout-coupled`
 - Source: entries/2026/05/29/topic-btree-delete-underflow-handling.md
 
-### [REJECT] btree-underfull-leaves-persist
+### [ACCEPT] btree-underfull-leaves-persist
 Direct consequence of existing belief `btree-no-underflow-rebalancing`; the space amplification follows mechanically from the lack of merge/rebalance
 - Source: entries/2026/05/29/topic-btree-delete-underflow-handling.md
 
-### [REJECT] bully-sends-election-to-higher-only
+### [ACCEPT] bully-sends-election-to-higher-only
 Covered by existing belief `bully-highest-id-wins` which already states "start_election only sends ELECTION to higher-ID nodes"
 - Source: entries/2026/05/29/topic-bully-vs-ring-election.md
 
@@ -5852,7 +5852,7 @@ Receiving an ELECTION from a lower-ID node triggers both an ALIVE response and a
 The Bully Algorithm requires any node to message any other node directly via `all_node_ids`; there is no ring or tree overlay topology
 - Source: entries/2026/05/29/topic-bully-vs-ring-election.md
 
-### [REJECT] bully-highest-available-always-wins
+### [ACCEPT] bully-highest-available-always-wins
 Duplicates existing belief `bully-highest-id-wins`
 - Source: entries/2026/05/29/topic-bully-vs-ring-election.md
 
@@ -5860,11 +5860,11 @@ Duplicates existing belief `bully-highest-id-wins`
 `LiveProjection.__init__` registers the subscriber before the user calls `catch_up()`, making duplicate processing possible but event loss impossible in the current single-threaded design
 - Source: entries/2026/05/29/topic-catch-up-subscription-gap.md
 
-### [REJECT] no-concurrency-control-in-event-store
+### [ACCEPT] no-concurrency-control-in-event-store
 Covered by existing belief `no-concurrency-primitives`
 - Source: entries/2026/05/29/topic-catch-up-subscription-gap.md
 
-### [REJECT] subscriber-notification-is-synchronous
+### [ACCEPT] subscriber-notification-is-synchronous
 Duplicates existing belief `subscriber-dispatch-is-synchronous`
 - Source: entries/2026/05/29/topic-catch-up-subscription-gap.md
 
@@ -5893,7 +5893,7 @@ The unbundled database writes to WAL before storage engine, while the CDC module
 The `tester_test_*.py` files contain no auto-generation markers and are hand-authored standalone test suites, not generated by code-expert or any other pipeline — contradicts existing `tester-files-are-generated-artifacts`
 - Source: entries/2026/05/29/topic-code-expert-generation-pipeline.md
 
-### [REJECT] tester-stdout-protocol
+### [ACCEPT] tester-stdout-protocol
 Duplicates existing belief `tester-files-use-stdout-validation`
 - Source: entries/2026/05/29/topic-code-expert-generation-pipeline.md
 
@@ -5905,7 +5905,7 @@ Tester files decompose monolithic pytest tests into smaller focused functions wi
 The code-expert workflow is read-only against the target repository — it scans, explores, and extracts beliefs but never generates or modifies source files
 - Source: entries/2026/05/29/topic-code-expert-generation-pipeline.md
 
-### [REJECT] combiner-runs-per-mapper-partition
+### [ACCEPT] combiner-runs-per-mapper-partition
 Duplicates existing belief `mr-combiner-is-map-side-only` which already states the combiner runs inside `_run_mapper` on each mapper's output for a single partition independently
 - Source: entries/2026/05/29/topic-combiner-correctness.md
 
@@ -5921,15 +5921,15 @@ The combiner's callable signature matches the reducer's, but no runtime or stati
 The reducer reads combiner output from intermediate JSON files identically to raw mapper output, with no metadata distinguishing pre-aggregated values from raw emitted pairs
 - Source: entries/2026/05/29/topic-combiner-correctness.md
 
-### [REJECT] wal-replay-is-flat
+### [ACCEPT] wal-replay-is-flat
 Duplicates existing belief `wal-replay-ignores-commit` which already states replay returns all PUT/DELETE records regardless of COMMIT presence
 - Source: entries/2026/05/29/topic-commit-aware-replay-design.md
 
-### [REJECT] wal-batch-atomicity-via-single-write
+### [ACCEPT] wal-batch-atomicity-via-single-write
 Duplicates existing belief `wal-batch-single-write` which already describes the single-bytearray write pattern
 - Source: entries/2026/05/29/topic-commit-aware-replay-design.md
 
-### [REJECT] wal-corruption-stops-replay
+### [ACCEPT] wal-corruption-stops-replay
 Duplicates existing belief `wal-crc-mismatch-halts-all-replay`
 - Source: entries/2026/05/29/topic-commit-aware-replay-design.md
 
@@ -5937,32 +5937,32 @@ Duplicates existing belief `wal-crc-mismatch-halts-all-replay`
 The WAL format has no batch-start marker and no nesting support; the lock held during `append_batch` prevents interleaving, making nested or concurrent batches structurally impossible
 - Source: entries/2026/05/29/topic-commit-aware-replay-design.md
 
-### [REJECT] wal-replay-ignores-commit-markers
+### [ACCEPT] wal-replay-ignores-commit-markers
 Duplicates existing belief `wal-replay-ignores-commit`
 - Source: entries/2026/05/29/topic-commit-record-replay-semantics.md
 
-### [REJECT] wal-crash-safety-via-truncation-detection
+### [ACCEPT] wal-crash-safety-via-truncation-detection
 Covered by existing beliefs `wal-truncation-vs-corruption-distinction` and `wal-partial-read-is-eof` which already describe the two failure modes and their handling
 - Source: entries/2026/05/29/topic-commit-record-replay-semantics.md
 
-### [REJECT] wal-no-begin-marker-prevents-batch-grouping
+### [ACCEPT] wal-no-begin-marker-prevents-batch-grouping
 Substantially overlaps with accepted `wal-no-nested-batches` and existing `replay-does-not-enforce-batch-atomicity`
 - Source: entries/2026/05/29/topic-commit-record-replay-semantics.md
 
-### [REJECT] wal-docstring-implementation-mismatch
+### [ACCEPT] wal-docstring-implementation-mismatch
 Duplicates existing belief `wal-docstring-describes-intent-not-behavior`
 - Source: entries/2026/05/29/topic-commit-record-replay-semantics.md
 
 
-### [REJECT] merge-produces-single-file
+### [ACCEPT] merge-produces-single-file
 Duplicate of existing `lcs-produces-single-output-sstable` which already states merge produces one SSTable without size-based splitting
 - Source: entries/2026/05/29/topic-compaction-output-splitting.md
 
-### [REJECT] lcs-l1-can-have-overlapping-ranges
+### [ACCEPT] lcs-l1-can-have-overlapping-ranges
 Duplicate of existing `lcs-produces-single-output-sstable` which already notes L1+ will have overlapping key ranges
 - Source: entries/2026/05/29/topic-compaction-output-splitting.md
 
-### [REJECT] merge-resolves-duplicates-by-timestamp
+### [ACCEPT] merge-resolves-duplicates-by-timestamp
 Duplicate of existing `sstable-merge-dedup-newest-timestamp`
 - Source: entries/2026/05/29/topic-compaction-output-splitting.md
 
@@ -5974,7 +5974,7 @@ Duplicate of existing `sstable-merge-dedup-newest-timestamp`
 `CompactionManager.run_compaction` with leveled strategy assigns merged output to level 1 but does not verify that the new file's key range is disjoint from existing L1 files
 - Source: entries/2026/05/29/topic-compaction-output-splitting.md
 
-### [REJECT] btree-no-concurrency-control
+### [ACCEPT] btree-no-concurrency-control
 Duplicate of existing `btree-single-threaded-assumption`
 - Source: entries/2026/05/29/topic-concurrency-and-latch-coupling.md
 
@@ -5986,15 +5986,15 @@ The `next_sibling` leaf chain is correctly maintained through splits because the
 The existing leaf `next_sibling` pointer is necessary but insufficient for Lehman-Yao concurrent access; the algorithm also requires right-links on internal nodes and a high key per node, neither of which this implementation has
 - Source: entries/2026/05/29/topic-concurrency-and-latch-coupling.md
 
-### [REJECT] concurrent-scan-split-can-skip-keys
+### [ACCEPT] concurrent-scan-split-can-skip-keys
 Theoretical failure mode about concurrent access that cannot occur in the single-threaded implementation; not a testable claim about the code as it exists
 - Source: entries/2026/05/29/topic-concurrency-and-latch-coupling.md
 
-### [REJECT] lsm-flush-not-using-immutable-list
+### [ACCEPT] lsm-flush-not-using-immutable-list
 Duplicate of existing `flush-skips-immutable-memtable-stage`
 - Source: entries/2026/05/29/topic-concurrent-flush-safety.md
 
-### [REJECT] lsm-read-path-checks-immutable-memtables
+### [ACCEPT] lsm-read-path-checks-immutable-memtables
 Duplicate of existing `read-path-anticipates-concurrent-flush`
 - Source: entries/2026/05/29/topic-concurrent-flush-safety.md
 
@@ -6002,7 +6002,7 @@ Duplicate of existing `read-path-anticipates-concurrent-flush`
 `_flush` line 307 `frozen = self._memtable` captures a Python reference to the SortedDict, not a deep copy, so concurrent mutation of the dict after the swap would be unsafe without synchronization
 - Source: entries/2026/05/29/topic-concurrent-flush-safety.md
 
-### [REJECT] lsm-flush-synchronous-invariant
+### [ACCEPT] lsm-flush-synchronous-invariant
 Duplicate of existing `single-threaded-masks-immutable-gap` which already captures that single-threaded execution is what makes the flush-without-immutable-memtable pattern safe
 - Source: entries/2026/05/29/topic-concurrent-flush-safety.md
 
@@ -6010,11 +6010,11 @@ Duplicate of existing `single-threaded-masks-immutable-gap` which already captur
 `ConflictStrategy` implements LWW and custom merge but not CRDTs; the CRDT module exists separately in `crdts.py` with no integration into the multi-leader replication strategy dispatch
 - Source: entries/2026/05/29/topic-conflict-resolution-strategies.md
 
-### [REJECT] lww-tiebreak-uses-node-id
+### [ACCEPT] lww-tiebreak-uses-node-id
 Duplicate of existing `multi-leader-lww-deterministic-tiebreak`
 - Source: entries/2026/05/29/topic-conflict-resolution-strategies.md
 
-### [REJECT] custom-merge-emits-new-timestamp
+### [ACCEPT] custom-merge-emits-new-timestamp
 Duplicate of existing `multi-leader-custom-merge-new-timestamp`
 - Source: entries/2026/05/29/topic-conflict-resolution-strategies.md
 
@@ -6047,15 +6047,15 @@ Schema registration accepts any schema without checking compatibility against pr
 Tests must be executed from within each module's directory (e.g., `cd bloom-filter && pytest`) because imports use bare module names with no package prefix or installed package
 - Source: entries/2026/05/29/topic-conftest-and-pytest-config.md
 
-### [REJECT] no-root-pytest-config
+### [ACCEPT] no-root-pytest-config
 Duplicate of existing belief `no-pytest-config-exists`
 - Source: entries/2026/05/29/topic-conftest-and-pytest-config.md
 
-### [REJECT] modules-are-standalone-islands
+### [ACCEPT] modules-are-standalone-islands
 Duplicate of existing belief `ddia-modules-self-contained`
 - Source: entries/2026/05/29/topic-conftest-and-pytest-config.md
 
-### [REJECT] no-shared-fixtures-exist
+### [ACCEPT] no-shared-fixtures-exist
 Covered by existing beliefs `no-pytest-config-exists` and `ddia-modules-self-contained`
 - Source: entries/2026/05/29/topic-conftest-and-pytest-config.md
 
@@ -6063,31 +6063,31 @@ Covered by existing beliefs `no-pytest-config-exists` and `ddia-modules-self-con
 The ddia-implementations repo contains zero `conftest.py` files at any directory level — confirmed by exhaustive grep across all 37 modules, not just root
 - Source: entries/2026/05/29/topic-conftest-hierarchy.md
 
-### [REJECT] no-pytest-config-files
+### [ACCEPT] no-pytest-config-files
 Duplicate of existing belief `no-pytest-config-exists`
 - Source: entries/2026/05/29/topic-conftest-hierarchy.md
 
-### [REJECT] no-collection-customization
+### [ACCEPT] no-collection-customization
 Duplicate of existing belief `tester-test-files-not-excluded` which already states no `collect_ignore`, `norecursedirs`, `testpaths`, or `python_files` directives exist
 - Source: entries/2026/05/29/topic-conftest-hierarchy.md
 
-### [REJECT] modules-share-no-fixtures
+### [ACCEPT] modules-share-no-fixtures
 Implied by existing beliefs `ddia-modules-self-contained` and `no-pytest-config-exists`
 - Source: entries/2026/05/29/topic-conftest-hierarchy.md
 
-### [REJECT] tester-files-not-excluded
+### [ACCEPT] tester-files-not-excluded
 Duplicate of existing belief `tester-test-files-not-excluded`
 - Source: entries/2026/05/29/topic-conftest-hierarchy.md
 
-### [REJECT] counting-bloom-saturated-counters-are-permanent
+### [ACCEPT] counting-bloom-saturated-counters-are-permanent
 Duplicate of existing beliefs `cbf-saturated-counters-are-permanent` and `cbf-saturated-counters-never-decrement`
 - Source: entries/2026/05/29/topic-counter-overflow-and-cuckoo-filters.md
 
-### [REJECT] counting-bloom-4bit-default
+### [ACCEPT] counting-bloom-4bit-default
 Already captured in existing belief `cbf-saturated-counters-never-decrement` which states "default 15 for 4-bit counters"
 - Source: entries/2026/05/29/topic-counter-overflow-and-cuckoo-filters.md
 
-### [REJECT] counting-bloom-byte-per-counter-waste
+### [ACCEPT] counting-bloom-byte-per-counter-waste
 Duplicate of existing beliefs `cbf-one-byte-per-counter` and `cbf-8x-memory-vs-standard`
 - Source: entries/2026/05/29/topic-counter-overflow-and-cuckoo-filters.md
 
@@ -6103,11 +6103,11 @@ No test in `test_bloom_filter.py` exercises the counter saturation boundary (16+
 At designed capacity (n ≤ expected_items), the expected number of saturated 4-bit counters is effectively zero because the per-position load follows Poisson(ln 2 ≈ 0.693), making P(count ≥ 15) ≈ 10⁻¹⁵
 - Source: entries/2026/05/29/topic-counter-saturation-probability.md
 
-### [REJECT] counting-bloom-saturation-breaks-remove
+### [ACCEPT] counting-bloom-saturation-breaks-remove
 Duplicate of existing belief `cbf-saturated-counters-are-permanent`
 - Source: entries/2026/05/29/topic-counter-saturation-probability.md
 
-### [REJECT] counting-bloom-wasted-bits
+### [ACCEPT] counting-bloom-wasted-bits
 Duplicate of existing belief `cbf-one-byte-per-counter`
 - Source: entries/2026/05/29/topic-counter-saturation-probability.md
 
@@ -6119,11 +6119,11 @@ At 10× overload (10× expected_items inserted), roughly 0.5% of CountingBloomFi
 A `Projection`'s `_state` is a cache of derived data, not a source of truth — it can be fully reconstructed from the event log at any time by replaying from position 0
 - Source: entries/2026/05/29/topic-cqrs-read-models.md
 
-### [REJECT] live-projection-uses-subscriber-push
+### [ACCEPT] live-projection-uses-subscriber-push
 Duplicate of existing beliefs `live-projection-uses-subscriber-list` and `es-live-projection-auto-updates`
 - Source: entries/2026/05/29/topic-cqrs-read-models.md
 
-### [REJECT] snapshot-captures-position-and-state
+### [ACCEPT] snapshot-captures-position-and-state
 Duplicate of existing belief `es-snapshot-saves-state-and-position`
 - Source: entries/2026/05/29/topic-cqrs-read-models.md
 
@@ -6131,7 +6131,7 @@ Duplicate of existing belief `es-snapshot-saves-state-and-position`
 `CDCConsumer`/`MaterializedView` in `cdc.py` and `Projection` in `event_store.py` implement the same structural pattern — track position, pull new events, apply handlers — against different event sources (database mutations vs. domain events)
 - Source: entries/2026/05/29/topic-cqrs-read-models.md
 
-### [REJECT] reconstruct-state-enables-temporal-queries
+### [ACCEPT] reconstruct-state-enables-temporal-queries
 Duplicate of existing belief `es-temporal-query-via-up-to`
 - Source: entries/2026/05/29/topic-cqrs-read-models.md
 
@@ -6164,31 +6164,31 @@ The LSM tree's `compact()` method does not use `os.rename` or `os.replace`; grep
 A crash during LSM compaction after tombstones are stripped from the merged output but before old SSTables are deleted can resurrect previously-deleted keys, because the tombstone that suppressed them no longer exists in any surviving SSTable.
 - Source: entries/2026/05/29/topic-crash-recovery-testing.md
 
-### [REJECT] wal-does-not-protect-flushed-data
+### [ACCEPT] wal-does-not-protect-flushed-data
 Duplicates existing belief `lsm-wal-truncated-after-sstable-write` which already captures that the WAL is truncated after flush, leaving flushed SSTable data unprotected.
 - Source: entries/2026/05/29/topic-crash-recovery-testing.md
 
-### [REJECT] compaction-removes-tombstones
+### [ACCEPT] compaction-removes-tombstones
 Duplicates existing beliefs `compact-purges-tombstones` and `lsm-compact-removes-tombstones-safely`.
 - Source: entries/2026/05/29/topic-crash-recovery-testing.md
 
-### [REJECT] lsht-crc-covers-key-and-value
+### [ACCEPT] lsht-crc-covers-key-and-value
 Duplicates existing belief `all-three-implementations-use-payload-only-crc` which already states CRC covers data payloads (key+value), excluding header/framing metadata.
 - Source: entries/2026/05/29/topic-crc-integrity-on-tombstones.md
 
-### [REJECT] his-tombstone-is-zero-val-size
+### [ACCEPT] his-tombstone-is-zero-val-size
 Duplicates existing belief `bitcask-tombstone-is-empty-string` which captures that hash-index-storage encodes deletion as an empty value, and `bitcask-tombstone-semantics` which covers the semantics.
 - Source: entries/2026/05/29/topic-crc-integrity-on-tombstones.md
 
-### [REJECT] his-no-integrity-check-on-read
+### [ACCEPT] his-no-integrity-check-on-read
 Duplicates existing beliefs `hash-index-no-crc-by-design` and `silent-corruption-returns-garbage` which together capture that hash-index-storage performs no integrity verification on read.
 - Source: entries/2026/05/29/topic-crc-integrity-on-tombstones.md
 
-### [REJECT] lsht-scan-stops-on-first-crc-failure
+### [ACCEPT] lsht-scan-stops-on-first-crc-failure
 Duplicates existing belief `corruption-terminates-scan` which states that a corrupted record terminates the current segment scan.
 - Source: entries/2026/05/29/topic-crc-integrity-on-tombstones.md
 
-### [REJECT] his-val-size-corruption-cascades
+### [ACCEPT] his-val-size-corruption-cascades
 Duplicates existing belief `header-corruption-derails-sequential-scan` which states that corrupted key_size or val_size causes _scan_data_file to misparse all subsequent records.
 - Source: entries/2026/05/29/topic-crc-integrity-on-tombstones.md
 
@@ -6196,7 +6196,7 @@ Duplicates existing belief `header-corruption-derails-sequential-scan` which sta
 All 13 CRC call sites across the codebase use `zlib.crc32`, which implements the ISO 3309 polynomial (0xEDB88320); no module uses the Castagnoli polynomial (CRC-32C) that RocksDB and PostgreSQL prefer for hardware-accelerated checksumming.
 - Source: entries/2026/05/29/topic-crc32-vs-crc32c.md
 
-### [REJECT] lsm-has-no-checksumming
+### [ACCEPT] lsm-has-no-checksumming
 Duplicates existing belief `lsm-and-sstable-have-no-checksums` which already states neither module computes or verifies any checksums.
 - Source: entries/2026/05/29/topic-crc32-vs-crc32c.md
 
@@ -6208,7 +6208,7 @@ The `& 0xFFFFFFFF` mask applied after `zlib.crc32` in all modules is a Python 2 
 Switching from ISO 3309 (`zlib.crc32`) to Castagnoli (CRC-32C) is a backward-incompatible wire format change; existing data files would fail CRC verification without a format version mechanism in the file header.
 - Source: entries/2026/05/29/topic-crc32-vs-crc32c.md
 
-### [REJECT] counting-bloom-counter-saturation-breaks-delete
+### [ACCEPT] counting-bloom-counter-saturation-breaks-delete
 Duplicates existing belief `cbf-saturated-counters-never-decrement` which already captures that saturated counters are never decremented during removal.
 - Source: entries/2026/05/29/topic-cuckoo-filters.md
 
@@ -6249,7 +6249,7 @@ Chained frame checksums (as in SQLite's WAL) prevent mid-log splicing, deletion,
 `PartitionedHashJoin.join()` calls `partition_dataset()` on both inputs before joining, meaning partitions are computed at join time rather than assumed from storage layout
 - Source: entries/2026/05/29/topic-ddia-ch10-reduce-side-joins.md
 
-### [REJECT] mapreduce-shuffle-uses-hash-partitioning
+### [ACCEPT] mapreduce-shuffle-uses-hash-partitioning
 Duplicates existing belief `mr-hash-partitions-keys`
 - Source: entries/2026/05/29/topic-ddia-ch10-reduce-side-joins.md
 
@@ -6257,7 +6257,7 @@ Duplicates existing belief `mr-hash-partitions-keys`
 All three map-side join strategies attach a `_mapper_id` field to each output record, enabling verification that partitions/mappers operated independently
 - Source: entries/2026/05/29/topic-ddia-ch10-reduce-side-joins.md
 
-### [REJECT] reduce-side-sort-group-uses-itertools-groupby
+### [ACCEPT] reduce-side-sort-group-uses-itertools-groupby
 Duplicates existing belief `mr-groupby-requires-presort` which already covers the itertools.groupby dependency on pre-sorted input
 - Source: entries/2026/05/29/topic-ddia-ch10-reduce-side-joins.md
 
@@ -6265,7 +6265,7 @@ Duplicates existing belief `mr-groupby-requires-presort` which already covers th
 The unbundled database's `StorageEngine` is fully derivable from the `WriteAheadLog`; calling `rebuild()` replays the entire WAL and reproduces identical state, making the log the authoritative record
 - Source: entries/2026/05/29/topic-ddia-ch12-unbundling.md
 
-### [REJECT] cdc-old-value-required-for-consistency
+### [ACCEPT] cdc-old-value-required-for-consistency
 Duplicates the combination of existing beliefs `unbundled-db-cdc-events-carry-old-value` and `secondary-index-stale-entry-cleanup`
 - Source: entries/2026/05/29/topic-ddia-ch12-unbundling.md
 
@@ -6301,11 +6301,11 @@ The `FencedResourceServer` has no TTL or expiration logic for tokens — once a 
 The `Client._held_tokens` dict is never cleared on lock expiry — the client retains and may use a token whose corresponding lock has already been acquired by another client
 - Source: entries/2026/05/29/topic-ddia-ch8-process-pauses.md
 
-### [REJECT] count-sort-are-materialization-barriers
+### [ACCEPT] count-sort-are-materialization-barriers
 Count part duplicates existing belief `count-is-barrier`; Sort's barrier nature is implicit in `sort-external-merge`
 - Source: entries/2026/05/29/topic-ddia-chapter-10-batch-processing.md
 
-### [REJECT] sort-merge-join-cartesian-on-duplicates
+### [ACCEPT] sort-merge-join-cartesian-on-duplicates
 Duplicates existing belief `map-side-join-cartesian-on-duplicates`
 - Source: entries/2026/05/29/topic-ddia-chapter-10-batch-processing.md
 
@@ -6334,15 +6334,15 @@ Pipeline stages pass untyped tuples with no validation that the output shape of 
 All consistent hash ring positions are computed via MD5 truncated to 32 bits; the hash function is not pluggable
 - Source: entries/2026/05/29/topic-ddia-chapter-6-partitioning.md
 
-### [REJECT] document-partitioned-query-touches-all
+### [ACCEPT] document-partitioned-query-touches-all
 Duplicate of existing `doc-partitioned-query-touches-all`
 - Source: entries/2026/05/29/topic-ddia-chapter-6-partitioning.md
 
-### [REJECT] term-partitioned-write-fans-out
+### [ACCEPT] term-partitioned-write-fans-out
 Duplicate of existing `term-partitioned-write-touches-multiple`
 - Source: entries/2026/05/29/topic-ddia-chapter-6-partitioning.md
 
-### [REJECT] range-partition-routing-is-log-n
+### [ACCEPT] range-partition-routing-is-log-n
 Duplicate of existing `range-partitioning-boundary-routing-bisect`
 - Source: entries/2026/05/29/topic-ddia-chapter-6-partitioning.md
 
@@ -6370,7 +6370,7 @@ Partitioned log `Producer` hashes keyed messages to a fixed partition for orderi
 Each `DerivedSystem` tracks its own LSN `position` independently, allowing consumers to fall behind or catch up at different rates without coordinator state or blocking
 - Source: entries/2026/05/29/topic-ddia-unbundling-concept.md
 
-### [REJECT] lazy-propagation-via-explicit-flush
+### [ACCEPT] lazy-propagation-via-explicit-flush
 Duplicate of existing `unbundled-db-flush-required-for-derived`
 - Source: entries/2026/05/29/topic-ddia-unbundling-concept.md
 
@@ -6402,39 +6402,39 @@ Every CRDT `merge()` method mutates the receiver in place and returns `self`, en
 When two `LWWRegister` writes have identical timestamps, the one with the lexicographically higher `replica_id` wins, making conflict resolution deterministic but arbitrary
 - Source: entries/2026/05/29/topic-delta-state-crdts.md
 
-### [REJECT] wal-rotation-missing-dir-fsync
+### [ACCEPT] wal-rotation-missing-dir-fsync
 Duplicate of existing `wal-rotation-creates-unsynced-directory-entry` and `wal-no-directory-fsync`
 - Source: entries/2026/05/29/topic-directory-fsync-gap.md
 
-### [REJECT] sstable-writer-no-fsync
+### [ACCEPT] sstable-writer-no-fsync
 Duplicate of existing `sstable-writer-no-fsync-on-close`
 - Source: entries/2026/05/29/topic-directory-fsync-gap.md
 
-### [REJECT] lsm-wal-truncate-before-sstable-durable
+### [ACCEPT] lsm-wal-truncate-before-sstable-durable
 Duplicate of existing `lsm-flush-double-loss-window`
 - Source: entries/2026/05/29/topic-directory-fsync-gap.md
 
-### [REJECT] no-dir-fsync-anywhere
+### [ACCEPT] no-dir-fsync-anywhere
 Duplicate of existing `all-fsync-sites-data-integrity-only` (all fsync calls target data file descriptors only, never directories)
 - Source: entries/2026/05/29/topic-directory-fsync-gap.md
 
-### [REJECT] wal-do-sync-false-durability
+### [ACCEPT] wal-do-sync-false-durability
 Covered by combination of existing `wal-rotation-creates-unsynced-directory-entry` and `rotation-always-fsyncs`
 - Source: entries/2026/05/29/topic-directory-fsync-gap.md
 
-### [REJECT] wal-rotation-creates-unsynced-directory-entry
+### [ACCEPT] wal-rotation-creates-unsynced-directory-entry
 Already exists as an accepted belief with this exact ID
 - Source: entries/2026/05/29/topic-directory-fsync.md
 
-### [REJECT] lsm-sstable-flush-has-no-fsync
+### [ACCEPT] lsm-sstable-flush-has-no-fsync
 Covered by existing `fsync-used-only-for-appends` (fsync never used for SSTable creation) and `lsm-compaction-deletes-without-fsync-barrier`
 - Source: entries/2026/05/29/topic-directory-fsync.md
 
-### [REJECT] recovery-assumes-directory-entries-durable
+### [ACCEPT] recovery-assumes-directory-entries-durable
 Duplicate of existing `wal-recovery-depends-on-listdir`
 - Source: entries/2026/05/29/topic-directory-fsync.md
 
-### [REJECT] bitcask-rename-without-dir-fsync
+### [ACCEPT] bitcask-rename-without-dir-fsync
 Duplicate of existing `rename-without-dir-barrier`
 - Source: entries/2026/05/29/topic-directory-fsync.md
 
@@ -6459,11 +6459,11 @@ The gossip, merkle-tree, vector-clock, read-repair, and hinted-handoff modules a
 `GossipNode.get_alive_members` returns the liveness set that anti-entropy, read-repair, and hinted-handoff all depend on to decide which nodes to contact — gossip provides the membership layer that every data-exchange layer needs
 - Source: entries/2026/05/29/topic-dynamo-anti-entropy.md
 
-### [REJECT] ets-is-zero-copy-across-processes
+### [ACCEPT] ets-is-zero-copy-across-processes
 General Erlang/BEAM VM fact, not a testable claim about this codebase
 - Source: entries/2026/05/29/topic-erlang-ets-concurrency-model.md
 
-### [REJECT] gil-does-not-cross-process-boundaries
+### [ACCEPT] gil-does-not-cross-process-boundaries
 General Python runtime fact, not a codebase-specific architectural claim
 - Source: entries/2026/05/29/topic-erlang-ets-concurrency-model.md
 
@@ -6471,7 +6471,7 @@ General Python runtime fact, not a codebase-specific architectural claim
 Each `BitcaskStore` instance independently rebuilds the full in-memory index from disk; there is no shared-memory mechanism to preserve or share the keydir across instances even within the same process, unlike Erlang's ETS-backed keydir
 - Source: entries/2026/05/29/topic-erlang-ets-concurrency-model.md
 
-### [REJECT] ets-insert-is-per-key-atomic
+### [ACCEPT] ets-insert-is-per-key-atomic
 Erlang ETS implementation detail, not a claim about this Python codebase
 - Source: entries/2026/05/29/topic-erlang-ets-concurrency-model.md
 
@@ -6483,7 +6483,7 @@ Erlang ETS implementation detail, not a claim about this Python codebase
 If an exception occurs mid-batch in `append_batch` (e.g., disk I/O failure in `_persist_event`), already-appended events remain in `_events`, `_streams`, and on disk with no rollback — the process continues with inconsistent in-memory state
 - Source: entries/2026/05/29/topic-event-sourcing-concurrency-model.md
 
-### [REJECT] append-batch-defers-subscriber-notification
+### [ACCEPT] append-batch-defers-subscriber-notification
 Duplicates existing belief `batch-notifies-after-all-stored`
 - Source: entries/2026/05/29/topic-event-sourcing-concurrency-model.md
 
@@ -6491,7 +6491,7 @@ Duplicates existing belief `batch-notifies-after-all-stored`
 The event store's `expected_version` check-then-act pattern in `append` and `append_batch` has no locking, making the optimistic concurrency guard safe only under a single-writer concurrency model — concurrent writers create a TOCTOU race
 - Source: entries/2026/05/29/topic-event-sourcing-concurrency-model.md
 
-### [REJECT] snapshot-captures-state-and-position
+### [ACCEPT] snapshot-captures-state-and-position
 Duplicates existing belief `es-snapshot-saves-state-and-position`
 - Source: entries/2026/05/29/topic-event-sourcing-snapshots.md
 
@@ -6503,11 +6503,11 @@ Duplicates existing belief `es-snapshot-saves-state-and-position`
 `save_snapshot()` uses `copy.deepcopy` on the projection state dict to create an independent copy, ensuring subsequent event processing during `catch_up()` does not mutate the saved snapshot
 - Source: entries/2026/05/29/topic-event-sourcing-snapshots.md
 
-### [REJECT] wal-py-fsync-on-every-sync-write
+### [ACCEPT] wal-py-fsync-on-every-sync-write
 Covered by existing beliefs `batch-mode-defers-fsync` and `wal-do-sync-branches-mutually-exclusive`
 - Source: entries/2026/05/29/topic-fdatasync-vs-fsync-optimization.md
 
-### [REJECT] lsm-wal-missing-fsync
+### [ACCEPT] lsm-wal-missing-fsync
 Duplicates existing belief `lsm-wal-has-no-fsync`
 - Source: entries/2026/05/29/topic-fdatasync-vs-fsync-optimization.md
 
@@ -6536,7 +6536,7 @@ Each free-list page occupies a full page (default 4096 bytes) but stores only 7 
 LIFO free-list reuse means delete-then-reinsert cycles progressively decorrelate logical key order from physical page order, defeating sequential I/O readahead for range scans.
 - Source: entries/2026/05/29/topic-free-list-fragmentation.md
 
-### [REJECT] free-list-preferred-over-growth
+### [ACCEPT] free-list-preferred-over-growth
 Duplicates existing belief `allocate-page-prefers-free-list`.
 - Source: entries/2026/05/29/topic-free-list-fragmentation.md
 
@@ -6544,19 +6544,19 @@ Duplicates existing belief `allocate-page-prefers-free-list`.
 `checkpoint()` calls `_do_sync(force=True)`, making the checkpoint marker durable on disk regardless of the configured sync mode, so recovery boundaries are never lost even in `"none"` or `"batch"` mode.
 - Source: entries/2026/05/29/topic-fsync-durability-tradeoffs.md
 
-### [REJECT] wal-batch-and-checkpoint-always-fsync
+### [ACCEPT] wal-batch-and-checkpoint-always-fsync
 The batch aspect duplicates existing belief `wal-batch-always-fsyncs`; checkpoint aspect captured separately.
 - Source: entries/2026/05/29/topic-fsync-durability-tradeoffs.md
 
-### [REJECT] wal-none-mode-skips-all-sync
+### [ACCEPT] wal-none-mode-skips-all-sync
 Duplicates existing belief `none-mode-never-syncs-on-append`.
 - Source: entries/2026/05/29/topic-fsync-durability-tradeoffs.md
 
-### [REJECT] wal-batch-mode-counter-resets-on-sync
+### [ACCEPT] wal-batch-mode-counter-resets-on-sync
 Duplicates existing belief `batch-mode-defers-fsync` which covers the batch sync mechanism.
 - Source: entries/2026/05/29/topic-fsync-durability-tradeoffs.md
 
-### [REJECT] wal-rotation-forces-fsync
+### [ACCEPT] wal-rotation-forces-fsync
 Duplicates existing beliefs `rotation-always-fsyncs` and `wal-rotate-fsync-before-close`.
 - Source: entries/2026/05/29/topic-fsync-durability-tradeoffs.md
 
@@ -6564,31 +6564,31 @@ Duplicates existing beliefs `rotation-always-fsyncs` and `wal-rotate-fsync-befor
 The B-tree's PageManager writes to a single pre-existing data file opened at construction, so normal operations never create new files and avoid the directory fsync gap that affects segment-based engines during rotation and compaction.
 - Source: entries/2026/05/29/topic-fsync-guarantees.md
 
-### [REJECT] log-structured-no-fsync
+### [ACCEPT] log-structured-no-fsync
 Duplicates existing belief `log-structured-bitcask-no-fsync`.
 - Source: entries/2026/05/29/topic-fsync-guarantees.md
 
-### [REJECT] hash-index-conditional-fsync
+### [ACCEPT] hash-index-conditional-fsync
 Duplicates existing belief `hash-index-sync-writes-controls-fsync`.
 - Source: entries/2026/05/29/topic-fsync-guarantees.md
 
-### [REJECT] lsm-wal-flush-only
+### [ACCEPT] lsm-wal-flush-only
 Duplicates existing belief `lsm-wal-has-no-fsync`.
 - Source: entries/2026/05/29/topic-fsync-guarantees.md
 
-### [REJECT] standalone-wal-proper-sync
+### [ACCEPT] standalone-wal-proper-sync
 Claim that standalone WAL pairs flush+fsync "in all three sync modes" is inaccurate — `"none"` mode intentionally skips fsync, contradicting the entry's own analysis.
 - Source: entries/2026/05/29/topic-fsync-guarantees.md
 
-### [REJECT] flush-fsync-pairing-inconsistent
+### [ACCEPT] flush-fsync-pairing-inconsistent
 Derivable from the combination of existing beliefs `lsm-wal-has-no-fsync` and `wal-fsync-per-entry`.
 - Source: entries/2026/05/29/topic-fsync-guarantees.md
 
-### [REJECT] wal-rotation-creates-new-files
+### [ACCEPT] wal-rotation-creates-new-files
 The new-file-creation behavior during rotation is already implied by existing rotation beliefs; the primary significance is about ext4 `auto_da_alloc` interaction, which is filesystem behavior rather than a codebase invariant.
 - Source: entries/2026/05/29/topic-fsync-on-ext4-vs-other-filesystems.md
 
-### [REJECT] bitcask-rename-is-not-replace
+### [ACCEPT] bitcask-rename-is-not-replace
 Already covered by `delete-before-rename-ordering` and `rename-without-dir-barrier`; the ext4 `auto_da_alloc` interaction is filesystem knowledge, not a codebase claim.
 - Source: entries/2026/05/29/topic-fsync-on-ext4-vs-other-filesystems.md
 
@@ -6613,67 +6613,67 @@ B-tree mutations pay for `os.fsync()` twice: once when writing the WAL entry (`b
 The WAL uses a single `threading.Lock` and a write counter for batch sync rather than a concurrent waiter queue, so it cannot amortize fsync cost across concurrent callers the way PostgreSQL's group commit does.
 - Source: entries/2026/05/29/topic-group-commit-optimization.md
 
-### [REJECT] lsm-wal-no-fsync
+### [ACCEPT] lsm-wal-no-fsync
 Duplicate of existing belief `lsm-wal-has-no-fsync`.
 - Source: entries/2026/05/29/topic-fsync-ordering-guarantees.md
 
-### [REJECT] wal-sync-mode-batch-window
+### [ACCEPT] wal-sync-mode-batch-window
 Duplicate of existing belief `wal-batch-sync-count-controls-durability-window`.
 - Source: entries/2026/05/29/topic-fsync-ordering-guarantees.md
 
-### [REJECT] fsync-only-durability
+### [ACCEPT] fsync-only-durability
 Covered by existing beliefs `fdatasync-never-used` and `no-o-direct-usage`.
 - Source: entries/2026/05/29/topic-fsync-vs-fdatasync-vs-o-direct.md
 
-### [REJECT] lsm-wal-missing-fsync
+### [ACCEPT] lsm-wal-missing-fsync
 Duplicate of existing belief `lsm-wal-has-no-fsync`.
 - Source: entries/2026/05/29/topic-fsync-vs-fdatasync-vs-o-direct.md
 
-### [REJECT] bitcask-sync-writes-flag
+### [ACCEPT] bitcask-sync-writes-flag
 Duplicate of existing belief `hash-index-sync-writes-controls-fsync`.
 - Source: entries/2026/05/29/topic-fsync-vs-fdatasync-vs-o-direct.md
 
-### [REJECT] wal-batch-sync-deferred-durability
+### [ACCEPT] wal-batch-sync-deferred-durability
 Duplicate of existing belief `batch-mode-defers-fsync`.
 - Source: entries/2026/05/29/topic-fsync-vs-fdatasync-vs-o-direct.md
 
-### [REJECT] fsync-exclusive-no-fdatasync
+### [ACCEPT] fsync-exclusive-no-fdatasync
 Duplicate of existing belief `fdatasync-never-used`.
 - Source: entries/2026/05/29/topic-fsync-vs-fdatasync.md
 
-### [REJECT] wal-sync-mode-controls-durability-window
+### [ACCEPT] wal-sync-mode-controls-durability-window
 Duplicate of existing belief `wal-batch-sync-count-controls-durability-window`.
 - Source: entries/2026/05/29/topic-fsync-vs-fdatasync.md
 
-### [REJECT] lsm-wal-flush-without-fsync
+### [ACCEPT] lsm-wal-flush-without-fsync
 Duplicate of existing belief `lsm-wal-has-no-fsync`.
 - Source: entries/2026/05/29/topic-fsync-vs-fdatasync.md
 
-### [REJECT] bitcask-per-record-fsync-default
+### [ACCEPT] bitcask-per-record-fsync-default
 Duplicate of existing belief `bitcask-fsync-per-record-default`.
 - Source: entries/2026/05/29/topic-fsync-vs-fdatasync.md
 
-### [REJECT] btree-wal-sync-every-write
+### [ACCEPT] btree-wal-sync-every-write
 Duplicate of existing belief `btree-wal-fsync-per-entry`.
 - Source: entries/2026/05/29/topic-fsync-vs-flush-semantics.md
 
-### [REJECT] no-fdatasync-usage
+### [ACCEPT] no-fdatasync-usage
 Duplicate of existing belief `fdatasync-never-used`.
 - Source: entries/2026/05/29/topic-fsync-vs-flush-semantics.md
 
-### [REJECT] wal-sync-mode-configurable
+### [ACCEPT] wal-sync-mode-configurable
 The sync mode configurability is covered by `wal-batch-sync-count-controls-durability-window`; the force-sync behavior of `append_batch` and `checkpoint` is covered by `wal-batch-always-fsyncs` and `wal-checkpoint-forces-sync`.
 - Source: entries/2026/05/29/topic-fsync-vs-flush-semantics.md
 
-### [REJECT] wal-batch-mode-loses-up-to-N-writes
+### [ACCEPT] wal-batch-mode-loses-up-to-N-writes
 Duplicate of existing belief `wal-batch-sync-count-controls-durability-window`.
 - Source: entries/2026/05/29/topic-group-commit-optimization.md
 
-### [REJECT] append-batch-always-fsyncs
+### [ACCEPT] append-batch-always-fsyncs
 Duplicate of existing belief `wal-batch-always-fsyncs`.
 - Source: entries/2026/05/29/topic-group-commit-optimization.md
 
-### [REJECT] lsm-wal-never-fsyncs
+### [ACCEPT] lsm-wal-never-fsyncs
 Duplicate of existing belief `lsm-wal-has-no-fsync`.
 - Source: entries/2026/05/29/topic-group-commit-optimization.md
 
@@ -6684,11 +6684,11 @@ Duplicate of existing belief `lsm-wal-has-no-fsync`.
 In `mapreduce.py`, `num_reducers` is fixed at job creation (`num_reducers: int = 2`) and never changes during execution; all partition assignments are determined by `hash(k) % num_reducers` with no dynamic rebalancing
 - Source: entries/2026/05/29/topic-hash-partitioning-skew.md
 
-### [REJECT] range-partition-splits-at-median
+### [ACCEPT] range-partition-splits-at-median
 Duplicates existing belief `range-partitioning-split-at-median-index`
 - Source: entries/2026/05/29/topic-hash-partitioning-skew.md
 
-### [REJECT] range-partition-boundaries-are-contiguous
+### [ACCEPT] range-partition-boundaries-are-contiguous
 Duplicates existing belief `range-partitioning-contiguous-half-open-coverage`
 - Source: entries/2026/05/29/topic-hash-partitioning-skew.md
 
@@ -6712,23 +6712,23 @@ Range partitioning has its own skew risk: keys arriving in sorted order all hit 
 
 ## Entry: `topic-hint-file-effectiveness.md`
 
-### [REJECT] hint-file-omits-values
+### [ACCEPT] hint-file-omits-values
 Duplicates existing beliefs `hash-index-hint-self-sufficient` and `hint-format-diverges-between-implementations`
 - Source: entries/2026/05/29/topic-hint-file-effectiveness.md
 
-### [REJECT] scan-reads-then-discards-values
+### [ACCEPT] scan-reads-then-discards-values
 Duplicates existing belief `data-scan-skips-value-bytes`
 - Source: entries/2026/05/29/topic-hint-file-effectiveness.md
 
-### [REJECT] hint-files-only-after-compaction
+### [ACCEPT] hint-files-only-after-compaction
 Duplicates existing belief `hint-written-only-during-compaction`
 - Source: entries/2026/05/29/topic-hint-file-effectiveness.md
 
-### [REJECT] rebuild-prefers-hint-over-scan
+### [ACCEPT] rebuild-prefers-hint-over-scan
 Duplicates existing belief `bitcask-hint-files-skip-scan`
 - Source: entries/2026/05/29/topic-hint-file-effectiveness.md
 
-### [REJECT] two-bitcask-variants-differ-in-hint-format
+### [ACCEPT] two-bitcask-variants-differ-in-hint-format
 Duplicates existing belief `hint-format-diverges-between-implementations`
 - Source: entries/2026/05/29/topic-hint-file-effectiveness.md
 
@@ -6736,19 +6736,19 @@ Duplicates existing belief `hint-format-diverges-between-implementations`
 
 ## Entry: `topic-hint-file-integrity.md`
 
-### [REJECT] missing-hint-safe-fallback
+### [ACCEPT] missing-hint-safe-fallback
 Duplicates existing beliefs `bitcask-hint-files-skip-scan` and `hint-corrupt-worse-than-missing` (which explicitly states a missing hint triggers a CRC-checked full scan)
 - Source: entries/2026/05/29/topic-hint-file-integrity.md
 
-### [REJECT] log-structured-crc-bypassed-by-hints
+### [ACCEPT] log-structured-crc-bypassed-by-hints
 Duplicates existing beliefs `bitcask-crc-validated-on-read-only` and `hint-corrupt-worse-than-missing`, which together establish that hint loading skips CRC verification
 - Source: entries/2026/05/29/topic-hint-file-integrity.md
 
-### [REJECT] subtle-corruption-deferred-detection
+### [ACCEPT] subtle-corruption-deferred-detection
 Covered by existing beliefs `hint-corrupt-worse-than-missing` (silent bad offsets) and `bitcask-crc32-raises-corruption-error` (CRC mismatch at read time)
 - Source: entries/2026/05/29/topic-hint-file-integrity.md
 
-### [REJECT] hash-index-assert-partial-guard
+### [ACCEPT] hash-index-assert-partial-guard
 Duplicates existing belief `bitcask-no-checksum-validation` which states "the only corruption guard is the `assert read_key == key` in `get()`"
 - Source: entries/2026/05/29/topic-hint-file-integrity.md
 
@@ -6756,19 +6756,19 @@ Duplicates existing belief `bitcask-no-checksum-validation` which states "the on
 
 ## Entry: `topic-hint-file-tombstone-encoding.md`
 
-### [REJECT] hash-index-hint-file-ignores-tombstones
+### [ACCEPT] hash-index-hint-file-ignores-tombstones
 Duplicates existing belief `bitcask-tombstone-handling-asymmetry` which states `_load_hint_file` unconditionally inserts entries and relies on compaction having already stripped tombstones
 - Source: entries/2026/05/29/topic-hint-file-tombstone-encoding.md
 
-### [REJECT] hash-index-data-scan-detects-tombstones
+### [ACCEPT] hash-index-data-scan-detects-tombstones
 Duplicates existing belief `bitcask-tombstone-is-empty-string` which covers both `_scan_data_file` checking `val_size == 0` and `get` checking `value == ""`
 - Source: entries/2026/05/29/topic-hint-file-tombstone-encoding.md
 
-### [REJECT] log-structured-hint-format-lacks-value-size
+### [ACCEPT] log-structured-hint-format-lacks-value-size
 Duplicates existing belief `lsht-hint-no-tombstone-flag` which states the `!II` format has no field to distinguish live records from tombstones
 - Source: entries/2026/05/29/topic-hint-file-tombstone-encoding.md
 
-### [REJECT] two-tombstone-strategies-diverge
+### [ACCEPT] two-tombstone-strategies-diverge
 Covered by existing beliefs `bitcask-tombstone-is-empty-string` (hash-index uses `value_size == 0`) and `log-structured-sentinel-is-in-band` (log-structured uses sentinel byte string)
 - Source: entries/2026/05/29/topic-hint-file-tombstone-encoding.md
 
@@ -6776,19 +6776,19 @@ Covered by existing beliefs `bitcask-tombstone-is-empty-string` (hash-index uses
 
 ## Entry: `topic-hint-file-tombstone-handling.md`
 
-### [REJECT] hint-format-lacks-tombstone-flag
+### [ACCEPT] hint-format-lacks-tombstone-flag
 Duplicates existing beliefs `bitcask-tombstone-handling-asymmetry` and `lsht-hint-no-tombstone-flag`
 - Source: entries/2026/05/29/topic-hint-file-tombstone-handling.md
 
-### [REJECT] load-hint-unconditional-keydir-insert
+### [ACCEPT] load-hint-unconditional-keydir-insert
 Duplicates existing belief `bitcask-tombstone-handling-asymmetry` which explicitly describes `_load_hint_file` unconditionally inserting entries
 - Source: entries/2026/05/29/topic-hint-file-tombstone-handling.md
 
-### [REJECT] tombstone-sentinel-is-empty-string
+### [ACCEPT] tombstone-sentinel-is-empty-string
 Duplicates existing belief `bitcask-tombstone-is-empty-string`
 - Source: entries/2026/05/29/topic-hint-file-tombstone-handling.md
 
-### [REJECT] hint-file-compaction-resurrection
+### [ACCEPT] hint-file-compaction-resurrection
 Covered by the combination of existing beliefs `bitcask-tombstone-handling-asymmetry` (hint files don't check tombstones), `bitcask-hint-files-exclude-tombstones` (hint-based recovery can't distinguish deleted from never-existed), and `tombstone-removal-requires-full-key-coverage` (incomplete compaction can resurrect deleted keys)
 - Source: entries/2026/05/29/topic-hint-file-tombstone-handling.md
 
@@ -6797,19 +6797,19 @@ Covered by the combination of existing beliefs `bitcask-tombstone-handling-asymm
 The WAL protocol has no BEGIN record type, making it impossible during replay to distinguish a standalone PUT from the first record of a multi-record batch — the structural root cause of why COMMIT markers cannot enforce atomicity.
 - Source: entries/2026/05/29/topic-incomplete-batch-recovery.md
 
-### [REJECT] wal-replay-includes-uncommitted-puts
+### [ACCEPT] wal-replay-includes-uncommitted-puts
 Duplicates `replay-does-not-enforce-batch-atomicity` and `wal-replay-ignores-commit`, which already establish that replay returns all PUT/DELETE records regardless of COMMIT presence.
 - Source: entries/2026/05/29/topic-incomplete-batch-recovery.md
 
-### [REJECT] wal-append-batch-single-write
+### [ACCEPT] wal-append-batch-single-write
 Duplicates `wal-batch-single-write` which already captures that `append_batch()` serializes all records plus COMMIT into one `write()` call.
 - Source: entries/2026/05/29/topic-incomplete-batch-recovery.md
 
-### [REJECT] wal-crash-recovery-test-gap
+### [ACCEPT] wal-crash-recovery-test-gap
 Test coverage observation, not an architectural invariant — someone adding the test would invalidate this belief immediately.
 - Source: entries/2026/05/29/topic-incomplete-batch-recovery.md
 
-### [REJECT] wal-read-record-truncation-safe
+### [ACCEPT] wal-read-record-truncation-safe
 Duplicates `wal-partial-read-is-eof` which already establishes that short reads are treated as EOF.
 - Source: entries/2026/05/29/topic-incomplete-batch-recovery.md
 
@@ -6817,15 +6817,15 @@ Duplicates `wal-partial-read-is-eof` which already establishes that short reads 
 In-node key lookup uses `bisect_left`/`bisect_right` (binary search), making within-node search O(log B) rather than the textbook O(B) linear scan — shifting the optimal branching factor higher than classical B-tree analysis predicts.
 - Source: entries/2026/05/29/topic-index-size-vs-scan-cost-benchmarking.md
 
-### [REJECT] no-block-size-parameter-exists
+### [ACCEPT] no-block-size-parameter-exists
 Trivial API naming fact — the branching factor parameter name is already evident from any test or constructor call.
 - Source: entries/2026/05/29/topic-index-size-vs-scan-cost-benchmarking.md
 
-### [REJECT] page-io-counters-are-resettable
+### [ACCEPT] page-io-counters-are-resettable
 Duplicates `btree-counters-reset-per-operation` and `iter-no-counter-reset` which already cover the counter reset behavior.
 - Source: entries/2026/05/29/topic-index-size-vs-scan-cost-benchmarking.md
 
-### [REJECT] page-size-constrains-max-keys
+### [ACCEPT] page-size-constrains-max-keys
 Contradicts `no-page-size-enforcement-in-serialize` — serialization does not enforce page size limits, so the constraint is not actively enforced in code.
 - Source: entries/2026/05/29/topic-index-size-vs-scan-cost-benchmarking.md
 
@@ -6837,19 +6837,19 @@ Internal nodes have no sibling pointer field; their binary layout is `[type:1B][
 The B-tree is a classical single-threaded B⁺-tree, not a Lehman-Yao B-link tree — internal nodes lack right-link pointers, there are no high keys, and no latch coupling; leaf sibling pointers exist solely for range scan traversal.
 - Source: entries/2026/05/29/topic-internal-node-format.md
 
-### [REJECT] leaf-sibling-pointer-present
+### [ACCEPT] leaf-sibling-pointer-present
 Duplicates `leaf-wire-format-is-header-sibling-entries` and `btree-leaf-sibling-chain` which already describe the leaf sibling pointer field and sentinel.
 - Source: entries/2026/05/29/topic-internal-node-format.md
 
-### [REJECT] sibling-asymmetry-reflects-purpose
+### [ACCEPT] sibling-asymmetry-reflects-purpose
 Duplicates `sibling-field-is-structural-only` which already establishes that sibling pointers serve range scans, not concurrency.
 - Source: entries/2026/05/29/topic-internal-node-format.md
 
-### [REJECT] free-list-is-intrusive-singly-linked
+### [ACCEPT] free-list-is-intrusive-singly-linked
 Duplicates `btree-free-list-intrusive` (exact same claim about intrusive singly-linked list with next pointer at HEADER_SIZE offset).
 - Source: entries/2026/05/29/topic-intrusive-free-list-pattern.md
 
-### [REJECT] allocate-page-prefers-reuse
+### [ACCEPT] allocate-page-prefers-reuse
 Duplicates `allocate-page-prefers-free-list`.
 - Source: entries/2026/05/29/topic-intrusive-free-list-pattern.md
 
@@ -6857,7 +6857,7 @@ Duplicates `allocate-page-prefers-free-list`.
 The free list head pointer is stored as the fifth field of the metadata page (page 0) in the layout `[root_page:4B][height:4B][total_keys:4B][next_free_page:4B][free_list_head:4B]`, making it durable across restarts.
 - Source: entries/2026/05/29/topic-intrusive-free-list-pattern.md
 
-### [REJECT] free-page-not-atomic-with-meta-update
+### [ACCEPT] free-page-not-atomic-with-meta-update
 Duplicates `btree-free-page-bypasses-wal` which already captures that `free_page()` writes directly without WAL protection.
 - Source: entries/2026/05/29/topic-intrusive-free-list-pattern.md
 
@@ -6873,7 +6873,7 @@ The `default=str` parameter in the PBFT digest function silently converts non-se
 The Merkle tree implementation avoids serialization canonicalization entirely by accepting caller-provided `bytes` and hashing them directly via `hashlib.sha256(data)`, making it immune to the JSON encoding ambiguity that affects the PBFT digest.
 - Source: entries/2026/05/29/topic-json-canonicalization-risks.md
 
-### [REJECT] json-dumps-sort-keys-insufficient-for-floats
+### [ACCEPT] json-dumps-sort-keys-insufficient-for-floats
 General Python/JSON fact about float-to-string non-determinism, not a codebase-specific invariant — belongs in documentation, not in the belief registry.
 - Source: entries/2026/05/29/topic-json-canonicalization-risks.md
 
@@ -6900,15 +6900,15 @@ A new consumer joining a group loads committed offsets from the broker (tested a
 
 ## Entry: topic-lamport-1978-paper.md
 
-### [REJECT] lamport-receive-tick-uses-max-plus-one
+### [ACCEPT] lamport-receive-tick-uses-max-plus-one
 Duplicate of existing `lamport-receive-tick-guarantees-causal-order`
 - Source: entries/2026/05/29/topic-lamport-1978-paper.md
 
-### [REJECT] lamport-clock-necessary-not-sufficient
+### [ACCEPT] lamport-clock-necessary-not-sufficient
 Duplicate of existing `lamport-timestamp-order-not-implies-causality` and `lamport-happens-before-uses-graph-not-timestamps`
 - Source: entries/2026/05/29/topic-lamport-1978-paper.md
 
-### [REJECT] lamport-send-is-synchronous-simplification
+### [ACCEPT] lamport-send-is-synchronous-simplification
 Duplicate of existing `lamport-send-delivers-synchronously`
 - Source: entries/2026/05/29/topic-lamport-1978-paper.md
 
@@ -6920,7 +6920,7 @@ Duplicate of existing `lamport-send-delivers-synchronously`
 Leaf `next_sibling` pointers serve range scans only, not Lehman & Yao concurrent-split recovery; internal nodes have no right-links, making this a standard B+ tree, not a B-link tree
 - Source: entries/2026/05/29/topic-lehman-yao-1981.md
 
-### [REJECT] no-concurrency-control
+### [ACCEPT] no-concurrency-control
 Duplicate of existing `btree-single-threaded-assumption` and `no-concurrency-primitives`
 - Source: entries/2026/05/29/topic-lehman-yao-1981.md
 
@@ -6928,7 +6928,7 @@ Duplicate of existing `btree-single-threaded-assumption` and `no-concurrency-pri
 No node stores a high-key (upper-bound fence key); searchers cannot detect mid-split state, which would be required for Lehman & Yao's concurrent search protocol
 - Source: entries/2026/05/29/topic-lehman-yao-1981.md
 
-### [REJECT] sibling-sentinel-convention
+### [ACCEPT] sibling-sentinel-convention
 Trivial implementation detail already partially covered by `sibling-field-is-structural-only` which mentions the `NO_SIBLING = 0xFFFFFFFF` sentinel
 - Source: entries/2026/05/29/topic-lehman-yao-1981.md
 
@@ -6940,7 +6940,7 @@ Trivial implementation detail already partially covered by `sibling-field-is-str
 Every binary record reader in this codebase (WAL, both Bitcasks, LSM WAL, SSTable, B-tree WAL) stops at the first CRC failure, short read, or parse error; none attempt to scan forward for the next valid record boundary
 - Source: entries/2026/05/29/topic-length-prefix-framing-resilience.md
 
-### [REJECT] lsm-wal-silent-cascading-misframes
+### [ACCEPT] lsm-wal-silent-cascading-misframes
 Duplicate of existing `lsm-wal-has-no-integrity-check` and `lsm-and-sstable-have-no-checksums`
 - Source: entries/2026/05/29/topic-length-prefix-framing-resilience.md
 
@@ -6956,7 +6956,7 @@ The B-tree's fixed-size pages (`page_num * page_size` addressing) provide natura
 A corrupted SSTable data entry only affects lookups within one sparse index segment; the sparse index provides independent entry points into different file regions, bounding corruption blast radius to ~`block_size` entries
 - Source: entries/2026/05/29/topic-length-prefix-framing-resilience.md
 
-### [REJECT] contiguous-framing-prevents-resync
+### [ACCEPT] contiguous-framing-prevents-resync
 Duplicate of existing `wal-contiguous-no-block-alignment`
 - Source: entries/2026/05/29/topic-length-prefix-framing-resilience.md
 
@@ -6964,15 +6964,15 @@ Duplicate of existing `wal-contiguous-no-block-alignment`
 
 ## Entry: topic-leveldb-log-format.md
 
-### [REJECT] wal-py-stops-at-first-corruption
+### [ACCEPT] wal-py-stops-at-first-corruption
 Duplicate of existing `wal-no-resync-after-corruption` and `wal-corruption-returns-valid-prefix`
 - Source: entries/2026/05/29/topic-leveldb-log-format.md
 
-### [REJECT] no-block-aligned-wal-in-codebase
+### [ACCEPT] no-block-aligned-wal-in-codebase
 Duplicate of existing `wal-contiguous-no-block-alignment`
 - Source: entries/2026/05/29/topic-leveldb-log-format.md
 
-### [REJECT] wal-py-crc-covers-optype-key-value
+### [ACCEPT] wal-py-crc-covers-optype-key-value
 Duplicate of existing `all-three-implementations-use-payload-only-crc` and `wal-crc-does-not-cover-seqnum`
 - Source: entries/2026/05/29/topic-leveldb-log-format.md
 
@@ -6981,51 +6981,51 @@ Duplicate of existing `all-three-implementations-use-payload-only-crc` and `wal-
 The k-way merge in `sstable-and-compaction/sstable.py` is forward-only with no direction tracking or reverse iteration support; there is no direction enum, no `FindLargest`, and no heap rebuild on direction change.
 - Source: entries/2026/05/29/topic-leveldb-merger.md
 
-### [REJECT] heap-tuple-ordering-for-dedup
+### [ACCEPT] heap-tuple-ordering-for-dedup
 Overlaps with existing `sstable-merge-dedup-newest-timestamp` (newest timestamp wins) and `heap-tiebreak-uses-source-index` (source index as tiebreaker); the negation trick is an implementation detail, not an invariant.
 - Source: entries/2026/05/29/topic-leveldb-merger.md
 
-### [REJECT] no-leveldb-source-in-repo
+### [ACCEPT] no-leveldb-source-in-repo
 Trivially obvious — this is a Python reference implementation repo, not a LevelDB fork; stating the absence of C++ source is not useful for working in the codebase.
 - Source: entries/2026/05/29/topic-leveldb-merger.md
 
-### [REJECT] compaction-avoids-direction-complexity
+### [ACCEPT] compaction-avoids-direction-complexity
 Design rationale comparing to LevelDB, not a testable codebase invariant; the actual constraint is captured by `sstable-merge-forward-only`.
 - Source: entries/2026/05/29/topic-leveldb-merger.md
 
-### [REJECT] wal-no-block-fragmentation
+### [ACCEPT] wal-no-block-fragmentation
 Duplicates existing `wal-contiguous-no-block-alignment` which already states the WAL uses variable-length records with no fixed block boundaries.
 - Source: entries/2026/05/29/topic-leveldb-record-fragmentation.md
 
-### [REJECT] wal-corruption-halts-recovery
+### [ACCEPT] wal-corruption-halts-recovery
 Duplicates existing `wal-corruption-stops-per-file` (stops at first corrupt record within each file but continues to next file) and `wal-no-resync-after-corruption`.
 - Source: entries/2026/05/29/topic-leveldb-record-fragmentation.md
 
-### [REJECT] wal-large-records-no-limit
+### [ACCEPT] wal-large-records-no-limit
 Direct consequence of existing `wal-contiguous-no-block-alignment`; not an independent invariant.
 - Source: entries/2026/05/29/topic-leveldb-record-fragmentation.md
 
-### [REJECT] leveldb-fragment-crash-safety
+### [ACCEPT] leveldb-fragment-crash-safety
 About LevelDB's design, not about this codebase; beliefs should be testable claims about the code a developer works in.
 - Source: entries/2026/05/29/topic-leveldb-record-fragmentation.md
 
-### [REJECT] setup-bottommost-scans-below-output-level
+### [ACCEPT] setup-bottommost-scans-below-output-level
 About RocksDB's `Compaction::SetupBottomMostLevel()` internals, not about this codebase; the relevant gap is already captured by `sstable-compaction-manager-lacks-bottommost-detection`.
 - Source: entries/2026/05/29/topic-leveled-compaction-tombstone-safety.md
 
-### [REJECT] bottommost-false-negative-is-safe
+### [ACCEPT] bottommost-false-negative-is-safe
 RocksDB design principle; the conservative correctness of this codebase is already captured by `compaction-manager-never-removes-tombstones`.
 - Source: entries/2026/05/29/topic-leveled-compaction-tombstone-safety.md
 
-### [REJECT] bottommost-enables-three-optimizations
+### [ACCEPT] bottommost-enables-three-optimizations
 About RocksDB's `ProcessKeyValueCompaction`, not about this codebase.
 - Source: entries/2026/05/29/topic-leveled-compaction-tombstone-safety.md
 
-### [REJECT] bottommost-level-enum-is-trigger-not-detection
+### [ACCEPT] bottommost-level-enum-is-trigger-not-detection
 About RocksDB's `BottommostLevelCompaction` enum, not about this codebase.
 - Source: entries/2026/05/29/topic-leveled-compaction-tombstone-safety.md
 
-### [REJECT] lcs-picks-most-overlap
+### [ACCEPT] lcs-picks-most-overlap
 Already exists as `lcs-picks-max-overlap-sstable`.
 - Source: entries/2026/05/29/topic-leveled-compaction-write-amplification.md
 
@@ -7082,31 +7082,31 @@ Neither `truncate` nor `compact_partition` holds a lock; concurrent calls on the
 `_load_existing_sstables` using `os.listdir` cannot distinguish pre-compaction from post-compaction file sets after a crash — if the crash occurs after creating the merged SSTable but before deleting the inputs, recovery sees duplicates; the inverse loses data.
 - Source: entries/2026/05/29/topic-manifest-and-crash-recovery.md
 
-### [REJECT] lsm-wal-covers-data-not-metadata
+### [ACCEPT] lsm-wal-covers-data-not-metadata
 Duplicates existing belief `wal-protects-data-not-metadata` and overlaps with `lsm-no-manifest`.
 - Source: entries/2026/05/29/topic-manifest-and-crash-recovery.md
 
-### [REJECT] sstable-metadata-has-level-field-but-no-persistence
+### [ACCEPT] sstable-metadata-has-level-field-but-no-persistence
 Duplicates existing belief `sstable-metadata-level-field-unused`, which already captures that the level field exists but has no operational use.
 - Source: entries/2026/05/29/topic-manifest-and-crash-recovery.md
 
-### [REJECT] wal-module-has-batch-atomicity-pattern
+### [ACCEPT] wal-module-has-batch-atomicity-pattern
 Duplicates existing belief `wal-batch-atomicity-via-commit-record`, which already describes the COMMIT-marker pattern for atomic batch writes.
 - Source: entries/2026/05/29/topic-manifest-and-crash-recovery.md
 
-### [REJECT] btree-no-delete-operation
+### [ACCEPT] btree-no-delete-operation
 Contradicted by multiple existing beliefs (`btree-delete-skips-free-page`, `btree-empty-leaf-freed-on-delete`, `btree-delete-no-commit-on-miss`, `btree-leaf-sibling-patched-on-remove`) that describe delete behavior in detail. The entry's grep likely missed the method.
 - Source: entries/2026/05/29/topic-merge-vs-lazy-free.md
 
-### [REJECT] btree-no-merge-or-redistribute
+### [ACCEPT] btree-no-merge-or-redistribute
 Duplicates existing beliefs `btree-impl-asymmetric-split-vs-merge` and `btree-sibling-pointers-unused-for-merge`, which already establish that merge/redistribute logic is absent.
 - Source: entries/2026/05/29/topic-merge-vs-lazy-free.md
 
-### [REJECT] btree-free-list-unused-by-logic
+### [ACCEPT] btree-free-list-unused-by-logic
 Contradicted by existing belief `btree-empty-leaf-freed-on-delete`, which states that empty leaves are returned to the free list via `free_page()`.
 - Source: entries/2026/05/29/topic-merge-vs-lazy-free.md
 
-### [REJECT] btree-next-sibling-for-range-scans
+### [ACCEPT] btree-next-sibling-for-range-scans
 Duplicates existing beliefs `range-scan-follows-sibling-chain` (range scans use sibling pointers) and `btree-sibling-pointers-unused-for-merge` (sibling pointers not used for merge).
 - Source: entries/2026/05/29/topic-merge-vs-lazy-free.md
 
@@ -7114,11 +7114,11 @@ Duplicates existing beliefs `range-scan-follows-sibling-chain` (range scans use 
 A Merkle proof contains exactly `height` sibling hashes where height = log2(next_power_of_2(leaf_count)), making both proof size and verification cost O(log N).
 - Source: entries/2026/05/29/topic-merkle-proof-security-model.md
 
-### [REJECT] verify-proof-is-stateless
+### [ACCEPT] verify-proof-is-stateless
 Duplicates existing belief `verify-proof-is-pure-static`, which already captures that `verify_proof` is a static method requiring no tree instance.
 - Source: entries/2026/05/29/topic-merkle-proof-security-model.md
 
-### [REJECT] root-hash-trust-is-external
+### [ACCEPT] root-hash-trust-is-external
 Duplicates existing belief `verify-proof-root-trust`, which already states that `verify_proof` does not authenticate the root and callers must obtain a trusted root independently.
 - Source: entries/2026/05/29/topic-merkle-proof-security-model.md
 
@@ -7134,15 +7134,15 @@ Non-power-of-2 leaf counts are padded with `EMPTY_HASH` (SHA-256 of empty bytes)
 `_seq_num` is a single in-memory counter that only increments via `+= 1`; all records across all WAL files share one monotonically increasing sequence space that never resets, even across file rotation.
 - Source: entries/2026/05/29/topic-multi-file-replay-ordering.md
 
-### [REJECT] wal-rotation-after-write
+### [ACCEPT] wal-rotation-after-write
 Duplicates existing belief `wal-rotation-is-post-write`.
 - Source: entries/2026/05/29/topic-multi-file-replay-ordering.md
 
-### [REJECT] wal-batch-never-spans-files
+### [ACCEPT] wal-batch-never-spans-files
 Duplicates existing belief `wal-batch-single-file`.
 - Source: entries/2026/05/29/topic-multi-file-replay-ordering.md
 
-### [REJECT] wal-filename-sort-equals-creation-order
+### [ACCEPT] wal-filename-sort-equals-creation-order
 Duplicates existing belief `wal-segment-naming-zero-padded`, which already establishes that zero-padded filenames ensure lexicographic = numeric ordering.
 - Source: entries/2026/05/29/topic-multi-file-replay-ordering.md
 
@@ -7175,7 +7175,7 @@ When a TOB slot is decided by another proposer with a different value, the losin
 The LSM tree in `lsm.py` has no locking, reference counting, or Version snapshots; `compact()` mutates `self._sstables` in place, so concurrent readers could see inconsistent state or reference deleted SSTables
 - Source: entries/2026/05/29/topic-mvcc-version-snapshots.md
 
-### [REJECT] lsm-compaction-replaces-all
+### [ACCEPT] lsm-compaction-replaces-all
 Duplicates existing belief `lsm-compaction-is-full-merge` which already captures that compact() merges all SSTables into one
 - Source: entries/2026/05/29/topic-mvcc-version-snapshots.md
 
@@ -7187,19 +7187,19 @@ The codebase implements MVCC visibility (`ssi_database.py:_visible_value`, `mvcc
 `SSTableMetadata` in `sstable-and-compaction/sstable.py` tracks a `level` field, indicating the compaction module is structured for leveled compaction even though `lsm.py` uses flat single-level merges
 - Source: entries/2026/05/29/topic-mvcc-version-snapshots.md
 
-### [REJECT] python-bytes-never-page-aligned
+### [ACCEPT] python-bytes-never-page-aligned
 General CPython runtime implementation detail, not a testable claim about this codebase
 - Source: entries/2026/05/29/topic-o-direct-aligned-io.md
 
-### [REJECT] o-direct-requires-three-alignments
+### [ACCEPT] o-direct-requires-three-alignments
 General OS/hardware constraint, not specific to this codebase; the relevant codebase fact (`no-o-direct-usage`) is already captured
 - Source: entries/2026/05/29/topic-o-direct-aligned-io.md
 
-### [REJECT] python-open-allocates-unaligned-buffers
+### [ACCEPT] python-open-allocates-unaligned-buffers
 General CPython runtime behavior, not a testable claim about this codebase
 - Source: entries/2026/05/29/topic-o-direct-aligned-io.md
 
-### [REJECT] mmap-returns-page-aligned-by-definition
+### [ACCEPT] mmap-returns-page-aligned-by-definition
 General OS-level invariant, not specific to this codebase
 - Source: entries/2026/05/29/topic-o-direct-aligned-io.md
 
@@ -7219,23 +7219,23 @@ The ORSet implementation uses no version vector, dot context, or causal summary 
 Dropping ORSet tombstones would cause removed elements to reappear when merging with a replica that still holds the element's active tags — the tombstone set in `merge()` at line 165 suppresses stale tags via set difference
 - Source: entries/2026/05/29/topic-or-set-tombstone-growth.md
 
-### [REJECT] lsm-tombstone-gc-not-applicable-to-crdts
+### [ACCEPT] lsm-tombstone-gc-not-applicable-to-crdts
 Covered by combination of existing beliefs `distributed-tombstone-removal-needs-replication-convergence` and `lsm-compact-removes-tombstones-safely`
 - Source: entries/2026/05/29/topic-or-set-tombstone-growth.md
 
-### [REJECT] lsm-wal-no-fsync
+### [ACCEPT] lsm-wal-no-fsync
 Duplicates existing belief `lsm-wal-has-no-fsync`
 - Source: entries/2026/05/29/topic-os-fsync-durability.md
 
-### [REJECT] lsm-truncate-before-sstable-sync
+### [ACCEPT] lsm-truncate-before-sstable-sync
 Duplicates existing belief `lsm-flush-double-loss-window` which captures the same crash scenario where both WAL and SSTable data can be lost
 - Source: entries/2026/05/29/topic-os-fsync-durability.md
 
-### [REJECT] wal-module-syncs-every-write
+### [ACCEPT] wal-module-syncs-every-write
 Duplicates existing belief `wal-fsync-per-entry`
 - Source: entries/2026/05/29/topic-os-fsync-durability.md
 
-### [REJECT] btree-wal-fsync-pagefile-deferred
+### [ACCEPT] btree-wal-fsync-pagefile-deferred
 Covered by existing beliefs `btree-wal-fsync-per-entry` (WAL fsyncs per entry) and `write-meta-no-fsync` (PageManager defers sync)
 - Source: entries/2026/05/29/topic-os-fsync-durability.md
 
@@ -7272,7 +7272,7 @@ All nodes in a `GossipCluster` receive identical threshold values from the clust
 `detect_failures` makes decisions using only `current_time - timestamp_last_updated`; it consults no historical distribution or sliding window, making it a pure point-in-time comparison rather than a statistical inference.
 - Source: entries/2026/05/29/topic-phi-accrual-failure-detector.md
 
-### [REJECT] fsync-semantics-vary-by-filesystem
+### [ACCEPT] fsync-semantics-vary-by-filesystem
 General OS/filesystem knowledge (ext4 vs XFS vs btrfs behavior), not a testable claim about this codebase's code.
 - Source: entries/2026/05/29/topic-posix-durability-guarantees.md
 
@@ -7280,7 +7280,7 @@ General OS/filesystem knowledge (ext4 vs XFS vs btrfs behavior), not a testable 
 Every append-only file in the codebase (WAL segments, Bitcask data files) writes sequentially with monotonically increasing file size, making `fdatasync` a safe drop-in for `fsync` on those paths; B-tree in-place page overwrites benefit even more since file size doesn't change.
 - Source: entries/2026/05/29/topic-posix-durability-guarantees.md
 
-### [REJECT] posix-fsync-is-per-file-not-cross-file
+### [ACCEPT] posix-fsync-is-per-file-not-cross-file
 General POSIX specification knowledge, not a testable claim about this codebase; the cross-file ordering consequence is already captured by `btree-wal-before-data` and related beliefs.
 - Source: entries/2026/05/29/topic-posix-durability-guarantees.md
 
@@ -7288,15 +7288,15 @@ General POSIX specification knowledge, not a testable claim about this codebase;
 On the development platform (Darwin/APFS), `os.fsync()` may not flush the disk write cache; true durability requires `fcntl(fd, F_FULLFSYNC)`, which is never used at any of the 13 fsync call sites in the codebase.
 - Source: entries/2026/05/29/topic-posix-durability-guarantees.md
 
-### [REJECT] btree-no-concurrent-access-control
+### [ACCEPT] btree-no-concurrent-access-control
 Duplicate of existing beliefs `btree-single-threaded-assumption`, `btree-single-writer`, and `no-concurrency-primitives`.
 - Source: entries/2026/05/29/topic-postgres-nbtree-readme.md
 
-### [REJECT] btree-leaf-sibling-not-updated-on-delete
+### [ACCEPT] btree-leaf-sibling-not-updated-on-delete
 Contradicts existing accepted belief `btree-leaf-sibling-patched-on-remove`, which confirms that the predecessor leaf's `next_sibling` IS updated when a leaf is freed; the bug described in the entry was fixed.
 - Source: entries/2026/05/29/topic-postgres-nbtree-readme.md
 
-### [REJECT] btree-split-uses-recursive-return
+### [ACCEPT] btree-split-uses-recursive-return
 Duplicate of existing belief `btree-recursive-insert-returns-union`, which captures that `_insert` returns either `'inserted'` or `(mid_key, new_page_num)` to propagate splits upward.
 - Source: entries/2026/05/29/topic-postgres-nbtree-readme.md
 
@@ -7304,19 +7304,19 @@ Duplicate of existing belief `btree-recursive-insert-returns-union`, which captu
 The WAL logs complete page images (physical logging) rather than logical operations, which eliminates incomplete-split states during recovery but increases write amplification compared to PostgreSQL's logical WAL entries.
 - Source: entries/2026/05/29/topic-postgres-nbtree-readme.md
 
-### [REJECT] btree-free-list-immediate-reclaim
+### [ACCEPT] btree-free-list-immediate-reclaim
 Covered by the combination of `btree-empty-leaf-freed-on-delete` (pages are freed immediately) and `btree-single-threaded-assumption` (no concurrent access makes deferred reclamation unnecessary).
 - Source: entries/2026/05/29/topic-postgres-nbtree-readme.md
 
-### [REJECT] btree-delete-never-frees-pages
+### [ACCEPT] btree-delete-never-frees-pages
 Contradicts existing accepted belief `btree-empty-leaf-freed-on-delete`; the Bug 5 described in `fix-plan.md` has been fixed and empty leaves are now freed via `PageManager.free_page()`.
 - Source: entries/2026/05/29/topic-postgres-nbtree-vacuum.md
 
-### [REJECT] btree-no-concurrency-control
+### [ACCEPT] btree-no-concurrency-control
 Duplicate of existing beliefs `btree-single-threaded-assumption` and `no-concurrency-primitives`.
 - Source: entries/2026/05/29/topic-postgres-nbtree-vacuum.md
 
-### [REJECT] btree-free-list-exists-unused
+### [ACCEPT] btree-free-list-exists-unused
 Contradicts existing accepted belief `free-page-only-called-from-delete`, which confirms the free list IS called from the delete path; the code was updated after the entry was written.
 - Source: entries/2026/05/29/topic-postgres-nbtree-vacuum.md
 
@@ -7345,7 +7345,7 @@ A `LiveProjection` must replay all events from position 0 on initialization beca
 
 ### Entry: topic-pytest-default-collection.md
 
-### [REJECT] tester-test-files-not-discovered
+### [ACCEPT] tester-test-files-not-discovered
 Duplicate of existing belief `tester-naming-avoids-pytest-discovery`
 - Source: entries/2026/05/29/topic-pytest-default-collection.md
 
@@ -7406,7 +7406,7 @@ The Raft log is initialized with a sentinel `LogEntry(term=0, index=0, command=N
 
 ### Entry: topic-range-scan-implementation.md
 
-### [REJECT] leaf-page-format-sibling-after-header
+### [ACCEPT] leaf-page-format-sibling-after-header
 Duplicate of existing belief `leaf-wire-format-is-header-sibling-entries`
 - Source: entries/2026/05/29/topic-range-scan-implementation.md
 
@@ -7427,7 +7427,7 @@ Calling `range_scan(start_key)` without an `end_key` scans from `start_key` thro
 `LockService._counter` is shared across all lock names, so fencing tokens are globally monotonic — a single `FencedResourceServer` can validate tokens from different locks without per-lock tracking.
 - Source: entries/2026/05/29/topic-redlock-controversy.md
 
-### [REJECT] fenced-server-rejects-strictly-lower-tokens
+### [ACCEPT] fenced-server-rejects-strictly-lower-tokens
 Duplicate of `fencing-rejects-stale-writes` which already captures the `<` (not `<=`) comparison and equal-token acceptance.
 - Source: entries/2026/05/29/topic-redlock-controversy.md
 
@@ -7435,23 +7435,23 @@ Duplicate of `fencing-rejects-stale-writes` which already captures the `<` (not 
 Each resource in `FencedResourceServer` maintains its own `_highest_token` entry, so a high token on resource A does not cause rejection of a lower token on resource B.
 - Source: entries/2026/05/29/topic-redlock-controversy.md
 
-### [REJECT] renewal-preserves-token-identity
+### [ACCEPT] renewal-preserves-token-identity
 Duplicate of `renew-preserves-token-number`.
 - Source: entries/2026/05/29/topic-redlock-controversy.md
 
-### [REJECT] unfenced-server-exists-as-negative-example
+### [ACCEPT] unfenced-server-exists-as-negative-example
 Duplicate of `unfenced-server-accepts-all`.
 - Source: entries/2026/05/29/topic-redlock-controversy.md
 
-### [REJECT] wal-records-contain-only-after-images
+### [ACCEPT] wal-records-contain-only-after-images
 Duplicate of `wal-has-no-before-images`.
 - Source: entries/2026/05/29/topic-redo-vs-undo-logging.md
 
-### [REJECT] wal-batch-atomicity-via-commit-marker
+### [ACCEPT] wal-batch-atomicity-via-commit-marker
 Duplicate of `wal-batch-atomicity-via-commit-record`.
 - Source: entries/2026/05/29/topic-redo-vs-undo-logging.md
 
-### [REJECT] wal-checkpoint-bounds-replay
+### [ACCEPT] wal-checkpoint-bounds-replay
 Covered by `checkpoint-record-not-used-in-recovery` (caller must supply seq externally) and `replay-strict-greater-than-filter` (replay skips records at or below the supplied seq).
 - Source: entries/2026/05/29/topic-redo-vs-undo-logging.md
 
@@ -7463,7 +7463,7 @@ WAL `seq_num` increases monotonically across all records but is not stamped onto
 `hash-index-storage/bitcask.py` uses a single cached file handle per segment for all reads via `_get_reader()`, making concurrent reads to the same segment unsafe due to shared seek position.
 - Source: entries/2026/05/29/topic-reference-counted-file-handles.md
 
-### [REJECT] log-structured-bitcask-fresh-handle-per-get
+### [ACCEPT] log-structured-bitcask-fresh-handle-per-get
 Duplicate of `bitcask-get-opens-fresh-handle`.
 - Source: entries/2026/05/29/topic-reference-counted-file-handles.md
 
@@ -7471,7 +7471,7 @@ Duplicate of `bitcask-get-opens-fresh-handle`.
 Neither Python Bitcask implementation has reference counting, reader registration, or file-handle locking — compaction can delete segment files while a concurrent reader holds a stale index entry, unlike Erlang Bitcask which defers deletion until the last reader's refcount drops to zero.
 - Source: entries/2026/05/29/topic-reference-counted-file-handles.md
 
-### [REJECT] python-bitcask-single-threaded-scope
+### [ACCEPT] python-bitcask-single-threaded-scope
 Intent/opinion claim ("deliberate scope boundary, not a bug"); the technical fact is already captured by `compact-single-threaded-assumption`.
 - Source: entries/2026/05/29/topic-reference-counted-file-handles.md
 
@@ -7491,23 +7491,23 @@ Intent/opinion claim ("deliberate scope boundary, not a bug"); the technical fac
 Both topologies use the same deterministic `(timestamp, node_id)` comparison for LWW resolution; topology affects when and where conflicts are detected, not which value wins.
 - Source: entries/2026/05/29/topic-ring-vs-all-to-all-propagation-delay.md
 
-### [REJECT] longer-convergence-widens-conflict-window
+### [ACCEPT] longer-convergence-widens-conflict-window
 Analytical consequence derivable from convergence round counts, not a directly testable code claim.
 - Source: entries/2026/05/29/topic-ring-vs-all-to-all-propagation-delay.md
 
-### [REJECT] lsm-compact-always-removes-tombstones
+### [ACCEPT] lsm-compact-always-removes-tombstones
 Covered by `lsm-compact-removes-tombstones-safely` and `lsm-flat-compaction-always-bottommost`.
 - Source: entries/2026/05/29/topic-rocksdb-bottommost-level-enum.md
 
-### [REJECT] no-rocksdb-bottommost-level-enum
+### [ACCEPT] no-rocksdb-bottommost-level-enum
 Trivial negative claim; `sstable-compaction-manager-lacks-bottommost-detection` already captures the important absence.
 - Source: entries/2026/05/29/topic-rocksdb-bottommost-level-enum.md
 
-### [REJECT] merge-sstables-tombstone-flag
+### [ACCEPT] merge-sstables-tombstone-flag
 Duplicate of `merge-sstables-tombstone-flag-is-caller-controlled`.
 - Source: entries/2026/05/29/topic-rocksdb-bottommost-level-enum.md
 
-### [REJECT] lsm-compaction-is-flat-merge
+### [ACCEPT] lsm-compaction-is-flat-merge
 Duplicate of `lsm-compaction-is-full-merge` and `lsm-tree-has-no-level-concept`.
 - Source: entries/2026/05/29/topic-rocksdb-bottommost-level-enum.md
 
@@ -7520,11 +7520,11 @@ Both LSM implementations resolve key conflicts during compaction by keeping only
 The SSTable format supports exactly two entry types (value and tombstone via `TOMBSTONE_MARKER`); there is no third type for merge operands, which would be required for RocksDB-style merge support
 - Source: entries/2026/05/29/topic-rocksdb-merge-operator.md
 
-### [REJECT] compaction-requires-full-read-for-update
+### [ACCEPT] compaction-requires-full-read-for-update
 General CS fact about read-modify-write workloads, not a testable claim about this codebase's behavior
 - Source: entries/2026/05/29/topic-rocksdb-merge-operator.md
 
-### [REJECT] partial-merge-avoids-cross-level-reads
+### [ACCEPT] partial-merge-avoids-cross-level-reads
 Describes RocksDB's MergeOperator design, not a claim about this codebase which has no merge operator implementation
 - Source: entries/2026/05/29/topic-rocksdb-merge-operator.md
 
@@ -7540,7 +7540,7 @@ Sibling pointers exist only on leaf nodes (`_serialize_leaf` at line 182); inter
 Nodes store no upper-bound "high key," so a reader cannot detect that a concurrent split moved keys to a right sibling; this is the second missing prerequisite for Lehman-Yao's single-latch protocol
 - Source: entries/2026/05/29/topic-sibling-pointer-maintenance.md
 
-### [REJECT] wal-does-not-log-metadata
+### [ACCEPT] wal-does-not-log-metadata
 Duplicate of existing belief `btree-metadata-bypasses-wal`
 - Source: entries/2026/05/29/topic-sibling-pointer-maintenance.md
 
@@ -7552,19 +7552,19 @@ During a leaf split, the new right page is written with the old leaf's `next_sib
 `BTree` has zero synchronization primitives; the sibling chain, split logic, and page allocation are correct only because no concurrent reader or writer can observe intermediate states
 - Source: entries/2026/05/29/topic-sibling-pointer-maintenance.md
 
-### [REJECT] lsm-size-tiered-missing-key-probes-all
+### [ACCEPT] lsm-size-tiered-missing-key-probes-all
 Duplicate of existing belief `lsm-get-probes-all-sstables-on-miss`
 - Source: entries/2026/05/29/topic-size-tiered-vs-leveled-read-amplification.md
 
-### [REJECT] leveled-compaction-one-sstable-per-level
+### [ACCEPT] leveled-compaction-one-sstable-per-level
 Contradicts existing belief `lcs-produces-single-output-sstable` which documents that the implementation merges all inputs into one SSTable, violating the non-overlapping invariant at levels above L0
 - Source: entries/2026/05/29/topic-size-tiered-vs-leveled-read-amplification.md
 
-### [REJECT] bloom-filter-not-integrated-into-lsm
+### [ACCEPT] bloom-filter-not-integrated-into-lsm
 Duplicate of existing belief `bloom-filter-not-integrated`
 - Source: entries/2026/05/29/topic-size-tiered-vs-leveled-read-amplification.md
 
-### [REJECT] sstable-sparse-index-bounds-per-table-cost
+### [ACCEPT] sstable-sparse-index-bounds-per-table-cost
 Composite of existing beliefs `sstable-lookup-is-two-phase` (per-table cost) and `lsm-get-probes-all-sstables-on-miss` (cross-table count)
 - Source: entries/2026/05/29/topic-size-tiered-vs-leveled-read-amplification.md
 
@@ -7576,7 +7576,7 @@ The `compaction_threshold` parameter (`lsm.py:204`) directly controls how many o
 `TimeWindow.contains()` uses `abs(t1 - t2) <= duration`, making join matching a symmetric interval check centered on each event, not aligned to any fixed time grid
 - Source: entries/2026/05/29/topic-sliding-vs-tumbling-windows.md
 
-### [REJECT] tumbling-aggregator-assigns-each-result-to-one-window
+### [ACCEPT] tumbling-aggregator-assigns-each-result-to-one-window
 Duplicate of existing belief `tumbling-window-floor-division`
 - Source: entries/2026/05/29/topic-sliding-vs-tumbling-windows.md
 
@@ -7589,11 +7589,11 @@ The join `TimeWindow` duration controls which event pairs can match, while the `
 - Source: entries/2026/05/29/topic-sliding-vs-tumbling-windows.md
 
 
-### [REJECT] sloppy-quorum-counts-hints-as-acks
+### [ACCEPT] sloppy-quorum-counts-hints-as-acks
 Duplicate of existing `hinted-handoff-sloppy-quorum-counts-hints`
 - Source: entries/2026/05/29/topic-sloppy-quorum-tradeoffs.md
 
-### [REJECT] reads-never-consult-hint-nodes
+### [ACCEPT] reads-never-consult-hint-nodes
 Duplicate of existing `hinted-handoff-reads-skip-non-preferred`
 - Source: entries/2026/05/29/topic-sloppy-quorum-tradeoffs.md
 
@@ -7633,11 +7633,11 @@ Event sourcing snapshots on `store._snapshots` are plain Python dicts monkey-pat
 When event sourcing snapshots are missing, the system falls back to replaying all events from the log to reconstruct aggregate state — correct but O(n) in total event count
 - Source: entries/2026/05/29/topic-snapshot-persistence.md
 
-### [REJECT] mvcc-state-entirely-volatile
+### [ACCEPT] mvcc-state-entirely-volatile
 Duplicate of `mvcc-no-persistence` proposed above — same claim about MVCCDatabase having no persistence
 - Source: entries/2026/05/29/topic-snapshot-persistence.md
 
-### [REJECT] no-persistence-api-exists
+### [ACCEPT] no-persistence-api-exists
 Too broad — a grep returning zero matches for persistence keywords across the entire project is an observation about the current codebase state, not a durable invariant; also overlaps with `mvcc-no-persistence` and `es-snapshots-are-in-memory-dicts`
 - Source: entries/2026/05/29/topic-snapshot-persistence.md
 
@@ -7649,7 +7649,7 @@ Too broad — a grep returning zero matches for persistence keywords across the 
 `SSIDatabase._store` only contains versions stamped with commit timestamps; uncommitted writes live in `tx._writes` until commit, so every version in the store is guaranteed to be from a committed transaction
 - Source: entries/2026/05/29/topic-snapshot-vs-ssi-tradeoffs.md
 
-### [REJECT] mvcc-visibility-requires-three-conditions
+### [ACCEPT] mvcc-visibility-requires-three-conditions
 Duplicate of existing `visibility-requires-three-conditions`
 - Source: entries/2026/05/29/topic-snapshot-vs-ssi-tradeoffs.md
 
@@ -7665,7 +7665,7 @@ Duplicate of existing `visibility-requires-three-conditions`
 During a leaf split, `_insert` writes the new right page to the WAL before the modified left page, ensuring the sibling pointer target is durable before any pointer references it — so the chain never points to a nonexistent page after crash recovery
 - Source: entries/2026/05/29/topic-split-and-sibling-update-atomicity.md
 
-### [REJECT] btree-wal-no-commit-record
+### [ACCEPT] btree-wal-no-commit-record
 Duplicate of existing `btree-wal-replays-without-commit` which captures the same structural fact that the B-tree WAL has no commit marker and replays all valid entries unconditionally
 - Source: entries/2026/05/29/topic-split-and-sibling-update-atomicity.md
 
@@ -7684,19 +7684,19 @@ The `next_sibling` field sits at a fixed byte offset (bytes 3–6) in every seri
 `__iter__` reaches the leftmost leaf by following `children[0]` at every internal level, then walks the sibling chain to `NO_SIBLING` to enumerate all keys in sorted order
 - Source: entries/2026/05/29/topic-split-during-insert.md
 
-### [REJECT] btree-split-inherits-sibling
+### [ACCEPT] btree-split-inherits-sibling
 Duplicate of `leaf-split-updates-sibling-pointers`
 - Source: entries/2026/05/29/topic-split-during-insert.md
 
-### [REJECT] btree-chain-no-cycle-detection
+### [ACCEPT] btree-chain-no-cycle-detection
 Duplicate of `range-scan-no-cycle-guard`
 - Source: entries/2026/05/29/topic-split-during-insert.md
 
-### [REJECT] btree-delete-patches-prev-sibling
+### [ACCEPT] btree-delete-patches-prev-sibling
 Duplicate of `btree-leaf-sibling-patched-on-remove`
 - Source: entries/2026/05/29/topic-split-during-insert.md
 
-### [REJECT] btree-split-wal-gap
+### [ACCEPT] btree-split-wal-gap
 Duplicate of `btree-allocate-page-outside-wal`
 - Source: entries/2026/05/29/topic-split-during-insert.md
 
@@ -7704,19 +7704,19 @@ Duplicate of `btree-allocate-page-outside-wal`
 
 ## Entry: `topic-split-propagation.md`
 
-### [REJECT] btree-splits-propagate-via-return-value
+### [ACCEPT] btree-splits-propagate-via-return-value
 Duplicate of `btree-recursive-insert-returns-union`
 - Source: entries/2026/05/29/topic-split-propagation.md
 
-### [REJECT] btree-root-split-grows-height
+### [ACCEPT] btree-root-split-grows-height
 Duplicate of `tree-height-monotonically-increases`
 - Source: entries/2026/05/29/topic-split-propagation.md
 
-### [REJECT] btree-leaf-copies-internal-promotes
+### [ACCEPT] btree-leaf-copies-internal-promotes
 Duplicate of `btree-leaf-split-copies-key`
 - Source: entries/2026/05/29/topic-split-propagation.md
 
-### [REJECT] btree-sibling-chain-maintained
+### [ACCEPT] btree-sibling-chain-maintained
 Duplicate of `leaf-split-updates-sibling-pointers`
 - Source: entries/2026/05/29/topic-split-propagation.md
 
@@ -7728,19 +7728,19 @@ Duplicate of `leaf-split-updates-sibling-pointers`
 On macOS/Darwin, `os.fsync()` does not guarantee flushing the disk write cache to stable storage; only `fcntl(fd, F_FULLFSYNC)` provides that guarantee, meaning all 13 fsync sites in the codebase may provide no power-loss durability on the development platform
 - Source: entries/2026/05/29/topic-sqlite-durability-model.md
 
-### [REJECT] sqlite-fsyncs-directories-after-file-ops
+### [ACCEPT] sqlite-fsyncs-directories-after-file-ops
 About SQLite's internal behavior, not a claim about this codebase
 - Source: entries/2026/05/29/topic-sqlite-durability-model.md
 
-### [REJECT] sqlite-fcntl-sync-abstracts-platform-differences
+### [ACCEPT] sqlite-fcntl-sync-abstracts-platform-differences
 About SQLite's VFS abstraction, not a claim about this codebase
 - Source: entries/2026/05/29/topic-sqlite-durability-model.md
 
-### [REJECT] lsm-flush-then-truncate-is-compound-failure
+### [ACCEPT] lsm-flush-then-truncate-is-compound-failure
 Duplicate of `lsm-flush-double-loss-window`
 - Source: entries/2026/05/29/topic-sqlite-durability-model.md
 
-### [REJECT] atomic-rename-is-not-durable-rename
+### [ACCEPT] atomic-rename-is-not-durable-rename
 Duplicate of `rename-without-dir-barrier`
 - Source: entries/2026/05/29/topic-sqlite-durability-model.md
 
@@ -7760,7 +7760,7 @@ A corrupted data entry in an SSTable only affects lookups within one sparse inde
 `_read_entry()` in the LSM SSTable checks for short reads on key and value fields, preventing buffer overruns on truncated files but silently skipping all remaining entries in the scan range
 - Source: entries/2026/05/29/topic-sstable-footer-integrity.md
 
-### [REJECT] sstable-no-integrity-checks
+### [ACCEPT] sstable-no-integrity-checks
 Duplicate of `lsm-and-sstable-have-no-checksums`
 - Source: entries/2026/05/29/topic-sstable-footer-integrity.md
 
@@ -7780,12 +7780,12 @@ The tombstone/value distinction in `sstable-and-compaction/sstable.py` rests on 
 The entry count stored in the SSTable header by `SSTableWriter.finish()` is trusted by `SSTableReader` but never validated against the actual number of entries read from the data section
 - Source: entries/2026/05/29/topic-sstable-magic-number-vs-crc.md
 
-### [REJECT] corrupted-key-length-cascades-silently
+### [ACCEPT] corrupted-key-length-cascades-silently
 Duplicate of `header-corruption-derails-sequential-scan`
 - Source: entries/2026/05/29/topic-sstable-magic-number-vs-crc.md
 
 
-### [REJECT] stcs-compaction-is-count-triggered
+### [ACCEPT] stcs-compaction-is-count-triggered
 Duplicate of existing `compaction-triggered-by-sstable-count`
 - Source: entries/2026/05/29/topic-stcs-vs-lcs-tradeoffs.md
 
@@ -7797,11 +7797,11 @@ Leveled compaction sizes each level as `level_base_size * fanout^(level-1)` with
 Level 0 in leveled compaction triggers based on SSTable count (`l0_compaction_trigger`), not total size, because L0 SSTables can have overlapping key ranges unlike higher levels which maintain non-overlapping invariants
 - Source: entries/2026/05/29/topic-stcs-vs-lcs-tradeoffs.md
 
-### [REJECT] newest-sstable-wins-reads
+### [ACCEPT] newest-sstable-wins-reads
 Duplicate of existing `lsm-newest-first-read-path` which already captures that get() searches newest-first and the first match is authoritative
 - Source: entries/2026/05/29/topic-stcs-vs-lcs-tradeoffs.md
 
-### [REJECT] compaction-removes-tombstones
+### [ACCEPT] compaction-removes-tombstones
 Duplicate of existing `compact-purges-tombstones`, `sstable-tombstone-encoding-0xff`, and `bitcask-tombstone-is-empty-string` which collectively cover tombstone encoding and compaction-time removal
 - Source: entries/2026/05/29/topic-stcs-vs-lcs-tradeoffs.md
 
@@ -7865,7 +7865,7 @@ The tester and developer test suites have overlapping but non-hierarchical cover
 Tester test files import only the public API (e.g., `from btree import BTree`), while developer test files import internal types like `WAL`, `_serialize_leaf`, and `HEADER_FMT` for state injection and internal invariant checking
 - Source: entries/2026/05/29/topic-test-coverage-gaps.md
 
-### [REJECT] dev-suite-longer-but-not-superset
+### [ACCEPT] dev-suite-longer-but-not-superset
 Duplicate: the length claim is already captured by `pytest-files-have-broader-coverage`, and the non-superset claim is captured by the proposed `tester-dev-suites-overlap-not-hierarchical`
 - Source: entries/2026/05/29/topic-test-coverage-gaps.md
 
@@ -7878,11 +7878,11 @@ Duplicate: the length claim is already captured by `pytest-files-have-broader-co
 Each `tester_test_*.py` is a simplified subset of its corresponding `test_*.py`, organized by numbered behavioral properties (`# 1. No false negatives`, `# 2. FPR within 2x of target`) rather than exhaustive edge cases
 - Source: entries/2026/05/29/topic-tester-generation-pipeline.md
 
-### [REJECT] code-expert-has-no-test-generation-step
+### [ACCEPT] code-expert-has-no-test-generation-step
 Describes the code-expert tool's workflow, not a code invariant of the target repository; tool behavior belongs in tool documentation, not the belief registry
 - Source: entries/2026/05/29/topic-tester-generation-pipeline.md
 
-### [REJECT] tester-and-original-tests-coexist
+### [ACCEPT] tester-and-original-tests-coexist
 Implied by existing beliefs `pytest-files-have-broader-coverage`, `both-suites-discoverable-by-pytest`, and `tester-files-are-standalone-runnable`; no new invariant added
 - Source: entries/2026/05/29/topic-tester-generation-pipeline.md
 
@@ -7894,27 +7894,27 @@ There is no shared `conftest.py`, base class, or test harness across `tester_tes
 Some `tester_test_*.py` files are pytest-only (using fixtures/`pytest.raises`), while others include an `if __name__ == '__main__':` block for standalone execution; the two execution patterns coexist across modules
 - Source: entries/2026/05/29/topic-tester-test-file-locations.md
 
-### [REJECT] tester-test-195-functions
+### [ACCEPT] tester-test-195-functions
 Unstable count detail — the number of test functions and classes changes as modules are added or tests are extended; not a durable invariant
 - Source: entries/2026/05/29/topic-tester-test-file-locations.md
 
-### [REJECT] tester-prefix-non-standard
+### [ACCEPT] tester-prefix-non-standard
 Duplicates existing belief `tester-naming-avoids-pytest-discovery`
 - Source: entries/2026/05/29/topic-tester-test-file-locations.md
 
-### [REJECT] tester-test-files-colocated
+### [ACCEPT] tester-test-files-colocated
 Covered by existing belief `ddia-modules-self-contained`; the co-location pattern applies to all module artifacts including tester test files
 - Source: entries/2026/05/29/topic-tester-test-file-locations.md
 
-### [REJECT] tester-files-are-self-contained-runners
+### [ACCEPT] tester-files-are-self-contained-runners
 Duplicates existing belief `tester-files-are-standalone-runnable`
 - Source: entries/2026/05/29/topic-tester-vs-pytest-test-duality.md
 
-### [REJECT] test-files-cover-more-cases
+### [ACCEPT] test-files-cover-more-cases
 Duplicates existing belief `pytest-files-have-broader-coverage`
 - Source: entries/2026/05/29/topic-tester-vs-pytest-test-duality.md
 
-### [REJECT] tester-bloom-filter-leaks-pytest
+### [ACCEPT] tester-bloom-filter-leaks-pytest
 Duplicates existing belief `tester-pytest-boundary-is-leaky`
 - Source: entries/2026/05/29/topic-tester-vs-pytest-test-duality.md
 
@@ -7942,15 +7942,15 @@ A participant that has voted YES in `prepare()` holds locks and cannot unilatera
 Locks acquired during `prepare()` are only released by `commit()` or `abort()`, meaning an in-doubt transaction blocks all subsequent transactions on the same keys indefinitely until the coordinator recovers
 - Source: entries/2026/05/29/topic-three-phase-commit.md
 
-### [REJECT] lsht-tombstone-is-real-value
+### [ACCEPT] lsht-tombstone-is-real-value
 Covered by existing belief `log-structured-sentinel-is-in-band`; the structural identity with normal records is the defining characteristic of an in-band sentinel
 - Source: entries/2026/05/29/topic-tombstone-encoding.md
 
-### [REJECT] hash-index-tombstone-is-zero-length
+### [ACCEPT] hash-index-tombstone-is-zero-length
 Covered by existing belief `bitcask-tombstone-is-empty-string`; zero-length value is the direct encoding of empty string
 - Source: entries/2026/05/29/topic-tombstone-encoding.md
 
-### [REJECT] hint-files-cannot-represent-deletes
+### [ACCEPT] hint-files-cannot-represent-deletes
 Covered by existing beliefs `lsht-hint-no-tombstone-flag` and `bitcask-hint-files-exclude-tombstones`, which describe this limitation for both implementations
 - Source: entries/2026/05/29/topic-tombstone-encoding.md
 
@@ -7963,11 +7963,11 @@ Storing `b"__BITCASK_TOMBSTONE__"` as a legitimate value in `log-structured-hash
 Any tombstone garbage collection strategy must define a maximum tolerated node downtime; tombstones removed before a down node receives them cause data resurrection via read repair or anti-entropy.
 - Source: entries/2026/05/29/topic-tombstone-gc-and-repair-window.md
 
-### [REJECT] dynamo-anti-entropy-unions-all-keys
+### [ACCEPT] dynamo-anti-entropy-unions-all-keys
 Duplicates existing belief `anti-entropy-unions-all-keys` which already captures that `anti_entropy_repair()` collects keys via set union across all available nodes.
 - Source: entries/2026/05/29/topic-tombstone-gc-and-repair-window.md
 
-### [REJECT] gc-grace-seconds-is-repair-window
+### [ACCEPT] gc-grace-seconds-is-repair-window
 Describes Cassandra's external design pattern rather than a testable claim about this codebase; useful context but not a codebase invariant.
 - Source: entries/2026/05/29/topic-tombstone-gc-and-repair-window.md
 
@@ -7975,7 +7975,7 @@ Describes Cassandra's external design pattern rather than a testable claim about
 None of the DDIA reference implementations combine tombstone support with time-bounded garbage collection; the multi-leader module stores tombstones indefinitely and the Dynamo module has no delete support at all.
 - Source: entries/2026/05/29/topic-tombstone-gc-and-repair-window.md
 
-### [REJECT] tombstone-lifetime-space-safety-tradeoff
+### [ACCEPT] tombstone-lifetime-space-safety-tradeoff
 General distributed systems design principle (longer tombstone lifetimes waste space but tolerate longer outages) rather than a testable claim about this codebase's behavior.
 - Source: entries/2026/05/29/topic-tombstone-gc-and-repair-window.md
 
@@ -8015,7 +8015,7 @@ The transfer dict uses `(arc_start, arc_end)` tuples as keys, so two vnodes prod
 With 3 equally-weighted nodes and 150 vnodes each, `load_imbalance()` is asserted to stay below 1.5 (`test_consistent_hashing.py:49`).
 - Source: entries/2026/05/29/topic-virtual-node-count-tuning.md
 
-### [REJECT] vnode-count-scales-with-weight
+### [ACCEPT] vnode-count-scales-with-weight
 Duplicates existing belief `ch-vnode-count-is-weighted` which already captures that a node's actual vnode count is `int(num_vnodes * weight)`.
 - Source: entries/2026/05/29/topic-virtual-node-count-tuning.md
 
@@ -8031,11 +8031,11 @@ Each `add_node` call performs `vnode_count` list insertions into a sorted list, 
 The test `test_vnode_count_affects_balance` asserts that imbalance at 500 vnodes is strictly less than at 1 vnode, and the statistical model (variance ∝ 1/V) guarantees monotonic improvement.
 - Source: entries/2026/05/29/topic-virtual-node-count-tuning.md
 
-### [REJECT] lsm-wal-truncation-is-total
+### [ACCEPT] lsm-wal-truncation-is-total
 Covered by existing beliefs `lsm-wal-truncate-no-arg` (takes no argument) and `lsm-wal-truncate-destroys-immediately` (erases immediately), which together establish total truncation semantics.
 - Source: entries/2026/05/29/topic-wal-checkpoint-protocol.md
 
-### [REJECT] wal-checkpoint-is-explicit-record-type
+### [ACCEPT] wal-checkpoint-is-explicit-record-type
 Already implied by existing beliefs `checkpoint-record-not-used-in-recovery`, `wal-checkpoint-consumes-sequence`, and `checkpoint-filtered-from-replay`, which collectively establish that OP_CHECKPOINT is a record type in the WAL stream.
 - Source: entries/2026/05/29/topic-wal-checkpoint-protocol.md
 
@@ -8054,19 +8054,19 @@ Looking at the 5 entries and cross-referencing against 150+ existing beliefs.
 
 ## Entry 1: `topic-wal-checksum-framing.md`
 
-### [REJECT] wal-has-crc32-validation
+### [ACCEPT] wal-has-crc32-validation
 Covered by `wal-crc-includes-op-type` (CRC computation) and `wal-truncation-vs-corruption-distinction` (error behavior on mismatch)
 - Source: entries/2026/05/29/topic-wal-checksum-framing.md
 
-### [REJECT] wal-crc-excludes-seq-num
+### [ACCEPT] wal-crc-excludes-seq-num
 Duplicate of `wal-crc-does-not-cover-seqnum` and `seq-num-corruption-is-silent`
 - Source: entries/2026/05/29/topic-wal-checksum-framing.md
 
-### [REJECT] wal-corruption-discards-tail
+### [ACCEPT] wal-corruption-discards-tail
 Covered by `wal-corruption-stops-per-file` (stops at first corruption per file, continues to next) and `iterate-stops-silently-at-corruption`
 - Source: entries/2026/05/29/topic-wal-checksum-framing.md
 
-### [REJECT] wal-length-corruption-mimics-truncation
+### [ACCEPT] wal-length-corruption-mimics-truncation
 Covered by `torn-length-prefix-causes-silent-skip` (garbage length consumes valid records, returns None) and `wal-partial-read-is-eof` (short reads treated as EOF)
 - Source: entries/2026/05/29/topic-wal-checksum-framing.md
 
@@ -8078,7 +8078,7 @@ Covered by `torn-length-prefix-causes-silent-skip` (garbage length consumes vali
 The standalone `WriteAheadLog` class in `write-ahead-log/wal.py` has no `commit` method; sync-then-truncate coordination must be implemented by a higher-level storage engine that composes the WAL with a data file
 - Source: entries/2026/05/29/topic-wal-commit-protocol.md
 
-### [REJECT] truncate-fsyncs-before-rewrite
+### [ACCEPT] truncate-fsyncs-before-rewrite
 Duplicate of `wal-truncate-fsyncs-before-scan`
 - Source: entries/2026/05/29/topic-wal-commit-protocol.md
 
@@ -8086,7 +8086,7 @@ Duplicate of `wal-truncate-fsyncs-before-scan`
 No production module imports the standalone `WriteAheadLog`; it is only referenced in `test_wal.py` and `tester_test_wal.py`, meaning crash-safe commit coordination using this module is unimplemented
 - Source: entries/2026/05/29/topic-wal-commit-protocol.md
 
-### [REJECT] rotate-missing-directory-fsync
+### [ACCEPT] rotate-missing-directory-fsync
 Duplicate of `wal-no-directory-fsync` which already covers all segment creation and deletion
 - Source: entries/2026/05/29/topic-wal-commit-protocol.md
 
@@ -8098,7 +8098,7 @@ Duplicate of `wal-no-directory-fsync` which already covers all segment creation 
 `WAL.commit()` in the B-tree engine syncs metadata page 0 because `PageManager.sync()` fsyncs the single shared file descriptor that holds both data pages and metadata; there is no dedicated metadata fsync step
 - Source: entries/2026/05/29/topic-wal-commit-vs-metadata-sync-ordering.md
 
-### [REJECT] commit-fence-ordering
+### [ACCEPT] commit-fence-ordering
 Duplicate of `btree-commit-syncs-data-before-wal-truncate`
 - Source: entries/2026/05/29/topic-wal-commit-vs-metadata-sync-ordering.md
 
@@ -8114,11 +8114,11 @@ Duplicate of `btree-commit-syncs-data-before-wal-truncate`
 WAL truncation is only safe because it is called after the data the WAL protects has been durably written to the main store (SSTable flush or data file fsync); violating this ordering loses committed data with no recovery path
 - Source: entries/2026/05/29/topic-wal-crash-safety-gap.md
 
-### [REJECT] lsm-wal-truncate-not-atomic
+### [ACCEPT] lsm-wal-truncate-not-atomic
 Covered by `lsm-wal-truncate-destroys-immediately` (wb mode zeroes content with no intermediate durable state) and `lsm-wal-truncate-wb-then-ab` (the two-phase reopen pattern)
 - Source: entries/2026/05/29/topic-wal-crash-safety-gap.md
 
-### [REJECT] wal-truncate-holds-lock
+### [ACCEPT] wal-truncate-holds-lock
 Duplicate of `wal-truncate-blocks-all-operations`
 - Source: entries/2026/05/29/topic-wal-crash-safety-gap.md
 
@@ -8126,7 +8126,7 @@ Duplicate of `wal-truncate-blocks-all-operations`
 If the standalone WAL's `truncate()` crashes mid-iteration over files, un-processed files retain old records that will be replayed on recovery; this is safe because PUT and DELETE are idempotent against an already-current store
 - Source: entries/2026/05/29/topic-wal-crash-safety-gap.md
 
-### [REJECT] wal-fsync-before-close-on-truncate
+### [ACCEPT] wal-fsync-before-close-on-truncate
 Duplicate of `wal-truncate-fsyncs-before-scan`
 - Source: entries/2026/05/29/topic-wal-crash-safety-gap.md
 
@@ -8134,23 +8134,23 @@ Duplicate of `wal-truncate-fsyncs-before-scan`
 
 ## Entry 5: `topic-wal-crash-safety-ordering.md`
 
-### [REJECT] btree-wal-fsync-before-data-write
+### [ACCEPT] btree-wal-fsync-before-data-write
 Duplicate of `btree-wal-before-data` and `btree-wal-fsync-per-entry`
 - Source: entries/2026/05/29/topic-wal-crash-safety-ordering.md
 
-### [REJECT] btree-commit-syncs-data-before-wal-truncate
+### [ACCEPT] btree-commit-syncs-data-before-wal-truncate
 Already exists as `btree-commit-syncs-data-before-wal-truncate`
 - Source: entries/2026/05/29/topic-wal-crash-safety-ordering.md
 
-### [REJECT] lsm-wal-no-fsync
+### [ACCEPT] lsm-wal-no-fsync
 Duplicate of `lsm-wal-has-no-fsync`
 - Source: entries/2026/05/29/topic-wal-crash-safety-ordering.md
 
-### [REJECT] btree-redo-is-idempotent
+### [ACCEPT] btree-redo-is-idempotent
 Duplicate of `btree-wal-replay-is-idempotent` and `btree-wal-is-physical-redo-only`
 - Source: entries/2026/05/29/topic-wal-crash-safety-ordering.md
 
-### [REJECT] btree-recovery-is-crash-safe
+### [ACCEPT] btree-recovery-is-crash-safe
 Duplicate of `wal-recover-then-truncate` which states recovery fsyncs the data file before truncating the WAL, so a crash during recovery leaves the WAL intact for re-replay
 - Source: entries/2026/05/29/topic-wal-crash-safety-ordering.md
 
@@ -8183,56 +8183,56 @@ Every WAL method that writes records or modifies files (`append`, `append_batch`
 The codebase contains no copy-on-write or shadow paging implementation; all three storage engines use write-ahead logging exclusively for crash recovery
 - Source: entries/2026/05/29/topic-wal-vs-shadow-paging.md
 
-### [REJECT] wal-fsync-in-sync-and-batch-modes
+### [ACCEPT] wal-fsync-in-sync-and-batch-modes
 Covered by existing `wal-do-sync-branches-mutually-exclusive`, `batch-mode-defers-fsync`, and `none-mode-never-syncs-on-append`
 - Source: entries/2026/05/29/topic-wal-fsync-durability.md
 
-### [REJECT] btree-selective-fsync
+### [ACCEPT] btree-selective-fsync
 Covered by combination of `btree-wal-fsync-per-entry` (WAL fsyncs) and `write-meta-no-fsync` (PageManager metadata does not)
 - Source: entries/2026/05/29/topic-wal-fsync-durability.md
 
-### [REJECT] wal-sync-mode-none-is-unsafe
+### [ACCEPT] wal-sync-mode-none-is-unsafe
 Durability gap covered by `none-mode-never-syncs-on-append`; testing observation is not a code invariant
 - Source: entries/2026/05/29/topic-wal-fsync-durability.md
 
-### [REJECT] btree-wal-logs-full-page-images
+### [ACCEPT] btree-wal-logs-full-page-images
 Already exists as `btree-wal-logs-full-page-images`
 - Source: entries/2026/05/29/topic-wal-operation-boundaries.md
 
-### [REJECT] wal-commit-record-is-atomicity-boundary
+### [ACCEPT] wal-commit-record-is-atomicity-boundary
 Covered by existing `wal-batch-atomicity-via-commit-record` and `wal-batch-commit-sentinel`
 - Source: entries/2026/05/29/topic-wal-operation-boundaries.md
 
-### [REJECT] btree-wal-has-no-multi-step-grouping
+### [ACCEPT] btree-wal-has-no-multi-step-grouping
 Covered by existing `btree-wal-no-operation-boundaries`
 - Source: entries/2026/05/29/topic-wal-operation-boundaries.md
 
-### [REJECT] wal-replay-flat-filter
+### [ACCEPT] wal-replay-flat-filter
 Covered by existing `wal-replay-ignores-commit`, `replay-does-not-enforce-batch-atomicity`, and `wal-replay-no-atomicity-check`
 - Source: entries/2026/05/29/topic-wal-recovery-consumer.md
 
-### [REJECT] wal-commit-is-metadata-only
+### [ACCEPT] wal-commit-is-metadata-only
 Covered by existing `wal-docstring-describes-intent-not-behavior` and `replay-does-not-enforce-batch-atomicity`
 - Source: entries/2026/05/29/topic-wal-recovery-consumer.md
 
-### [REJECT] wal-iterate-vs-replay
+### [ACCEPT] wal-iterate-vs-replay
 Covered by existing `wal-iterate-preserves-all-ops` and `checkpoint-filtered-from-replay`
 - Source: entries/2026/05/29/topic-wal-recovery-consumer.md
 
-### [REJECT] wal-no-partial-batch-test
+### [ACCEPT] wal-no-partial-batch-test
 Close to existing `wal-no-torn-write-tests`; partial batch is a subset of torn write scenarios
 - Source: entries/2026/05/29/topic-wal-recovery-consumer.md
 
-### [REJECT] wal-stops-replay-on-crc-failure
+### [ACCEPT] wal-stops-replay-on-crc-failure
 Already exists as `wal-crc-mismatch-halts-all-replay`
 - Source: entries/2026/05/29/topic-wal-vs-shadow-paging.md
 
-### [REJECT] btree-wal-commit-requires-data-fsync-before-truncate
+### [ACCEPT] btree-wal-commit-requires-data-fsync-before-truncate
 Covered by existing `wal-commit-sync-before-truncate` and `btree-wal-truncate-is-safe`
 - Source: entries/2026/05/29/topic-wal-vs-shadow-paging.md
 
 
-### [REJECT] watermark-monotonic-advance
+### [ACCEPT] watermark-monotonic-advance
 Duplicate of existing `stream-join-watermark-monotonic`
 - Source: entries/2026/05/29/topic-watermark-vs-processing-time.md
 
@@ -8240,7 +8240,7 @@ Duplicate of existing `stream-join-watermark-monotonic`
 Events with `timestamp < watermark - allowed_lateness` are unconditionally dropped and counted in `stats.late_events_dropped`; there is no secondary path to recover or re-buffer them
 - Source: entries/2026/05/29/topic-watermark-vs-processing-time.md
 
-### [REJECT] miss-emission-requires-expiration
+### [ACCEPT] miss-emission-requires-expiration
 Duplicate of existing `stream-join-miss-deferred`
 - Source: entries/2026/05/29/topic-watermark-vs-processing-time.md
 
@@ -8264,7 +8264,7 @@ The LSM-tree engine has no built-in byte or operation counters for writes; all w
 The B-tree's `PageManager` tracks `pages_read` and `pages_written` with a `reset_counters()` method (multiply by `page_size` for bytes), but WAL writes are not counted by any existing counter
 - Source: entries/2026/05/29/topic-write-amplification-measurement.md
 
-### [REJECT] btree-page-write-always-full
+### [ACCEPT] btree-page-write-always-full
 Duplicate of existing `page-padding-to-page-size`
 - Source: entries/2026/05/29/topic-write-amplification-measurement.md
 
@@ -8276,19 +8276,19 @@ Each LSM WAL entry is exactly `8 + len(key_utf8) + len(value)` bytes: two 4-byte
 Each B-tree WAL entry is `16 + page_size` bytes (12-byte header with seq/page_num/data_len, full page image, 4-byte CRC32), making WAL writes the dominant cost for small key-value updates
 - Source: entries/2026/05/29/topic-write-amplification-measurement.md
 
-### [REJECT] lsm-wal-missing-fsync
+### [ACCEPT] lsm-wal-missing-fsync
 Duplicate of existing `lsm-wal-has-no-fsync`
 - Source: entries/2026/05/29/topic-write-ordering-and-barriers.md
 
-### [REJECT] codebase-uses-fsync-not-fdatasync
+### [ACCEPT] codebase-uses-fsync-not-fdatasync
 Duplicate of existing `fdatasync-never-used`
 - Source: entries/2026/05/29/topic-write-ordering-and-barriers.md
 
-### [REJECT] btree-wal-fsync-before-data-write
+### [ACCEPT] btree-wal-fsync-before-data-write
 Duplicate of existing `btree-wal-before-data`
 - Source: entries/2026/05/29/topic-write-ordering-and-barriers.md
 
-### [REJECT] no-directory-fsync-after-file-creation
+### [ACCEPT] no-directory-fsync-after-file-creation
 Duplicate of existing `wal-no-directory-fsync`
 - Source: entries/2026/05/29/topic-write-ordering-and-barriers.md
 
@@ -8361,7 +8361,7 @@ The 2PC protocol communicates all outcomes (commits, aborts, lock conflicts, una
 A transaction commits only if every participant in `participant_operations` votes `"yes"`; a single `"no"` vote triggers abort for all participants regardless of how many voted yes
 - Source: entries/2026/05/29/two-phase-commit-two_phase_commit.md
 
-### [REJECT] 2pc-no-exception-errors
+### [ACCEPT] 2pc-no-exception-errors
 Duplicates `2pc-result-dict-not-exceptions` which captures the same claim with a more descriptive ID
 - Source: entries/2026/05/29/two-phase-commit-two_phase_commit.md
 
@@ -8393,7 +8393,7 @@ LSNs returned by the unbundled database's `put()`/`delete()` are 1-indexed and s
 After `db.flush()`, `get_lag()` returns 0 for all derived systems, confirming all pending CDC events have been consumed
 - Source: entries/2026/05/29/unbundled-database-test_tester_validation.md
 
-### [REJECT] unbundled-cdc-update-carries-old-and-new
+### [ACCEPT] unbundled-cdc-update-carries-old-and-new
 Duplicates existing belief `unbundled-db-cdc-events-carry-old-value`; the new_value presence is implicit in any CDC event representing a mutation
 - Source: entries/2026/05/29/unbundled-database-test_tester_validation.md
 
@@ -8405,7 +8405,7 @@ In the unbundled database, `StorageEngine` has no public mutation method other t
 Insert vs. update is determined solely by whether `CDCStream.emit()` receives a non-None `old_value`; the WAL itself only records `PUT` operations for both cases
 - Source: entries/2026/05/29/unbundled-database-unbundled_database.md
 
-### [REJECT] lazy-derived-propagation
+### [ACCEPT] lazy-derived-propagation
 Duplicates existing belief `unbundled-db-flush-required-for-derived` which captures the same decoupling between writes and derived-system propagation
 - Source: entries/2026/05/29/unbundled-database-unbundled_database.md
 
@@ -8417,11 +8417,11 @@ Each `DerivedSystem` tracks its own LSN position independently via `_position`, 
 Every `DerivedSystem` implements `rebuild(events)` that clears state and replays from scratch, guaranteeing eventual convergence with the CDC event log regardless of prior state
 - Source: entries/2026/05/29/unbundled-database-unbundled_database.md
 
-### [REJECT] gitignore-covers-python-only
+### [ACCEPT] gitignore-covers-python-only
 Low value — easily verified by reading the 3-line `.gitignore` file directly
 - Source: entries/2026/05/29/unknown.md
 
-### [REJECT] gitignore-applies-repo-wide
+### [ACCEPT] gitignore-applies-repo-wide
 Obvious from reading the file; unprefixed patterns matching at any depth is default gitignore behavior
 - Source: entries/2026/05/29/unknown.md
 
@@ -8429,7 +8429,7 @@ Obvious from reading the file; unprefixed patterns matching at any depth is defa
 On-disk files created by storage-engine modules (B-tree pages, WAL segments, SSTable files) are not covered by `.gitignore`, relying on test teardown or manual cleanup
 - Source: entries/2026/05/29/unknown.md
 
-### [REJECT] pyc-pattern-is-redundant-on-py3
+### [ACCEPT] pyc-pattern-is-redundant-on-py3
 Trivia about Python internals; doesn't affect how developers work in the codebase
 - Source: entries/2026/05/29/unknown.md
 
@@ -8510,4 +8510,9269 @@ Phantom detection re-evaluates each stored predicate function against current co
 When `_pessimistic` is true, `_check_read_conflict` raises `RuntimeError` and sets `tx._status = "aborted"` at read time rather than waiting for commit — eager detection vs optimistic validation
 - Source: entries/2026/05/29/write-skew-detection-ssi_database.md
 
+
+
+---
+
+**Generated:** 2026-11-10
+**Source:** 449 entries from /home/forge/workspace/entries/
+**Model:** openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-delete-cleanup-removes-parent-key-child
+When _delete removes an empty depth-2 leaf that is not the leftmost child, it removes the parent's separator key at ikeys[idx-1] and child pointer at children[idx].
+- Source: /home/forge/workspace/entries/2026/05/28/b-tree-storage-engine-btree-_delete.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-delete-cleanup-extra-page-io
+On the depth-2 empty-leaf cleanup path, _delete performs two additional page reads (the empty leaf and previous sibling) and three page writes (previous sibling, current internal node, and free-list page).
+- Source: /home/forge/workspace/entries/2026/05/28/b-tree-storage-engine-btree-_delete.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-delete-caller-updates-count-and-commits
+BTree.delete writes metadata with total_keys - 1 and calls wal.commit(pm) only when _delete returns a truthy result.
+- Source: /home/forge/workspace/entries/2026/05/28/b-tree-storage-engine-btree-_delete.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-leaf-split-at-half
+In a leaf split, _insert uses mid = len(keys) // 2, keeps keys[:mid] in the left page, and places keys[mid:] in the new right page.
+- Source: /home/forge/workspace/entries/2026/05/28/b-tree-storage-engine-btree-_insert.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-leaf-overflow-trigger-max-keys
+In _insert's leaf case, a leaf with len(keys) <= max_keys is written without splitting, while len(keys) > max_keys triggers a split.
+- Source: /home/forge/workspace/entries/2026/05/28/b-tree-storage-engine-btree-_insert.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-put-root-split-handling
+When _insert returns a (mid_key, new_page) tuple at the root, put allocates a new root page, creates an internal node with the old root and new page as children, and increments the tree height.
+- Source: /home/forge/workspace/entries/2026/05/28/b-tree-storage-engine-btree-_insert.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] leaf-no-sibling-sentinel
+_serialize_leaf defaults next_sibling to 0xFFFFFFFF, the sentinel meaning no next leaf.
+- Source: /home/forge/workspace/entries/2026/05/28/b-tree-storage-engine-btree-_serialize_leaf.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] serialize-leaf-preserves-order-no-verification
+_serialize_leaf preserves the input order of keys and values and does not sort or verify that keys are sorted.
+- Source: /home/forge/workspace/entries/2026/05/28/b-tree-storage-engine-btree-_serialize_leaf.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] serialize-leaf-length-overflow-raises
+_serialize_leaf raises struct.error if a key or value length cannot fit in an unsigned 16-bit field (>= 65,536 bytes).
+- Source: /home/forge/workspace/entries/2026/05/28/b-tree-storage-engine-btree-_serialize_leaf.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] allocate-page-free-list-keeps-next-free
+When allocate_page recycles a free-list page, it updates free_head to the next free page but leaves next_free unchanged.
+- Source: /home/forge/workspace/entries/2026/05/28/b-tree-storage-engine-btree-allocate_page.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] allocate-page-append-increments-next-free
+When the free list is empty, allocate_page returns the current next_free value and increments next_free by 1 in metadata.
+- Source: /home/forge/workspace/entries/2026/05/28/b-tree-storage-engine-btree-allocate_page.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] allocate-page-free-list-reads-page
+The free-list reclamation path in allocate_page calls read_page and increments pages_read; the append path performs no page read.
+- Source: /home/forge/workspace/entries/2026/05/28/b-tree-storage-engine-btree-allocate_page.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-commit-no-exception-handling
+WAL.commit does not catch exceptions; failures from page_manager.sync, truncate, flush, or fsync propagate to the caller.
+- Source: /home/forge/workspace/entries/2026/05/28/b-tree-storage-engine-btree-commit.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-commit-assumes-data-already-applied
+WAL.commit assumes all page writes logged via log_write have already been applied to the PageManager data file; it only syncs the data file and clears the WAL.
+- Source: /home/forge/workspace/entries/2026/05/28/b-tree-storage-engine-btree-commit.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-mutations-call-wal-commit
+The BTree class calls WAL.commit at the end of every mutating operation, including put, delete, and close.
+- Source: /home/forge/workspace/entries/2026/05/28/b-tree-storage-engine-btree-commit.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] range-scan-no-bound-order-validation
+`range_scan` does not validate that `end_key >= start_key`; passing `end_key < start_key` returns an empty list instead of raising an error.
+- Source: /home/forge/workspace/entries/2026/05/28/b-tree-storage-engine-btree-range_scan.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] range-scan-assumes-string-keys
+`range_scan` assumes both `start_key` and `end_key` are strings; comparing a non-string key to the stored string keys produces undefined behavior.
+- Source: /home/forge/workspace/entries/2026/05/28/b-tree-storage-engine-btree-range_scan.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] range-scan-start-beyond-max-returns-empty
+If `start_key` is greater than every key in the B-tree, `range_scan` returns an empty list.
+- Source: /home/forge/workspace/entries/2026/05/28/b-tree-storage-engine-btree-range_scan.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-allocate-page-prefers-free-list
+`PageManager.allocate_page()` prefers reusing pages from the free list before extending the data file.
+- Source: /home/forge/workspace/entries/2026/05/28/b-tree-storage-engine-btree.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-wal-entry-format-is-seq-page-len-data-crc
+Each B-tree WAL entry is structured as `(seq, page_num, data_len, data, crc32)`.
+- Source: /home/forge/workspace/entries/2026/05/28/b-tree-storage-engine-btree.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] leaf-entry-format-is-key-len-key-val-len-val
+In a B-tree leaf page, each entry is serialized as `key_len(2B) + key + val_len(2B) + val`.
+- Source: /home/forge/workspace/entries/2026/05/28/b-tree-storage-engine-btree.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] internal-node-wire-format-is-header-child0-then-key-child-pairs
+A B-tree internal page is formatted as `header(3B) + child_0(4B) + (key_len(2B) + key + child(4B))...`.
+- Source: /home/forge/workspace/entries/2026/05/28/b-tree-storage-engine-btree.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-keys-sorted-within-every-node
+Keys within every B-tree node (both leaf and internal) are sorted; all lookup, insert, and range-scan logic depends on this ordering.
+- Source: /home/forge/workspace/entries/2026/05/28/b-tree-storage-engine-btree.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-len-reads-total-keys-from-metadata
+`BTree.__len__` reads the `total_keys` field directly from the page 0 metadata rather than counting entries in the tree.
+- Source: /home/forge/workspace/entries/2026/05/28/b-tree-storage-engine-btree.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-leaf-split-promotes-first-right-key
+When a B-tree leaf splits, the first key of the new right leaf is promoted to the parent internal node.
+- Source: /home/forge/workspace/entries/2026/05/28/b-tree-storage-engine-btree.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] page-header-format-is-u8-type-u16-num-keys
+Every B-tree page starts with a 3-byte header consisting of a 1-byte page type (u8) and a 2-byte number of keys (u16), packed as `>BH`.
+- Source: /home/forge/workspace/entries/2026/05/28/b-tree-storage-engine-btree.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-fix-plan-execution-order
+Bugs 1 and 3 must be fixed before Bug 2 because the corrected WAL commit sequence depends on `PageManager.sync()` (from Bug 1) and routing metadata through the WAL (from Bug 3).
+- Source: /home/forge/workspace/entries/2026/05/28/b-tree-storage-engine-fix-plan.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-wal-replay-idempotency-enables-commit-marker-removal
+WAL replay is safe to run at any time because page writes are idempotent; this idempotency eliminates the need for a commit marker in the WAL.
+- Source: /home/forge/workspace/entries/2026/05/28/b-tree-storage-engine-fix-plan.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-wal-correct-commit-order-is-fsync-data-then-truncate
+The correct WAL commit sequence is to fsync the data file before truncating the WAL, ensuring protected data is durable before discarding the log.
+- Source: /home/forge/workspace/entries/2026/05/28/b-tree-storage-engine-fix-plan.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-tests-use-temp-directory-isolation
+Every B-tree test uses `tempfile.TemporaryDirectory` as a context manager to give the tree a fresh, isolated filesystem namespace with automatic cleanup.
+- Source: /home/forge/workspace/entries/2026/05/28/b-tree-storage-engine-test_btree.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-wal-recovery-test-simulates-crash-by-closing-raw-file-handles
+`test_wal_recovery` simulates a crash by closing raw file handles (`tree.pm._f`, `tree.wal._f`) without calling `tree.close()`, then reopens the tree to verify recovery.
+- Source: /home/forge/workspace/entries/2026/05/28/b-tree-storage-engine-test_btree.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-wal-uncommitted-entries-test-appends-manual-entry-without-commit
+`test_wal_uncommitted_entries` manually appends a WAL entry via `WAL.log_write` without a commit marker, then reopens the tree to verify uncommitted entries are replayed without corrupting committed state.
+- Source: /home/forge/workspace/entries/2026/05/28/b-tree-storage-engine-test_btree.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-tests-probe-internal-state-via-pages-read-and-metadata
+B-tree tests such as `test_page_io_counts` and `test_metadata_consistency_after_split` reach into internal state like `tree.pm.pages_read` and `_read_meta()` to verify invariants that a pure API test cannot catch.
+- Source: /home/forge/workspace/entries/2026/05/28/b-tree-storage-engine-test_btree.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-empty-tree-operations-return-sane-defaults
+All operations on an empty B-tree return `None`, `0`, `False`, or `[]` and never raise an exception.
+- Source: /home/forge/workspace/entries/2026/05/28/b-tree-storage-engine-tester_test_btree.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-reusable-after-deleting-all-keys
+After deleting every key from a B-tree, the tree remains in a usable state and accepts new inserts normally.
+- Source: /home/forge/workspace/entries/2026/05/28/b-tree-storage-engine-tester_test_btree.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-tester-tests-assert-on-public-api-and-internal-stats
+The standalone tester tests assert on both the public API contract and observable internals like `tree.stats.height` and `tree.pm.pages_read`.
+- Source: /home/forge/workspace/entries/2026/05/28/b-tree-storage-engine-tester_test_btree.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-rebuild-does-not-clear-keydir-before-populate
+`_rebuild_index` populates `self.keydir` additively without clearing it first; the caller is expected to provide an empty or overwritten keydir.
+- Source: /home/forge/workspace/entries/2026/05/28/hash-index-storage-bitcask-_rebuild_index.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-rebuild-propagates-file-and-format-errors
+`_rebuild_index` has no explicit error handling and propagates `FileNotFoundError`, `struct.error`, and `UnicodeDecodeError`.
+- Source: /home/forge/workspace/entries/2026/05/28/hash-index-storage-bitcask-_rebuild_index.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-rebuild-only-called-when-existing-data-files
+`_rebuild_index` is called exactly once from `__init__`, only when `_find_file_ids()` returns existing data file IDs.
+- Source: /home/forge/workspace/entries/2026/05/28/hash-index-storage-bitcask-_rebuild_index.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-rebuild-empty-file-list-leaves-keydir-empty
+If `_rebuild_index` receives an empty `file_ids` list, its loop never executes and `keydir` stays empty.
+- Source: /home/forge/workspace/entries/2026/05/28/hash-index-storage-bitcask-_rebuild_index.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hint-entry-header-fields-are-file-id-offset-size-timestamp
+Each hint entry begins with a 24-byte header packing `file_id` as uint32, `offset` as uint64, `size` as uint32, and `timestamp` as float64.
+- Source: /home/forge/workspace/entries/2026/05/28/hash-index-storage-bitcask-_write_hint_file.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hint-key-length-is-utf8-byte-length
+The hint file stores key length as the UTF-8 byte length of the key, not its character count.
+- Source: /home/forge/workspace/entries/2026/05/28/hash-index-storage-bitcask-_write_hint_file.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hint-empty-entries-creates-zero-length-file
+Passing an empty `entries` list to `_write_hint_file` creates a valid zero-length hint file.
+- Source: /home/forge/workspace/entries/2026/05/28/hash-index-storage-bitcask-_write_hint_file.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hint-write-does-not-mutate-in-memory-state
+`_write_hint_file` does not modify `keydir`, `file_handles`, or any other instance state.
+- Source: /home/forge/workspace/entries/2026/05/28/hash-index-storage-bitcask-_write_hint_file.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hint-write-requires-data-file-flushed
+A precondition of `_write_hint_file` is that the corresponding `.data` file is already fully written and flushed.
+- Source: /home/forge/workspace/entries/2026/05/28/hash-index-storage-bitcask-_write_hint_file.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] compact-no-immutable-files-returns-immediately
+`compact` returns immediately when there are no immutable files, meaning all existing file IDs equal the active file ID.
+- Source: /home/forge/workspace/entries/2026/05/28/hash-index-storage-bitcask-compact.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] compact-merged-file-ids-start-after-active
+`compact` assigns new merged data file IDs starting at `active_file_id + 1`.
+- Source: /home/forge/workspace/entries/2026/05/28/hash-index-storage-bitcask-compact.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] compact-deletes-old-data-and-hint-files
+After merging, `compact` deletes both `.data` and `.hint` files for every old immutable file ID.
+- Source: /home/forge/workspace/entries/2026/05/28/hash-index-storage-bitcask-compact.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] compact-triggered-explicitly-by-caller
+Compaction is triggered explicitly by the caller; there is no automatic background compaction.
+- Source: /home/forge/workspace/entries/2026/05/28/hash-index-storage-bitcask-compact.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] compact-rotates-merged-files-at-max-file-size
+`compact` rotates merged data files at `max_file_size`, just like active files are rotated.
+- Source: /home/forge/workspace/entries/2026/05/28/hash-index-storage-bitcask-compact.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] compact-uses-explicit-timestamp-comparison
+During scanning, `compact` keeps an entry if its timestamp is newer than a previously seen entry for the same key, handling out-of-order cases.
+- Source: /home/forge/workspace/entries/2026/05/28/hash-index-storage-bitcask-compact.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hash-index-storage-bitcask-header-format-dii-16-bytes
+In `hash-index-storage/bitcask.py`, `HEADER_FORMAT` is `"<dII"` and `HEADER_SIZE` is 16 bytes.
+- Source: /home/forge/workspace/entries/2026/05/28/hash-index-storage-bitcask.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-default-max-file-size-10mb
+`BitcaskStore` defaults `max_file_size` to 10 MB.
+- Source: /home/forge/workspace/entries/2026/05/28/hash-index-storage-bitcask.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-uses-only-stdlib
+`hash-index-storage/bitcask.py` imports only Python standard library modules: `os`, `struct`, `time`, `dataclasses`, and `typing`.
+- Source: /home/forge/workspace/entries/2026/05/28/hash-index-storage-bitcask.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-delete-removes-key-from-keydir
+`delete()` writes a tombstone record with an empty value and removes the key from `keydir`.
+- Source: /home/forge/workspace/entries/2026/05/28/hash-index-storage-bitcask.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-file-handles-leak-on-error
+If `_write_record` or `compact` raises mid-operation, open file handles in `file_handles` and temporary files in `compact` are not cleaned up; there is no context manager protocol.
+- Source: /home/forge/workspace/entries/2026/05/28/hash-index-storage-bitcask.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-put-checks-rotation-before-write
+`put(key, value)` calls `_maybe_rotate()` before `_write_record()` and then updates `keydir[key]`.
+- Source: /home/forge/workspace/entries/2026/05/28/hash-index-storage-bitcask.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-tests-use-temp-directory-isolation
+Every test in `test_bitcask.py` uses `tempfile.TemporaryDirectory()` for filesystem isolation and automatic cleanup.
+- Source: /home/forge/workspace/entries/2026/05/28/hash-index-storage-test_bitcask.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-test-file-rotation-uses-256-byte-max
+`test_file_rotation` writes 100 entries with `max_file_size=256` to force multiple `.data` files.
+- Source: /home/forge/workspace/entries/2026/05/28/hash-index-storage-test_bitcask.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-test-large-dataset-10k-keys
+`test_large_dataset` writes 10,000 keys, overwrites half, and compacts them to verify correctness at scale.
+- Source: /home/forge/workspace/entries/2026/05/28/hash-index-storage-test_bitcask.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-tests-use-manual-main-runner
+The test file has a manual `if __name__ == "__main__"` runner that executes tests sequentially with `print("PASS: ...")` and no pytest fixtures or decorators.
+- Source: /home/forge/workspace/entries/2026/05/28/hash-index-storage-test_bitcask.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-keys-returns-list
+The `BitcaskStore` API includes `keys()` returning a list.
+- Source: /home/forge/workspace/entries/2026/05/28/hash-index-storage-test_bitcask.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-len-and-contains-implemented
+`BitcaskStore` implements `__len__` for `len(store)` and `__contains__` for `key in store`.
+- Source: /home/forge/workspace/entries/2026/05/28/hash-index-storage-test_bitcask.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-tests-close-reopen-validate-startup
+Tests such as `test_startup_recovery`, `test_hint_files`, and `test_crash_recovery` close a store and open a new `BitcaskStore` on the same directory to validate startup index rebuild.
+- Source: /home/forge/workspace/entries/2026/05/28/hash-index-storage-test_bitcask.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] scan-segment-is-read-only
+`_scan_segment` never modifies any file on disk; its only side effect is mutating `self._index`.
+- Source: /home/forge/workspace/entries/2026/05/28/log-structured-hash-table-bitcask-_scan_segment.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] scan-segment-no-path-validation
+`_scan_segment` performs no validation on `seg_path`; if the file is missing or unreadable, `open()` raises an OS exception such as `FileNotFoundError` that propagates to the caller.
+- Source: /home/forge/workspace/entries/2026/05/28/log-structured-hash-table-bitcask-_scan_segment.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] scan-segment-returns-none-mutates-index
+`_scan_segment` returns `None` and communicates results entirely by mutating `self._index`.
+- Source: /home/forge/workspace/entries/2026/05/28/log-structured-hash-table-bitcask-_scan_segment.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] scan-segment-offset-recorded-before-header
+`_scan_segment` records each record's byte offset with `f.tell()` before reading the 12-byte header, and stores that offset in the index entry.
+- Source: /home/forge/workspace/entries/2026/05/28/log-structured-hash-table-bitcask-_scan_segment.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-compact-returns-stale-record-count
+`BitcaskStore.compact` returns an `int` equal to total records scanned minus live records written, representing the number of stale records removed.
+- Source: /home/forge/workspace/entries/2026/05/28/log-structured-hash-table-bitcask-compact.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-compact-renames-active-to-highest-id
+After compaction, the old active segment file is renamed to a new highest segment ID and index entries pointing to the old active path are updated to the new path.
+- Source: /home/forge/workspace/entries/2026/05/28/log-structured-hash-table-bitcask-compact.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-compact-recomputes-crc
+`compact` recomputes a fresh CRC32 for each record it writes to the compacted segment.
+- Source: /home/forge/workspace/entries/2026/05/28/log-structured-hash-table-bitcask-compact.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-compact-bumps-counter-twice
+`compact` increments `_segment_counter` twice: once for the compacted segment and once for the renamed active segment.
+- Source: /home/forge/workspace/entries/2026/05/28/log-structured-hash-table-bitcask-compact.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-delete-returns-existence
+`BitcaskStore.delete(key)` writes a tombstone record, removes the key from `_index`, and returns whether the key existed.
+- Source: /home/forge/workspace/entries/2026/05/28/log-structured-hash-table-bitcask.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-put-returns-byte-offset
+`BitcaskStore.put(key, value)` appends a record to the active segment and returns the byte offset of the appended record.
+- Source: /home/forge/workspace/entries/2026/05/28/log-structured-hash-table-bitcask.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-hint-format-key-size-offset
+Hint files use the binary format `!II` storing key size and offset, allowing recovery to skip reading full values.
+- Source: /home/forge/workspace/entries/2026/05/28/log-structured-hash-table-bitcask.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-index-value-is-path-offset
+`_index` maps each live key to a tuple `(segment_file_path, byte_offset)`.
+- Source: /home/forge/workspace/entries/2026/05/28/log-structured-hash-table-bitcask.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-default-max-segment-size-1mb
+The active segment is rotated when it exceeds `max_segment_size`, whose default is 1 MB.
+- Source: /home/forge/workspace/entries/2026/05/28/log-structured-hash-table-bitcask.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-delete-removes-index-entry-immediately
+`delete()` removes the key from the in-memory index immediately while leaving a tombstone on disk until compaction.
+- Source: /home/forge/workspace/entries/2026/05/28/log-structured-hash-table-bitcask.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-test-fixture-max-segment-size-100
+The `store` pytest fixture instantiates `BitcaskStore` with `max_segment_size=100` to trigger segment rotation in basic tests.
+- Source: /home/forge/workspace/entries/2026/05/28/log-structured-hash-table-test_bitcask.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-test-suite-14-tests
+`log-structured-hash-table/test_bitcask.py` contains 14 test cases covering CRUD, segment rotation, compaction, crash recovery, CRC integrity, and partial-write tolerance.
+- Source: /home/forge/workspace/entries/2026/05/28/log-structured-hash-table-test_bitcask.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-test-corruption-overwrites-payload-byte
+`test_crc_corruption` locates a record's offset via `_index`, seeks `HEADER_SIZE + 2` bytes into the payload, overwrites one byte with `0xFF`, and expects `CorruptionError` on read.
+- Source: /home/forge/workspace/entries/2026/05/28/log-structured-hash-table-test_bitcask.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-test-partial-write-truncates-value
+`test_partial_write_recovery` manually packs a record header with `struct.pack(HEADER_FMT, crc, key_len, value_len)`, writes the key bytes but not the value bytes, and verifies the reopened store ignores the truncated tail.
+- Source: /home/forge/workspace/entries/2026/05/28/log-structured-hash-table-test_bitcask.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-test-close-reopen-simulates-crash
+Several tests close the store and open a fresh `BitcaskStore` on the same directory to simulate a process crash and validate durable on-disk state.
+- Source: /home/forge/workspace/entries/2026/05/28/log-structured-hash-table-test_bitcask.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-test-disk-usage-decreases-after-compaction
+`test_disk_usage_decreases` verifies that `total_disk_usage` drops after compaction when stale entries exist.
+- Source: /home/forge/workspace/entries/2026/05/28/log-structured-hash-table-test_bitcask.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-test-large-dataset-10k-keys
+`test_large_dataset` writes 10,000 keys with overwrites and compaction as a stress/integration test.
+- Source: /home/forge/workspace/entries/2026/05/28/log-structured-hash-table-test_bitcask.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-compact-requires-two-sstables
+`LSMTree.compact` returns immediately without doing work if there are fewer than two SSTables.
+- Source: /home/forge/workspace/entries/2026/05/28/log-structured-merge-tree-lsm-compact.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-compact-returns-none
+`LSMTree.compact` returns `None`; all of its effects are side effects on `self._sstables`, `self._seq`, and the filesystem.
+- Source: /home/forge/workspace/entries/2026/05/28/log-structured-merge-tree-lsm-compact.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-compact-does-not-touch-wal
+LSM compaction does not read or write the WAL, active memtable, or immutable memtables.
+- Source: /home/forge/workspace/entries/2026/05/28/log-structured-merge-tree-lsm-compact.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-compact-deletes-old-sstables-after-new-write
+`compact` writes the new merged SSTable first, then deletes every old SSTable file from disk.
+- Source: /home/forge/workspace/entries/2026/05/28/log-structured-merge-tree-lsm-compact.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-compact-crash-leaves-duplicate-sstables
+A crash after writing the new SSTable but before deleting old SSTables leaves both old and new SSTables on disk; on restart `_load_existing_sstables` loads all of them, causing duplicate keys but preserving correctness via newest-wins reads.
+- Source: /home/forge/workspace/entries/2026/05/28/log-structured-merge-tree-lsm-compact.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-compact-temporarily-doubles-disk-usage
+Full LSM compaction temporarily requires enough disk space for both the new SSTable and all old SSTables before the old files are deleted.
+- Source: /home/forge/workspace/entries/2026/05/28/log-structured-merge-tree-lsm-compact.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-compact-assumes-unique-sstable-seq
+`compact` assumes each SSTable has a unique sequence number because the `(key, -seq)` sort is nondeterministic for equal keys if two SSTables share a sequence number.
+- Source: /home/forge/workspace/entries/2026/05/28/log-structured-merge-tree-lsm-compact.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] range-scan-excludes-tombstones
+`range_scan` filters out entries whose value equals the `TOMBSTONE` sentinel, so deleted keys are excluded from the returned pairs.
+- Source: /home/forge/workspace/entries/2026/05/28/log-structured-merge-tree-lsm-range_scan.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] range-scan-returns-sorted-pairs
+`range_scan` returns a `List[Tuple[str, str]]` of `(key, value)` pairs sorted in lexicographic key order.
+- Source: /home/forge/workspace/entries/2026/05/28/log-structured-merge-tree-lsm-range_scan.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] range-scan-all-tombstoned-returns-empty
+If every matching key in the range has been tombstoned, `range_scan` returns an empty list, making the result indistinguishable from no keys in range.
+- Source: /home/forge/workspace/entries/2026/05/28/log-structured-merge-tree-lsm-range_scan.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] range-scan-exceptions-propagate
+`range_scan` has no explicit error handling; `FileNotFoundError`, `IOError`, and `UnicodeDecodeError` propagate to the caller.
+- Source: /home/forge/workspace/entries/2026/05/28/log-structured-merge-tree-lsm-range_scan.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-flush-triggers-compaction-at-threshold
+`_flush()` triggers `compact()` when the number of SSTables reaches `compaction_threshold` after writing the new SSTable.
+- Source: /home/forge/workspace/entries/2026/05/28/log-structured-merge-tree-lsm.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-delete-uses-put-path
+`delete(key)` writes a tombstone through the same `put` path used for normal writes.
+- Source: /home/forge/workspace/entries/2026/05/28/log-structured-merge-tree-lsm.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sstable-load-index-reads-last-12-bytes
+`SSTable.load_index()` seeks to the last 12 bytes of the file to read `footer_start` (8 bytes) and `index_count` (4 bytes).
+- Source: /home/forge/workspace/entries/2026/05/28/log-structured-merge-tree-lsm.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-load-sstables-assumes-filename-format
+`_load_existing_sstables()` assumes SSTable filenames follow the `sst_NNNNNN.sst` format and would crash on a malformed filename.
+- Source: /home/forge/workspace/entries/2026/05/28/log-structured-merge-tree-lsm.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-sstables-tracked-newest-last-by-seq
+`self._sstables` tracks SSTables sorted by sequence number so that newer SSTables appear last in the list.
+- Source: /home/forge/workspace/entries/2026/05/28/log-structured-merge-tree-lsm.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sstable-sparse-index-interval-fixed-per-table
+The sparse index interval is fixed per SSTable at construction time.
+- Source: /home/forge/workspace/entries/2026/05/28/log-structured-merge-tree-lsm.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-tests-use-temp-directories
+Every LSM test creates its own `tempfile.TemporaryDirectory()` via a context manager, giving each test a clean filesystem.
+- Source: /home/forge/workspace/entries/2026/05/28/log-structured-merge-tree-test_lsm.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-tests-tune-thresholds-for-control
+LSM tests set `memtable_threshold` low (2–3) to force predictable flushes and `compaction_threshold` high (100) to suppress automatic compaction.
+- Source: /home/forge/workspace/entries/2026/05/28/log-structured-merge-tree-test_lsm.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-large-dataset-test-parameters
+`test_large_dataset` uses 10,000 keys with `memtable_threshold=500` and `compaction_threshold=10`, exercising automatic compaction.
+- Source: /home/forge/workspace/entries/2026/05/28/log-structured-merge-tree-test_lsm.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-compaction-test-3-to-1
+`test_compaction` asserts exactly 3 SSTables exist before compaction and exactly 1 exists after.
+- Source: /home/forge/workspace/entries/2026/05/28/log-structured-merge-tree-test_lsm.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-basic-crud-crosses-flush-boundary
+`test_basic_crud` crosses a flush boundary mid-test when the third `put` reaches the memtable threshold.
+- Source: /home/forge/workspace/entries/2026/05/28/log-structured-merge-tree-test_lsm.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] ddia-storage-modules-map-to-chapter-3
+The `hash-index-storage`, `log-structured-hash-table`, `sstable-and-compaction`, `log-structured-merge-tree`, `b-tree-storage-engine`, `write-ahead-log`, and `bloom-filter` modules map to DDIA Chapter 3.
+- Source: /home/forge/workspace/entries/2026/05/28/scan-ddia-implementations.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] ddia-replication-consensus-modules-map-to-chapters-5-and-9
+The replication and consensus modules (`leader-follower-replication`, `multi-leader-replication`, `leaderless-replication`, `read-repair`, `hinted-handoff`, `leader-election`, `raft-consensus`, `two-phase-commit`, `total-order-broadcast`) map to DDIA Chapters 5 and 9.
+- Source: /home/forge/workspace/entries/2026/05/28/scan-ddia-implementations.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] ddia-partitioning-modules-map-to-chapter-6
+The `consistent-hashing`, `range-partitioning`, and `secondary-index-partitioning` modules map to DDIA Chapter 6.
+- Source: /home/forge/workspace/entries/2026/05/28/scan-ddia-implementations.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] ddia-stream-batch-modules-map-to-chapters-10-and-11
+The stream and batch modules (`mapreduce-framework`, `batch-word-count`, `map-side-join`, `change-data-capture`, `event-sourcing-store`, `stream-join-processor`, `partitioned-log`) map to DDIA Chapters 10 and 11.
+- Source: /home/forge/workspace/entries/2026/05/28/scan-ddia-implementations.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] merge-returns-reader-on-output
+`merge_sstables` returns an `SSTableReader` opened on the newly written output SSTable.
+- Source: /home/forge/workspace/entries/2026/05/28/sstable-and-compaction-sstable-merge_sstables.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] merge-time-complexity-n-log-k
+`merge_sstables` performs a k-way merge in O(N log K) time, where N is total entries and K is the number of input SSTables.
+- Source: /home/forge/workspace/entries/2026/05/28/sstable-and-compaction-sstable-merge_sstables.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] merge-tombstone-removal-only-safe-without-older-sstables
+Passing `remove_tombstones=True` is only safe when no older SSTables reference the same keys; otherwise dropping a tombstone can resurrect deleted data.
+- Source: /home/forge/workspace/entries/2026/05/28/sstable-and-compaction-sstable-merge_sstables.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] merge-heap-maintains-one-entry-per-source
+During `merge_sstables`, the min-heap contains at most one entry per source SSTable.
+- Source: /home/forge/workspace/entries/2026/05/28/sstable-and-compaction-sstable-merge_sstables.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] merge-output-sorted-by-key
+The merged output SSTable contains exactly one entry per unique key and is sorted by key.
+- Source: /home/forge/workspace/entries/2026/05/28/sstable-and-compaction-sstable-merge_sstables.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] merge-empty-inputs-produce-empty-output
+If `readers` is empty, `merge_sstables` produces an empty output SSTable.
+- Source: /home/forge/workspace/entries/2026/05/28/sstable-and-compaction-sstable-merge_sstables.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sstable-file-layout-header-entries-sparse-index-footer
+An SSTable file is laid out as `[header][entries...][sparse index][footer]`.
+- Source: /home/forge/workspace/entries/2026/05/28/sstable-and-compaction-sstable.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sstable-header-format-magic-version-entry-count
+`HEADER_FMT = ">4sHI"` encodes the 4-byte magic `SSTB`, a 2-byte version, and a 4-byte entry count, totaling 10 bytes.
+- Source: /home/forge/workspace/entries/2026/05/28/sstable-and-compaction-sstable.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sstable-footer-format-index-offset-index-count
+`FOOTER_FMT = ">QI"` encodes an 8-byte index offset and a 4-byte index count, totaling 12 bytes.
+- Source: /home/forge/workspace/entries/2026/05/28/sstable-and-compaction-sstable.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] merge-sstables-uses-min-heap-negative-timestamp
+`merge_sstables` uses a min-heap keyed by `(key, -timestamp, source_index, entry, iterator)` so the newest entry for a duplicate key is popped first.
+- Source: /home/forge/workspace/entries/2026/05/28/sstable-and-compaction-sstable.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] stcs-compaction-threshold-default-4
+Size-tiered compaction merges a size tier into one SSTable when the tier accumulates `min_threshold` SSTables, with a default of 4.
+- Source: /home/forge/workspace/entries/2026/05/28/sstable-and-compaction-sstable.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lcs-level-size-caps-exponential-fanout
+Leveled compaction caps a level's size at `level_base_size * fanout^(level-1)`.
+- Source: /home/forge/workspace/entries/2026/05/28/sstable-and-compaction-sstable.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sstable-reader-caches-min-max-timestamp-metadata
+`SSTableReader` caches `_min_key`, `_max_key`, and `_timestamp` by reading the first entry and scanning from the last sparse-index entry to find the final entry.
+- Source: /home/forge/workspace/entries/2026/05/28/sstable-and-compaction-sstable.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sstable-empty-table-supported
+`test_sstable.py` verifies that an SSTable containing zero entries can be written and read.
+- Source: /home/forge/workspace/entries/2026/05/28/sstable-and-compaction-test_sstable.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sstable-single-entry-min-max-equal
+For an SSTable with exactly one entry, `min_key` equals `max_key` in the metadata.
+- Source: /home/forge/workspace/entries/2026/05/28/sstable-and-compaction-test_sstable.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sstable-test-size-tiered-threshold-2
+`test_sstable.py` exercises size-tiered compaction with `min_threshold=2` and triggers compaction when two or more SSTables exist.
+- Source: /home/forge/workspace/entries/2026/05/28/sstable-and-compaction-test_sstable.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-max-keys-per-page-4
+The B-tree implementation uses `max_keys_per_page=4`.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-b-tree-underflow-rebalancing.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] production-btree-min-fill-half-full
+Production B+ trees require every non-root node to be at least half full, i.e. at least `ceil(m/2)` keys for order `m`.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-b-tree-underflow-rebalancing.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] postgres-nbtree-defers-rebalancing-to-vacuum
+PostgreSQL nbtree marks deleted index tuples as dead and defers space reclamation to VACUUM; it does not merge pages with siblings.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-b-tree-underflow-rebalancing.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] innodb-btree-merges-on-underflow
+InnoDB B+ trees maintain a minimum fill factor and trigger a merge with a sibling when a deletion drops a page below it.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-b-tree-underflow-rebalancing.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sqlite-btree-rebalances-below-one-third-full
+SQLite's B-tree attempts redistribution with siblings when a page drops below roughly 1/3 full, and merges if redistribution fails.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-b-tree-underflow-rebalancing.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-tests-do-not-verify-reclaiming-half-empty-leaves
+`test_delete_and_reinsert` and `test_delete_frees_empty_leaf` do not verify space reclamation or merging of half-empty leaves.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-b-tree-underflow-rebalancing.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] manifest-write-is-atomic-compaction-commit-point
+In a crash-safe compaction protocol, atomically writing and fsyncing a manifest after fsyncing new files is the commit point before old files may be deleted.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-bitcask-compaction-atomicity.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-compaction-delete-last-ordering
+The LSM tree's compaction ordering is delete-last: it writes the new merged SSTable first and removes old SSTables afterward.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-bitcask-crash-recovery.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bloom-filter-module-has-three-variants
+The `bloom-filter/bloom_filter.py` module implements three Bloom filter variants: standard `BloomFilter`, `CountingBloomFilter`, and `ScalableBloomFilter`.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-bloom-filter-integration.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bloom-filter-module-has-dedicated-test-suite
+The bloom filter module has its own test suite (`test_bloom_filter.py`, 207 lines) covering false positive rates, serialization, unions, and edge cases.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-bloom-filter-integration.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bloom-filter-integration-checks-before-sstable-get
+A bloom-filter-enhanced `SSTable.get()` would check `key not in self._bloom` before the sparse index lookup and return `(False, None)` if absent, skipping disk I/O.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-bloom-filter-integration.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] scalable-bloom-slice-fp-ratio-is-0-5
+`ScalableBloomFilter` adds new filter slices with `fp_ratio=0.5` per slice, so each slice targets half the false positive rate of the previous slice.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-bloom-filter-integration.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-metadata-page-tracks-root-height-total-keys-free-list
+The B-tree metadata page (page 0) maintains `root_page`, `height`, `total_keys`, `next_free_page`, and `free_list_head`, updated on every structural change.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-btree-split-and-merge-strategy.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-split-logic-not-in-first-200-lines
+The first 200 lines of `b-tree-storage-engine/btree.py` cover `PageManager`, `WAL`, and leaf serialization helpers, but do not contain the split or delete logic.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-btree-split-and-merge-strategy.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-test-metadata-consistency-after-split-not-found
+The test `test_metadata_consistency_after_split` was not found in `test_btree.py` (grep returned 0 matches).
+- Source: /home/forge/workspace/entries/2026/05/28/topic-btree-split-and-merge-strategy.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] free-list-reclaims-empty-leaves
+`PageManager.free_page()` pushes emptied pages onto a singly-linked free list (with the next pointer stored in the first 4 bytes after the header), and `allocate_page()` pops from this list before extending the file.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-concurrent-btree-deletion.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-no-merge-redistribute-underflow-rebalance-code
+Grepping for `merge|redistribute|underflow|rebalance` across the B-tree implementation returns zero matches, confirming no merge or redistribution logic exists.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-concurrent-btree-deletion.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-delete-leaves-sparse-leaves-and-degrades-range-scan
+Without merge or redistribution, deleting keys leaves underflowed leaf pages in place until fully empty, causing range scans to read every leaf along the chain and wasting I/O.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-concurrent-btree-deletion.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-full-compaction-drops-tombstones
+The full compaction in `log-structured-merge-tree/lsm.py:compact` merges every SSTable into one and permanently drops tombstones, then deletes the old SSTables from disk.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-counting-bloom-compaction-interaction.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] counting-bloom-lacks-union-support
+`CountingBloomFilter` does not support union, while the standard `BloomFilter` has a `union()` method.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-counting-bloom-compaction-interaction.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] counting-bloom-counters-saturate-at-15
+`CountingBloomFilter` uses saturating 4-bit counters that max out at 15; after saturation, `remove()` becomes a no-op for that position to avoid false negatives.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-counting-bloom-compaction-interaction.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-deletes-use-tombstones-not-memtable-removal
+The LSM tree marks deletions with tombstone entries rather than removing keys from the active memtable.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-counting-bloom-compaction-interaction.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] rename-is-atomic-but-not-durable-without-directory-fsync
+`os.rename()` is atomic at the VFS level but not durable; the directory entry metadata can be lost on crash unless the directory itself is fsynced.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-directory-fsync-semantics.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] ext4-requires-directory-fsync-for-rename-durability
+On ext4 with default `data=ordered`, a rename is not guaranteed durable without an explicit `fsync()` on the directory; `auto_da_alloc` only covers the narrow `open(O_TRUNC)+write+close+rename` pattern.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-directory-fsync-semantics.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] xfs-requires-directory-fsync-for-rename-durability
+XFS requires directory fsync for rename durability; without it, a crash can lose the rename and, on older kernels, even the file contents of newly allocated files.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-directory-fsync-semantics.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-rotation-lacks-directory-fsync
+`write-ahead-log/wal.py:_rotate()` creates a new WAL file without fsyncing the directory, so after a crash the new file might not appear in the directory listing and `_wal_files()` would miss it on recovery.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-directory-fsync-semantics.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sstable-writer-never-fsyncs-data-or-directory
+`sstable-and-compaction/sstable.py` writes SSTables via `SSTableWriter.finish()` but never calls `os.fsync()` on the file data or the directory; the LSM tree's `SSTable.write()` has the same gap.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-directory-fsync-semantics.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] range-scan-snapshots-memtable-before-sstable-iteration
+range_scan() first snapshots the memtable, then iterates SSTables.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-lsm-concurrency-safety.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] concurrent-compaction-can-resurrect-deleted-keys-during-range-scan
+If range_scan() reads an old SSTable before compaction deletes a tombstone but reads the compacted SSTable after the tombstone is gone, the merge logic may resurrect a deleted key.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-lsm-concurrency-safety.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] concurrent-flush-and-compact-can-cause-duplicate-data-or-data-loss
+If _flush() appends a new SSTable while compact() is iterating the list, the new SSTable may be included in the merge and also remain as a separate SSTable (duplicate data), or be excluded from the merge and lost when compact() overwrites self._sstables (data loss).
+- Source: /home/forge/workspace/entries/2026/05/28/topic-lsm-concurrency-safety.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-files-have-no-header
+Each WAL file is a sequence of back-to-back binary records with no file-level header.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-lsm-crash-recovery-wal-format.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-op-types-are-put-delete-commit-checkpoint
+The WAL op_type byte is one of four values: PUT(1), DELETE(2), COMMIT(3), CHECKPOINT(4).
+- Source: /home/forge/workspace/entries/2026/05/28/topic-lsm-crash-recovery-wal-format.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-default-max-file-size-10mb
+WAL files rotate when they exceed max_file_size, which defaults to 10 MB.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-lsm-crash-recovery-wal-format.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-records-have-no-random-access-index
+WAL records have no random-access index, so there is no reliable way to find the next valid record boundary after corruption.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-lsm-crash-recovery-wal-format.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] leveldb-manifest-is-append-only-metadata-log
+LevelDB's MANIFEST is an append-only write-ahead log for metadata, where each state transition is recorded as a VersionEdit.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-manifest-based-compaction.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] rocksdb-versionset-uses-immutable-versions
+RocksDB's VersionSet maintains immutable Version snapshots; compaction creates a new Version by applying a VersionEdit rather than mutating the current version.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-manifest-based-compaction.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] leveldb-uses-current-file-to-find-manifest
+LevelDB uses a CURRENT file containing the filename of the active MANIFEST, read at startup to locate the MANIFEST.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-manifest-based-compaction.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] heapq-imported-but-unused-for-merge
+lsm.py imports heapq but the merge logic for range scans and compaction uses dicts and lists instead of a heap-based k-way merge.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-merge-iterator-vs-dict-merge.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sstable-module-imports-heapq
+sstable-and-compaction/sstable.py imports heapq at line 2.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-merge-iterator-vs-dict-merge.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sstable-entries-carry-timestamp
+SSTableEntry in sstable-and-compaction/sstable.py has a timestamp field (line 28).
+- Source: /home/forge/workspace/entries/2026/05/28/topic-merge-iterator-vs-dict-merge.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] leveldb-and-rocksdb-use-heap-based-merging-iterator
+LevelDB's MergingIterator and RocksDB's MergingIterator use a heap-based k-way merge iterator.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-merge-iterator-vs-dict-merge.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] postgres-nbtree-removes-empty-pages-via-half-dead-dead-state-machine
+PostgreSQL's nbtree removes an empty page through a "half-dead" → "dead" state machine.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-postgres-nbtree-lazy-deletion.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] postgres-nbtree-recycles-pages-into-free-space-map
+PostgreSQL recycles deleted pages into a free space map rather than merging them with siblings.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-postgres-nbtree-lazy-deletion.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-codebase-has-no-merge-redistribute-rebalance-code
+A grep for merge|redistribute|rebalance|underflow|borrow|sibling across the entire codebase returns zero matches, indicating no merge/redistribute/rebalance code exists.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-postgres-nbtree-lazy-deletion.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] innodb-uses-full-merge-on-underflow-and-change-buffer
+InnoDB performs full merge on underflow and uses a change buffer for batching.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-postgres-nbtree-lazy-deletion.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sqlite-uses-full-merge-redistribute-when-page-below-one-third-full
+SQLite performs full merge/redistribute when a page drops below approximately 1/3 full.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-postgres-nbtree-lazy-deletion.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] compaction-manager-supports-partial-merge-strategies
+The `CompactionManager` supports both size-tiered and leveled strategies with partial compactions, so a merge may include only a subset of SSTables and cannot always guarantee full key coverage.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-tombstone-gc-safety.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-merge-rebuilds-keydir
+Bitcask's `merge()` removes tombstones freely because it rebuilds the entire keydir from one merged file, making tombstone removal safe.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-tombstone-gc-safety.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] replication-tombstone-ttl-bounds-removal
+Distributed systems often retain tombstones for a TTL such as Cassandra's `gc_grace_seconds` so all replicas receive the delete before the tombstone can be removed.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-tombstone-gc-safety.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] in-place-rewrite-open-wb-truncates-before-write
+WAL truncation rewrites surviving records in place using `open(f, 'wb')`, which truncates the file to zero before writing any survivors; a crash after this open but before rewriting loses all surviving records.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-truncation-crash-safety.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] atomic-rename-requires-same-filesystem
+`os.rename()` is atomic only when source and destination are on the same filesystem, so crash-safe truncation must write the temporary file in the same directory as the WAL.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-truncation-crash-safety.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] crash-safe-truncation-three-step
+The crash-safe truncation pattern is write survivors to a temporary file, fsync the temporary file, rename it over the original, and fsync the containing directory.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-truncation-crash-safety.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] orphaned-tmp-means-original-intact
+If a `.wal.tmp` file exists on startup, the atomic rename never completed, so the original `.wal` file is authoritative and the temporary file should be deleted.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-truncation-crash-safety.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] single-write-not-atomic-across-pages
+A single `write()` call that spans multiple 4 KB filesystem pages provides no atomicity guarantee on ext4 or APFS; the kernel can flush pages independently and a crash can leave a subset persisted.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-wal-atomicity-guarantees.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] posix-write-atomicity-is-concurrent-only
+POSIX guarantees that `write()` on a regular file is atomic with respect to other reads and writes on the same file descriptor, but does not guarantee that bytes land on disk as an all-or-nothing unit.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-wal-atomicity-guarantees.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] write-returns-after-page-cache-copy-not-disk
+`write()` returns successfully after copying data into the kernel page cache; the data is not on disk until writeback or `fsync()` flushes dirty pages.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-wal-atomicity-guarantees.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] ext4-no-ordering-across-file-pages
+ext4 in `data=ordered` mode writes file data before committing metadata to the journal, but provides no ordering guarantee across pages within a single file's data.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-wal-atomicity-guarantees.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sector-write-atomic-within-single-sector
+Modern disks write in 512-byte or 4096-byte sectors; a write within one sector is typically hardware-atomic, while a write spanning multiple sectors can result in a torn write.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-wal-atomicity-guarantees.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] fsync-does-not-retroactively-atomicize-write
+`fsync()` makes data durable but does not make the preceding `write()` atomic; a crash during `write()` before `fsync()` can leave a partial write, and a crash during `fsync()` can commit any subset of dirty pages.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-wal-atomicity-guarantees.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] append-batch-no-rollback-on-fsync-failure
+In `append_batch()`, if `write()` succeeds but `fsync()` fails, sequence numbers have already been incremented and the partial data may be in the page cache with no rollback.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-wal-atomicity-guarantees.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] corruption-test-overwrites-tail-payload
+`test_corruption` overwrites the last 5 bytes of the WAL file with `0xFF`, targeting the second record's payload or trailing bytes and guaranteeing a CRC mismatch while leaving the first record intact.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-wal-checksum-format.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-crc-omits-key-and-value-length-fields
+The WAL CRC32 does not cover `key_len` or `val_len`, so corruption to those length fields is not detected by the checksum.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-wal-checksum-format.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] corruption-test-expects-single-record-replay
+The WAL corruption test verifies that `replay()` returns exactly one record after corrupting the tail, proving reads stop at the corruption boundary.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-wal-checksum-format.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] commit-aware-replay-requires-sequence-ranges
+A correct crash-recovery replay would track which records belong to which batch by sequence-number ranges and only replay batch records when a corresponding COMMIT record exists.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-wal-commit-semantics.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] replay-test-returns-six-data-ops-from-eight-records
+In the WAL test, 3 individual operations plus a 3-operation batch plus COMMIT and CHECKPOINT produce 8 total records, but `replay()` returns only the 6 data operations.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-wal-commit-semantics.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] replay-comments-document-exclusion
+The `replay()` implementation comments explicitly state that all PUT/DELETE records are included while COMMIT and CHECKPOINT markers are excluded.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-wal-commit-semantics.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-replay-after-seq-is-exclusive
+`replay(after_seq=n)` returns only WAL records whose sequence number is greater than `n`, making the filter exclusive at the checkpoint boundary.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-wal-crash-recovery-correctness.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-replay-accepts-standalone-appends-without-commit
+Standalone records written by `append()` are included in `replay()` output without requiring a `COMMIT` marker because each append is individually fsynced.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-wal-crash-recovery-correctness.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-replay-built-on-iterate
+`replay()` is implemented by consuming the raw record stream from `iterate()` and filtering or grouping records into committed batches.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-wal-crash-recovery-correctness.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-truncate-removes-whole-segment-when-all-records-eligible
+During `truncate(up_to_seq)`, if a segment contains no records with `seq_num > up_to_seq`, the entire segment file is deleted with `os.remove(path)`.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-wal-segment-deletion-ordering.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-truncate-scans-segment-records-before-deletion
+`truncate()` reads and scans each WAL segment's records to build a `kept` list before deciding whether to delete or rewrite that segment.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-wal-segment-deletion-ordering.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-wal-truncate-invoked-without-sequence-argument
+The LSM tree calls `self._wal.truncate()` with no sequence argument at line 314, unlike the standalone WAL's `truncate(up_to_seq)` signature.
+- Source: /home/forge/workspace/entries/2026/05/28/topic-wal-segment-deletion-ordering.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-test-suite-has-nine-tests
+`write-ahead-log/test_wal.py` contains 9 test functions covering basic operations, crash recovery, corruption, truncation, rotation, iteration, empty WAL, sync modes, and large values.
+- Source: /home/forge/workspace/entries/2026/05/28/write-ahead-log-test_wal.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-tests-use-temp-directory-isolation
+Every test in `write-ahead-log/test_wal.py` uses `tempfile.TemporaryDirectory()` as a context manager so WAL files are isolated and cleaned up automatically.
+- Source: /home/forge/workspace/entries/2026/05/28/write-ahead-log-test_wal.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-crash-recovery-test-uses-second-instance-without-close
+`test_crash_recovery` simulates a crash by opening a second `WriteAheadLog` instance on the same directory without calling `close()` on the first instance.
+- Source: /home/forge/workspace/entries/2026/05/28/write-ahead-log-test_wal.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-corruption-test-overwrites-last-five-bytes
+`test_corruption` injects physical corruption by overwriting the last 5 bytes of the WAL file with `0xFF`.
+- Source: /home/forge/workspace/entries/2026/05/28/write-ahead-log-test_wal.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-rotation-test-uses-max-file-size-100
+`test_rotation` sets `max_file_size=100` to force multiple `.wal` segment files and verifies all 20 records are readable across segments.
+- Source: /home/forge/workspace/entries/2026/05/28/write-ahead-log-test_wal.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-sync-modes-test-only-constructs-wal
+`test_sync_modes` only constructs a WAL in each of the `sync`, `batch`, and `none` modes without error; it does not verify durability behavior for those modes.
+- Source: /home/forge/workspace/entries/2026/05/28/write-ahead-log-test_wal.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] tester-test-wal-prints-pass-per-test
+`tester_test_wal.py` prints a pass message from each test function and prints `ALL TESTS PASSED` at the end of its `__main__` block.
+- Source: /home/forge/workspace/entries/2026/05/28/write-ahead-log-tester_test_wal.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-tests-omit-filesystem-error-paths
+The WAL test suites have no explicit tests for a nonexistent directory, disk full, or permission errors.
+- Source: /home/forge/workspace/entries/2026/05/28/write-ahead-log-tester_test_wal.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] tester-test-wal-has-ten-test-functions
+`write-ahead-log/tester_test_wal.py` contains 10 test functions covering appends, crash recovery, corruption, truncation, rotation, iteration, empty WAL, large values, checkpoint replay, and sequence monotonicity across restart.
+- Source: /home/forge/workspace/entries/2026/05/28/write-ahead-log-tester_test_wal.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-encode-struct-format-header
+The fixed header of a WAL record is packed using the struct format `<IIQBi`, corresponding to record_length (uint32), crc (uint32), seq_num (uint64), op_type (uint8), and key_len (int32) in little-endian order.
+- Source: /home/forge/workspace/entries/2026/05/28/write-ahead-log-wal-_encode_record.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-encode-header-size-21-bytes
+The fixed portion of a WAL record (record_length, crc, seq_num, op_type, key_len) occupies exactly 21 bytes.
+- Source: /home/forge/workspace/entries/2026/05/28/write-ahead-log-wal-_encode_record.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-encode-total-size-25-plus-key-value
+The total on-disk size of a WAL record is 25 + len(key) + len(value) bytes.
+- Source: /home/forge/workspace/entries/2026/05/28/write-ahead-log-wal-_encode_record.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-encode-crc-mask-unsigned32
+`_encode_record` applies `& 0xFFFFFFFF` to the CRC32 result to ensure the checksum is stored as an unsigned 32-bit integer.
+- Source: /home/forge/workspace/entries/2026/05/28/write-ahead-log-wal-_encode_record.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-encode-struct-error-on-overflow
+`_encode_record` uses `struct.pack` without explicit error handling, so overflow (e.g., seq_num > uint64 max or key length > int32 max) raises `struct.error` to the caller.
+- Source: /home/forge/workspace/entries/2026/05/28/write-ahead-log-wal-_encode_record.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-encode-callers-pass-utf8
+All callers of `_encode_record` except for COMMIT/CHECKPOINT pass `key.encode("utf-8")` and `value.encode("utf-8")`; COMMIT and CHECKPOINT pass empty bytes `b""`.
+- Source: /home/forge/workspace/entries/2026/05/28/write-ahead-log-wal-_encode_record.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-encode-op-type-not-validated
+`_encode_record` does not validate that `op_type_byte` is in the range 1–4; it simply packs the provided value as an unsigned byte.
+- Source: /home/forge/workspace/entries/2026/05/28/write-ahead-log-wal-_encode_record.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-read-record-crc-mismatch-raises-valueerror
+On CRC mismatch, `_read_record` raises `ValueError` (including the sequence number in the message) rather than returning None.
+- Source: /home/forge/workspace/entries/2026/05/28/write-ahead-log-wal-_read_record.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-read-record-unknown-op-maps-to-unknown
+If the op_type_byte is not in `OP_NAMES`, `_read_record` silently maps it to the string `"UNKNOWN"` via `OP_NAMES.get()`.
+- Source: /home/forge/workspace/entries/2026/05/28/write-ahead-log-wal-_read_record.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-read-record-invalid-utf8-raises
+Invalid UTF-8 in key or value causes `_read_record` to raise `UnicodeDecodeError` (unhandled).
+- Source: /home/forge/workspace/entries/2026/05/28/write-ahead-log-wal-_read_record.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-read-record-advances-by-4-plus-record-length
+On successful read, `_read_record` advances the file position by `4 + record_length` bytes.
+- Source: /home/forge/workspace/entries/2026/05/28/write-ahead-log-wal-_read_record.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-read-record-no-length-bounds-check
+`_read_record` does not validate that `key_len` or `val_len` are within the bounds of the record body; a corrupted length can cause a short slice, which is later caught by the CRC check if the payload doesn't match.
+- Source: /home/forge/workspace/entries/2026/05/28/write-ahead-log-wal-_read_record.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-read-record-key-offset-17
+The key bytes are extracted by slicing from offset 17 (after 4-byte CRC, 8-byte seq_num, 1-byte op_type, and 4-byte key_len) within the record body.
+- Source: /home/forge/workspace/entries/2026/05/28/write-ahead-log-wal-_read_record.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-append-batch-invalid-op-raises-keyerror
+If `op_type` is not a key in `OP_BYTES`, `append_batch` raises `KeyError`.
+- Source: /home/forge/workspace/entries/2026/05/28/write-ahead-log-wal-append_batch.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-append-batch-utf8-encode-error
+If key or value contains surrogates or non-encodable characters, `append_batch` raises `UnicodeEncodeError` during `str.encode("utf-8")`.
+- Source: /home/forge/workspace/entries/2026/05/28/write-ahead-log-wal-append_batch.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-append-batch-requires-open-fd
+`append_batch` assumes `self._fd` is not `None`; calling after `close()` raises `AttributeError` because there is no guard.
+- Source: /home/forge/workspace/entries/2026/05/28/write-ahead-log-wal-append_batch.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-append-batch-seq-num-advances-len-plus-one
+`append_batch` advances `self._seq_num` by `len(operations) + 1` (one per operation plus one for the COMMIT record).
+- Source: /home/forge/workspace/entries/2026/05/28/write-ahead-log-wal-append_batch.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-append-batch-returns-commit-seq
+`append_batch` returns the sequence number assigned to the COMMIT record, which is the highest sequence number in the batch.
+- Source: /home/forge/workspace/entries/2026/05/28/write-ahead-log-wal-append_batch.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-append-batch-empty-operations-valid
+An empty `operations` list is technically valid for `append_batch`; it writes a lone COMMIT record and advances the sequence number by 1.
+- Source: /home/forge/workspace/entries/2026/05/28/write-ahead-log-wal-append_batch.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-append-batch-lock-held-across-fsync
+`append_batch` holds `self._lock` across the entire I/O path including the `fsync` call, so other writers block for the full duration of the disk sync.
+- Source: /home/forge/workspace/entries/2026/05/28/write-ahead-log-wal-append_batch.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-append-batch-no-try-except
+`append_batch` has no try/except blocks; I/O errors (OSError/IOError) from write() or fsync() propagate directly to the caller.
+- Source: /home/forge/workspace/entries/2026/05/28/write-ahead-log-wal-append_batch.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] iterate-delegates-to-read-all-records
+`iterate` uses `yield from _read_all_records()` to lazily stream records, meaning the actual file scanning and parsing logic resides in `_read_all_records`.
+- Source: /home/forge/workspace/entries/2026/05/28/write-ahead-log-wal-iterate.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] iterate-read-all-records-moves-to-next-file-on-none
+When `_read_record` returns `None` (EOF or partial read), `_read_all_records` moves to the next WAL file rather than stopping.
+- Source: /home/forge/workspace/entries/2026/05/28/write-ahead-log-wal-iterate.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] iterate-opens-files-read-only
+During iteration, each WAL segment file is opened in read-only mode (`"rb"`) by `_read_all_records`.
+- Source: /home/forge/workspace/entries/2026/05/28/write-ahead-log-wal-iterate.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] iterate-sorted-filename-order
+`_read_all_records` iterates over `.wal` files in sorted filename order.
+- Source: /home/forge/workspace/entries/2026/05/28/write-ahead-log-wal-iterate.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] iterate-returns-walrecord-iterator
+`iterate` returns an `Iterator[WALRecord]` where each `WALRecord` includes `seq_num`, `op_type`, `key`, `value`, and `checksum`.
+- Source: /home/forge/workspace/entries/2026/05/28/write-ahead-log-wal-iterate.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] replay-after-seq-not-validated
+`replay` does not validate that `after_seq` is non-negative; passing a negative value effectively returns all records.
+- Source: /home/forge/workspace/entries/2026/05/28/write-ahead-log-wal-replay.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] replay-no-external-file-lock
+`replay` does not use file-level locking to protect against concurrent external writers modifying WAL files during the read phase.
+- Source: /home/forge/workspace/entries/2026/05/28/write-ahead-log-wal-replay.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] replay-records-in-log-order
+The records returned by `replay` are in log order: file order (sorted filename) and then byte offset within each file.
+- Source: /home/forge/workspace/entries/2026/05/28/write-ahead-log-wal-replay.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] replay-uses-read-all-records
+`replay` delegates the actual file scanning and record parsing to `_read_all_records`, the same internal iterator used by `iterate`.
+- Source: /home/forge/workspace/entries/2026/05/28/write-ahead-log-wal-replay.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-truncate-zero-is-noop
+In `WriteAheadLog.truncate`, passing `up_to_seq=0` is a no-op because no records have sequence number 0.
+- Source: /home/forge/workspace/entries/2026/05/28/write-ahead-log-wal-truncate.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-truncate-returns-none
+`WriteAheadLog.truncate` returns `None`; success is silent and callers infer correctness from the absence of exceptions.
+- Source: /home/forge/workspace/entries/2026/05/28/write-ahead-log-wal-truncate.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-truncate-current-seq-deletes-all
+Passing `current_seq_num()` as `up_to_seq` to `truncate` deletes all records because every record has a sequence number at or below the current sequence number.
+- Source: /home/forge/workspace/entries/2026/05/28/write-ahead-log-wal-truncate.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-four-op-types
+The WAL defines four operation types — `OP_PUT`, `OP_DELETE`, `OP_COMMIT`, and `OP_CHECKPOINT` — stored as single-byte integers in the binary format.
+- Source: /home/forge/workspace/entries/2026/05/28/write-ahead-log-wal.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-record-frame-layout
+A WAL record frame is laid out as 4-byte record length, 4-byte CRC32, 8-byte sequence number, 1-byte op type, 4-byte key length, key, 4-byte value length, and value.
+- Source: /home/forge/workspace/entries/2026/05/28/write-ahead-log-wal.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-default-max-file-size-10mb
+`WriteAheadLog` defaults `max_file_size` to 10 MB as the WAL file rotation threshold.
+- Source: /home/forge/workspace/entries/2026/05/28/write-ahead-log-wal.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-default-batch-sync-count-100
+In batch sync mode, `WriteAheadLog` defaults `batch_sync_count` to 100 writes between fsyncs.
+- Source: /home/forge/workspace/entries/2026/05/28/write-ahead-log-wal.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-iterate-includes-commit-checkpoint
+`WriteAheadLog.iterate()` yields all raw WAL records, including `COMMIT` and `CHECKPOINT` records, without filtering.
+- Source: /home/forge/workspace/entries/2026/05/28/write-ahead-log-wal.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-replay-flushes-without-fsync
+`WriteAheadLog.replay()` flushes the active file descriptor but does not fsync before scanning WAL files.
+- Source: /home/forge/workspace/entries/2026/05/28/write-ahead-log-wal.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-io-errors-propagate-as-oserror
+The WAL has no explicit handling for disk-full, permission, or I/O errors during `write()` or `fsync()`; these propagate as `OSError` to the caller.
+- Source: /home/forge/workspace/entries/2026/05/28/write-ahead-log-wal.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] resolve-record-name-check-in-decode
+`_decode` enforces that writer and reader record schemas have matching `name` values before calling `_resolve_record`.
+- Source: /home/forge/workspace/entries/2026/05/29/avro-serializer-avro_serializer-_resolve_record.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] resolve-record-fields-decoded-with-both-schemas
+For fields present in both writer and reader schemas, `_resolve_record` decodes values using both the writer and reader field types, enabling type promotion.
+- Source: /home/forge/workspace/entries/2026/05/29/avro-serializer-avro_serializer-_resolve_record.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] resolve-record-zero-writer-fields-uses-defaults
+If the writer record schema has zero fields, `_resolve_record` builds the result entirely from reader field defaults.
+- Source: /home/forge/workspace/entries/2026/05/29/avro-serializer-avro_serializer-_resolve_record.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] resolve-record-truncated-buffer-raises-valueerror
+A truncated record buffer causes `ValueError` from lower-level `read_varint` or `struct.unpack` calls during `_resolve_record`.
+- Source: /home/forge/workspace/entries/2026/05/29/avro-serializer-avro_serializer-_resolve_record.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] resolve-record-no-cycle-detection
+`_resolve_record` has no cycle detection for nested records; a recursive record type would recurse infinitely, although the `Schema` parser does not support recursive types.
+- Source: /home/forge/workspace/entries/2026/05/29/avro-serializer-avro_serializer-_resolve_record.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] resolve-record-relies-on-python-dict-order
+Result field ordering in `_resolve_record` relies on the Python 3.7+ dict insertion-order guarantee.
+- Source: /home/forge/workspace/entries/2026/05/29/avro-serializer-avro_serializer-_resolve_record.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] avro-eight-primitive-types
+The Avro serializer defines `PRIMITIVES` as the set of eight Avro primitive type names used for type validation.
+- Source: /home/forge/workspace/entries/2026/05/29/avro-serializer-avro_serializer.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] avro-zigzag-mapping
+Avro zigzag encoding maps signed integers to unsigned values as 0→0, -1→1, 1→2, -2→3, so small-magnitude negatives use few bytes.
+- Source: /home/forge/workspace/entries/2026/05/29/avro-serializer-avro_serializer.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] avro-varint-encodes-all-integer-fields
+`write_long`/`read_long` compose zigzag with varint and encode every integer in the Avro format: lengths, array counts, union indices, enum ordinals, and int/long values.
+- Source: /home/forge/workspace/entries/2026/05/29/avro-serializer-avro_serializer.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] avro-fixed-encoding-requires-exact-size
+Avro `fixed` type encodes raw bytes and requires the value to match the declared size exactly.
+- Source: /home/forge/workspace/entries/2026/05/29/avro-serializer-avro_serializer.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] avro-check-compatibility-return-flags
+`check_compatibility` performs a dry-run of schema resolution and returns a dict with `backward_compatible`, `forward_compatible`, `full_compatible`, and `errors`.
+- Source: /home/forge/workspace/entries/2026/05/29/avro-serializer-avro_serializer.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] avro-named-types-require-name-match
+Records, enums, and fixed types require matching `name` fields during Avro schema resolution; renaming these types breaks compatibility.
+- Source: /home/forge/workspace/entries/2026/05/29/avro-serializer-avro_serializer.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] avro-compatibility-checker-catches-errors-internally
+The Avro compatibility checker catches `SchemaCompatibilityError` internally to report errors rather than raise, so check functions always return a result.
+- Source: /home/forge/workspace/entries/2026/05/29/avro-serializer-avro_serializer.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] avro-schema-registry-auto-incrementing-ids
+`SchemaRegistry` assigns auto-incrementing integer IDs to registered schemas.
+- Source: /home/forge/workspace/entries/2026/05/29/avro-serializer-avro_serializer.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] avro-test-suite-is-standalone-script
+`test_avro.py` is a standalone script run via `python test_avro.py`, using `print()` plus `assert` rather than pytest.
+- Source: /home/forge/workspace/entries/2026/05/29/avro-serializer-test_avro.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] avro-test-primitives-boundary-values
+`test_avro.py` tests primitive round-trips including the int boundary values `2147483647`, `-2147483648`, and `2**40`.
+- Source: /home/forge/workspace/entries/2026/05/29/avro-serializer-test_avro.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] avro-streaming-decode-consumes-exact-bytes
+The streaming test concatenates two encoded integers and verifies that sequential decode from a `BytesIO` consumes exactly each value's bytes with no leftover.
+- Source: /home/forge/workspace/entries/2026/05/29/avro-serializer-test_avro.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] avro-test-nested-containers
+`test_avro.py` includes nested-structure tests for records containing arrays and maps and for records nested inside records.
+- Source: /home/forge/workspace/entries/2026/05/29/avro-serializer-test_avro.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] avro-test-performance-10000-cycles
+`test_performance` benchmarks 10,000 record encode/decode cycles and makes no timing assertion.
+- Source: /home/forge/workspace/entries/2026/05/29/avro-serializer-test_avro.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] avro-test-only-compatibility-error-tested
+In `test_avro.py`, only `SchemaCompatibilityError` is explicitly tested; `SchemaError` is imported but not directly tested in this file.
+- Source: /home/forge/workspace/entries/2026/05/29/avro-serializer-test_avro.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] avro-roundtrip-float-epsilon
+Float round-trip tests in `test_avro.py` use an epsilon tolerance of `1e-6` because IEEE 754 floats lose precision.
+- Source: /home/forge/workspace/entries/2026/05/29/avro-serializer-test_avro.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] avro-binary-encoding-has-no-field-names
+Avro binary encoding contains no field names or tags; the schema alone determines how bytes map to fields, as verified by test_record's byte-level assertion.
+- Source: /home/forge/workspace/entries/2026/05/29/avro-serializer-test_avro_serializer.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] avro-type-promotion-int-to-long-and-double
+Avro type promotion allows int to be read as long and int to be read as double.
+- Source: /home/forge/workspace/entries/2026/05/29/avro-serializer-test_avro_serializer.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] avro-fixed-type-enforces-exact-size
+A fixed type with size 4 rejects byte strings of any length other than 4.
+- Source: /home/forge/workspace/entries/2026/05/29/avro-serializer-test_avro_serializer.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] avro-schema-validation-rejects-duplicate-union-branches
+Avro schema validation raises SchemaError for duplicate union branches.
+- Source: /home/forge/workspace/entries/2026/05/29/avro-serializer-test_avro_serializer.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] page-manager-allocate-prefers-free-list
+PageManager.allocate_page recycles a page from the free list before incrementing next_free.
+- Source: /home/forge/workspace/entries/2026/05/29/b-tree-storage-engine-btree-PageManager.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] page-manager-free-list-cycle-causes-infinite-loop
+If a free-list pointer cycle exists in PageManager, allocate_page loops forever reusing the same pages.
+- Source: /home/forge/workspace/entries/2026/05/29/b-tree-storage-engine-btree-PageManager.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] page-manager-init-failure-leaks-file-handle
+If PageManager.__init__ fails after open() but before setup completes, the file handle is not closed.
+- Source: /home/forge/workspace/entries/2026/05/29/b-tree-storage-engine-btree-PageManager.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] page-manager-file-growth-happens-on-write-after-allocation
+PageManager.allocate_page advances next_free without growing the file; the actual file growth happens on the subsequent write_page.
+- Source: /home/forge/workspace/entries/2026/05/29/b-tree-storage-engine-btree-PageManager.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] iter-yields-pairs-in-ascending-key-order
+BTree.__iter__ yields (key, value) pairs in ascending key order by walking the leaf sibling chain left-to-right.
+- Source: /home/forge/workspace/entries/2026/05/29/b-tree-storage-engine-btree-__iter__.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] iter-read-cost-is-internal-levels-plus-leaf-pages
+For a tree with H levels and L leaves, BTree.__iter__ reads H-1 internal pages plus L leaf pages.
+- Source: /home/forge/workspace/entries/2026/05/29/b-tree-storage-engine-btree-__iter__.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] iter-generator-is-lazy-and-supports-early-stop
+BTree.__iter__ returns a lazy generator, so callers can stop iteration early without reading remaining leaves.
+- Source: /home/forge/workspace/entries/2026/05/29/b-tree-storage-engine-btree-__iter__.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-checksum-is-crc32
+WAL integrity checking uses CRC-32 via zlib.crc32, not a cryptographic hash.
+- Source: /home/forge/workspace/entries/2026/05/29/b-tree-storage-engine-btree-_checksum.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-checksum-covers-page-data-only
+The WAL checksum covers only the page data bytes, not the entry header fields (sequence number, page number, data length).
+- Source: /home/forge/workspace/entries/2026/05/29/b-tree-storage-engine-btree-_checksum.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-recovery-discards-entry-on-checksum-mismatch
+During WAL recovery, a checksum mismatch causes the entry to be silently discarded and replay to stop.
+- Source: /home/forge/workspace/entries/2026/05/29/b-tree-storage-engine-btree-_checksum.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] internal-deserialize-is-pure-function
+_deserialize_internal has no I/O, mutation, or side effects.
+- Source: /home/forge/workspace/entries/2026/05/29/b-tree-storage-engine-btree-_deserialize_internal.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] internal-deserialize-preserves-serialized-key-order
+_deserialize_internal returns keys in the same order they were serialized, without sorting.
+- Source: /home/forge/workspace/entries/2026/05/29/b-tree-storage-engine-btree-_deserialize_internal.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] internal-deserialize-raises-struct-error-on-truncated-data
+Passing truncated data to _deserialize_internal raises struct.error from a short unpack.
+- Source: /home/forge/workspace/entries/2026/05/29/b-tree-storage-engine-btree-_deserialize_internal.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] max-key-or-value-size-is-65535-bytes
+Key and value lengths are stored as >H (unsigned 16-bit), capping individual key or value size at 65,535 bytes, though page size is the practical limit.
+- Source: /home/forge/workspace/entries/2026/05/29/b-tree-storage-engine-btree-_deserialize_leaf.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-search-reads-exactly-height-pages
+_search performs exactly one read_page call per tree level, so a lookup in a tree of height H always reads H pages.
+- Source: /home/forge/workspace/entries/2026/05/29/b-tree-storage-engine-btree-_search.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-search-is-read-only
+_search never writes pages, modifies metadata, or touches the WAL; it only calls read_page.
+- Source: /home/forge/workspace/entries/2026/05/29/b-tree-storage-engine-btree-_search.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] serialize-internal-is-pure
+_serialize_internal is a pure function with no side effects, I/O, or state mutation.
+- Source: /home/forge/workspace/entries/2026/05/29/b-tree-storage-engine-btree-_serialize_internal.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] key-length-cap-uint16
+Individual key sizes are capped at 65535 bytes by the uint16 length prefix; exceeding this raises struct.error at pack time rather than being checked upfront.
+- Source: /home/forge/workspace/entries/2026/05/29/b-tree-storage-engine-btree-_serialize_internal.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] structural-mutations-eventually-write-meta
+Every B-tree structural mutation (insert, delete, split, page allocation, page free) eventually calls `_write_meta` to persist the updated tree shape.
+- Source: /home/forge/workspace/entries/2026/05/29/b-tree-storage-engine-btree-_write_meta.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] write-meta-leaves-cursor-at-page-size
+After `_write_meta` returns, the file cursor is positioned at byte `page_size`, just past page 0.
+- Source: /home/forge/workspace/entries/2026/05/29/b-tree-storage-engine-btree-_write_meta.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] write-meta-page-size-under-20-overwrites-page-1
+If `page_size` is less than 20, `_write_meta`'s packed 20-byte metadata is not padded and overwrites into page 1's territory.
+- Source: /home/forge/workspace/entries/2026/05/29/b-tree-storage-engine-btree-_write_meta.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-delete-resets-io-counters
+`BTree.delete` calls `self.pm.reset_counters()` at entry, zeroing `pages_read` and `pages_written` so stats reflect only the deletion.
+- Source: /home/forge/workspace/entries/2026/05/29/b-tree-storage-engine-btree-delete.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-delete-assumes-string-keys
+`BTree.delete` assumes `key` is a string because leaf deserialization decodes UTF-8 and comparisons rely on string ordering; this is not enforced by a type check.
+- Source: /home/forge/workspace/entries/2026/05/29/b-tree-storage-engine-btree-delete.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-delete-metadata-written-twice-on-free-page
+When deletion frees an empty leaf, the metadata page is written twice: once unprotected by `free_page` and once through `_wal_write_meta`; WAL recovery replays the protected write, but the freed page's free-list node content may be lost.
+- Source: /home/forge/workspace/entries/2026/05/29/b-tree-storage-engine-btree-delete.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] free-page-does-not-change-next-free
+`PageManager.free_page` leaves the `next_free` high-water mark unchanged; it only updates the `free_head` pointer in metadata.
+- Source: /home/forge/workspace/entries/2026/05/29/b-tree-storage-engine-btree-free_page.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] free-page-metadata-write-bypasses-pages-written-counter
+`free_page` increments `pages_written` only for its `write_page` call; the metadata write via `_write_meta` bypasses the counter.
+- Source: /home/forge/workspace/entries/2026/05/29/b-tree-storage-engine-btree-free_page.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] free-page-can-free-page-zero
+`PageManager.free_page` has no guard against `page_num == 0`, so freeing page 0 would overwrite the metadata page with a free-list node.
+- Source: /home/forge/workspace/entries/2026/05/29/b-tree-storage-engine-btree-free_page.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-entry-header-is-12-bytes
+Each WAL entry begins with a 12-byte header containing sequence number, page number, and data length, each packed as a 4-byte big-endian unsigned integer.
+- Source: /home/forge/workspace/entries/2026/05/29/b-tree-storage-engine-btree-log_write.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-log-write-single-write-call
+`WAL.log_write` writes the header, page data, and checksum in a single `write` call.
+- Source: /home/forge/workspace/entries/2026/05/29/b-tree-storage-engine-btree-log_write.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-log-write-callers-are-btree-wrappers
+`WAL.log_write` is not called directly by external code; it is called by `BTree._wal_write_page` and `BTree._wal_write_meta`.
+- Source: /home/forge/workspace/entries/2026/05/29/b-tree-storage-engine-btree-log_write.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-log-write-errors-propagate-uncaught
+`WAL.log_write` has no error handling; `struct.pack`, `write`, or `fsync` failures propagate uncaught to the caller, aborting the operation.
+- Source: /home/forge/workspace/entries/2026/05/29/b-tree-storage-engine-btree-log_write.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-put-resets-io-counters
+`BTree.put` calls `pm.reset_counters()` before reading metadata, zeroing `pages_read` and `pages_written` for per-operation stats.
+- Source: /home/forge/workspace/entries/2026/05/29/b-tree-storage-engine-btree-put.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] put-size-validation-checks-single-entry-not-existing-entries
+`BTree.put`'s size check verifies only that the new entry would fit in an otherwise empty leaf; it does not account for existing entries in the target leaf.
+- Source: /home/forge/workspace/entries/2026/05/29/b-tree-storage-engine-btree-put.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-put-does-not-validate-value-is-bytes
+`BTree.put` does not type-check `value`; passing a `str` fails later inside `_serialize_leaf` when concatenating with bytes.
+- Source: /home/forge/workspace/entries/2026/05/29/b-tree-storage-engine-btree-put.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] root-split-creates-new-root-with-one-key-two-children
+When the root splits, `put` creates a new root internal node containing one separator key and two children: the old root and the new sibling.
+- Source: /home/forge/workspace/entries/2026/05/29/b-tree-storage-engine-btree-put.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-recover-checksum-gate
+WAL recovery only replays entries whose CRC32 checksum matches the stored checksum, silently skipping torn writes from crashes.
+- Source: /home/forge/workspace/entries/2026/05/29/b-tree-storage-engine-btree-recover.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-recover-entry-layout
+Each WAL entry is laid out as `[seq:4B][page_num:4B][data_len:4B][page_data:data_len B][checksum:4B]`.
+- Source: /home/forge/workspace/entries/2026/05/29/b-tree-storage-engine-btree-recover.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-recover-breaks-on-short-read
+During recovery, if the remaining bytes are insufficient for the 12-byte header or the payload plus 4-byte checksum, parsing breaks and treats it as a torn write at the tail.
+- Source: /home/forge/workspace/entries/2026/05/29/b-tree-storage-engine-btree-recover.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-recover-io-error-leaves-wal-intact
+If an I/O error occurs during `write_page` or `sync()` in recovery, the exception propagates and the WAL is left intact for the next startup to re-attempt recovery.
+- Source: /home/forge/workspace/entries/2026/05/29/b-tree-storage-engine-btree-recover.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] pipeline-add-stage-returns-self
+`Pipeline.add_stage()` returns `self`, enabling fluent builder-style chaining of stages.
+- Source: /home/forge/workspace/entries/2026/05/29/batch-word-count-pipeline.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] pipeline-run-to-file-streams-jsonl
+`Pipeline.run_to_file()` streams results to a JSONL file without holding all records in memory.
+- Source: /home/forge/workspace/entries/2026/05/29/batch-word-count-pipeline.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] pipeline-imports-only-stdlib
+`pipeline.py` imports only Python standard library modules, including `heapq`, `json`, `tempfile`, `os`, `re`, `time`, and `collections.defaultdict`.
+- Source: /home/forge/workspace/entries/2026/05/29/batch-word-count-pipeline.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] pipeline-sort-cleanup-in-finally
+`Sort.process` uses a `try/finally` block to delete chunk files and the temp directory even on error.
+- Source: /home/forge/workspace/entries/2026/05/29/batch-word-count-pipeline.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] pipeline-build-iterator-special-cases-readlines
+`Pipeline._build_iterator` special-cases the first stage: if it's a `ReadLines`, it uses its own source; otherwise, if `input_data` is provided, a temporary `ReadLines` is prepended but not added to `self._stages`.
+- Source: /home/forge/workspace/entries/2026/05/29/batch-word-count-pipeline.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] pipeline-stats-tracks-all-stages
+`Pipeline.stats.stages` contains one entry per `add_stage` call, and `total_records_in` reflects the count of records entering the pipeline.
+- Source: /home/forge/workspace/entries/2026/05/29/batch-word-count-test_pipeline.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] empty-input-produces-empty-output
+A pipeline with no input lines returns an empty list `[]` rather than raising an error.
+- Source: /home/forge/workspace/entries/2026/05/29/batch-word-count-test_pipeline.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] topn-output-is-descending
+`TopN` returns results ordered descending by the specified field (for top 5, `top5[0][1] >= top5[4][1]`).
+- Source: /home/forge/workspace/entries/2026/05/29/batch-word-count-test_pipeline.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] filter-output-satisfies-predicate
+After a `Filter` stage with predicate `count >= 2`, every output record satisfies the predicate.
+- Source: /home/forge/workspace/entries/2026/05/29/batch-word-count-test_pipeline.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bloom-filter-sizing-formulas
+`BloomFilter` auto-sizes using `m = ceil(-n * ln(p) / (ln2)²)` and `k = round((m/n) * ln2)`.
+- Source: /home/forge/workspace/entries/2026/05/29/bloom-filter-bloom_filter-BloomFilter.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bloom-filter-serialization-format
+`BloomFilter.to_bytes()` returns a 12-byte header (`m`, `k`, `count` as little-endian uint32s) followed by the raw bit array.
+- Source: /home/forge/workspace/entries/2026/05/29/bloom-filter-bloom_filter-BloomFilter.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bloom-filter-union-bitwise-or
+`BloomFilter.union()` performs a bitwise OR of the underlying byte arrays.
+- Source: /home/forge/workspace/entries/2026/05/29/bloom-filter-bloom_filter-BloomFilter.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bloom-filter-count-estimation-formula
+`BloomFilter.estimate_count()` uses `-(m/k) * ln(1 - X/m)` where X is the number of set bits.
+- Source: /home/forge/workspace/entries/2026/05/29/bloom-filter-bloom_filter-BloomFilter.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bloom-filter-membership-short-circuits
+`BloomFilter.__contains__` short-circuits on the first unset bit, returning False immediately.
+- Source: /home/forge/workspace/entries/2026/05/29/bloom-filter-bloom_filter-BloomFilter.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] counting-bloom-shares-sizing-with-bloom
+`CountingBloomFilter` uses the same optimal Bloom filter formulas as `BloomFilter` for sizing `m` and `k`.
+- Source: /home/forge/workspace/entries/2026/05/29/bloom-filter-bloom_filter-CountingBloomFilter.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] counting-bloom-saturation-silent
+Counter saturation in `CountingBloomFilter` is handled silently with no warning when a counter reaches `_max_val`.
+- Source: /home/forge/workspace/entries/2026/05/29/bloom-filter-bloom_filter-CountingBloomFilter.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] counting-bloom-count-can-go-negative
+`CountingBloomFilter.__len__` (via `_count`) can go negative if `remove` is called more times than `add` for an item that passes the zero-check due to hash collisions.
+- Source: /home/forge/workspace/entries/2026/05/29/bloom-filter-bloom_filter-CountingBloomFilter.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] counting-bloom-no-thread-safety
+`CountingBloomFilter` has no thread safety; concurrent `add`/`remove` calls can race on counter reads and writes.
+- Source: /home/forge/workspace/entries/2026/05/29/bloom-filter-bloom_filter-CountingBloomFilter.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bloom-hashes-pure-no-side-effects
+`_hashes` is a pure function with no side effects — it performs no mutation of inputs, no I/O, and no state changes.
+- Source: /home/forge/workspace/entries/2026/05/29/bloom-filter-bloom_filter-_hashes.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bloom-hashes-item-must-be-string
+`_hashes` calls `.encode("utf-8")` on `item`, so passing a non-string value raises `AttributeError`.
+- Source: /home/forge/workspace/entries/2026/05/29/bloom-filter-bloom_filter-_hashes.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bloom-filter-bit-array-bytearray-packing
+`BloomFilter` stores its bit array as a `bytearray` of `ceil(m/8)` bytes, using manual bit manipulation with `pos // 8` as the byte index and `pos % 8` as the bit offset.
+- Source: /home/forge/workspace/entries/2026/05/29/bloom-filter-bloom_filter.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bloom-estimate-count-formula
+`BloomFilter.estimate_count()` estimates cardinality from bit density using the inverse formula `-(m/k) * ln(1 - x/m)` and returns `float("inf")` when all bits are set.
+- Source: /home/forge/workspace/entries/2026/05/29/bloom-filter-bloom_filter.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bloom-filter-scalable-aggregate-fpr-bound
+`ScalableBloomFilter` assigns slice `idx` a target FPR of `p * ratio^idx`, so the aggregate FPR converges to `p / (1 - ratio)` (equal to `2p` with the default `ratio=0.5`).
+- Source: /home/forge/workspace/entries/2026/05/29/bloom-filter-bloom_filter.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] scalable-bloom-lookup-linear-in-slices
+`ScalableBloomFilter` membership checks scan all slices via `any()`, so lookup cost grows linearly with the number of slices.
+- Source: /home/forge/workspace/entries/2026/05/29/bloom-filter-bloom_filter.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bloom-test-fpr-tolerance-2x
+`test_false_positive_rate` inserts 5,000 members, probes 50,000 distinct non-members, and asserts the empirical false positive rate stays below 2× the configured target.
+- Source: /home/forge/workspace/entries/2026/05/29/bloom-filter-test_bloom_filter.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wrong-sequence-adds-1000
+`WRONG_SEQUENCE` Byzantine mode adds 1000 to every outbound message's sequence number so honest nodes reject them as matching no accepted pre-prepare.
+- Source: /home/forge/workspace/entries/2026/05/29/byzantine-fault-tolerance-pbft-_apply_byzantine.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] apply-byzantine-mutates-messages-in-place
+`_apply_byzantine` mutates input `Message` objects in place for `WRONG_SEQUENCE` and `WRONG_DIGEST` modes, which is safe only because callers always pass freshly constructed messages.
+- Source: /home/forge/workspace/entries/2026/05/29/byzantine-fault-tolerance-pbft-_apply_byzantine.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] apply-byzantine-unknown-mode-passthrough
+`_apply_byzantine` silently returns messages unchanged for an unrecognized `byzantine_mode` value, with no error or logging.
+- Source: /home/forge/workspace/entries/2026/05/29/byzantine-fault-tolerance-pbft-_apply_byzantine.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] pbft-prepare-digest-match-required
+Only PREPARE messages whose digest matches the expected digest are counted toward the 2f quorum in `_check_prepared`; mismatched digests are silently excluded.
+- Source: /home/forge/workspace/entries/2026/05/29/byzantine-fault-tolerance-pbft-_check_prepared.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] pbft-check-prepared-returns-own-commit-and-committed-messages
+`_check_prepared` returns its own COMMIT message plus any messages produced by `_check_committed` when the commit threshold is also crossed.
+- Source: /home/forge/workspace/entries/2026/05/29/byzantine-fault-tolerance-pbft-_check_prepared.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] pbft-check-prepared-invalid-state-returns-empty
+`_check_prepared` returns an empty list without raising exceptions when the prepared predicate is not satisfied or state is invalid.
+- Source: /home/forge/workspace/entries/2026/05/29/byzantine-fault-tolerance-pbft-_check_prepared.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] pbft-view-change-dedup-by-sender
+`_handle_view_change` records at most one VIEW_CHANGE message per sender per target view in `view_change_msgs`, preventing ballot stuffing by Byzantine nodes.
+- Source: /home/forge/workspace/entries/2026/05/29/byzantine-fault-tolerance-pbft-_handle_view_change.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] pbft-new-primary-selected-by-view-modulo-n
+In `_handle_view_change`, the new primary for a target view is determined by `target_view % total_nodes`.
+- Source: /home/forge/workspace/entries/2026/05/29/byzantine-fault-tolerance-pbft-_handle_view_change.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] pbft-view-change-new-primary-resets-timer
+When the new primary advances to `target_view`, `_handle_view_change` resets `timer_ms` to 0.
+- Source: /home/forge/workspace/entries/2026/05/29/byzantine-fault-tolerance-pbft-_handle_view_change.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] pbft-view-change-malformed-prepared-raises-keyerror
+`_handle_view_change` assumes each `msg.data["prepared"]` entry has `sequence`, `request`, `digest`, and `view` keys, so a malformed entry raises `KeyError`.
+- Source: /home/forge/workspace/entries/2026/05/29/byzantine-fault-tolerance-pbft-_handle_view_change.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] pbft-client-acceptance-requires-f-plus-1-replies
+The PBFT test suite requires at least `f+1` matching replies for client acceptance.
+- Source: /home/forge/workspace/entries/2026/05/29/byzantine-fault-tolerance-test_pbft.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] pbft-verify-agreement-checks-identical-honest-logs
+`PBFTCluster.verify_agreement()` checks that all honest nodes have identical executed logs.
+- Source: /home/forge/workspace/entries/2026/05/29/byzantine-fault-tolerance-test_pbft.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] pbft-trigger-view-change-returns-new-view-number
+`PBFTCluster.trigger_view_change()` forces a view change and returns the new view number.
+- Source: /home/forge/workspace/entries/2026/05/29/byzantine-fault-tolerance-test_pbft.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] pbft-run-protocol-bounded-rounds
+`PBFTCluster.run_protocol(max_rounds)` delivers pending messages for a bounded number of rounds.
+- Source: /home/forge/workspace/entries/2026/05/29/byzantine-fault-tolerance-test_pbft.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] cdc-read-operations-do-not-generate-events
+`CDCDatabase.select` and `scan` do not append `ChangeEvent`s to the CDC log.
+- Source: /home/forge/workspace/entries/2026/05/29/change-data-capture-cdc.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] cdc-compaction-preserves-relative-order
+`CDCLog.compact()` retains the latest event per `(table, key)` and preserves the relative order of surviving events.
+- Source: /home/forge/workspace/entries/2026/05/29/change-data-capture-cdc.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] cdc-consumer-seek-moves-cursor
+`CDCConsumer.seek()` allows the consumer cursor to be rewound or fast-forwarded.
+- Source: /home/forge/workspace/entries/2026/05/29/change-data-capture-cdc.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] cdc-search-index-tokenization-whitespace-lowercase
+`SearchIndex` tokenizes specified columns by whitespace splitting and lowercasing.
+- Source: /home/forge/workspace/entries/2026/05/29/change-data-capture-cdc.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] cdc-compact-returns-removed-count
+`CDCLog.compact()` returns the number of events removed.
+- Source: /home/forge/workspace/entries/2026/05/29/change-data-capture-cdc.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] gcounter-increment-rejects-negative-amount
+`GCounter.increment` raises `ValueError` on negative amounts.
+- Source: /home/forge/workspace/entries/2026/05/29/conflict-free-replicated-data-types-crdts.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] orset-remove-absent-returns-false
+`ORSet.remove` returns `False` if the element is not present rather than raising an exception.
+- Source: /home/forge/workspace/entries/2026/05/29/conflict-free-replicated-data-types-crdts.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lww-register-auto-increments-internal-clock
+`LWWRegister.set` uses an internal auto-incrementing `_clock` so callers do not need to supply timestamps manually.
+- Source: /home/forge/workspace/entries/2026/05/29/conflict-free-replicated-data-types-crdts.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] crdt-sync-deepcopies-source
+`CRDTReplicaGroup.sync` uses `deepcopy` on the source replica before merging to prevent aliasing between replicas.
+- Source: /home/forge/workspace/entries/2026/05/29/conflict-free-replicated-data-types-crdts.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] orset-tag-is-replica-id-and-sequence
+`ORSet.add()` tags each element with a unique `(replica_id, seq_num)` pair.
+- Source: /home/forge/workspace/entries/2026/05/29/conflict-free-replicated-data-types-crdts.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] pncounter-value-is-positive-minus-negative
+`PNCounter.value()` returns `p.value() - n.value()`, where `p` and `n` are `GCounter` instances.
+- Source: /home/forge/workspace/entries/2026/05/29/conflict-free-replicated-data-types-crdts.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] crdt-tests-cover-20-scenarios
+The CRDT test suite is organized into exactly 20 numbered scenarios, each in its own test class, covering GCounter, PNCounter, LWWRegister, ORSet, and CRDTReplicaGroup.
+- Source: /home/forge/workspace/entries/2026/05/29/conflict-free-replicated-data-types-test_crdts.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] crdt-merge-tests-use-deepcopy-isolation
+CRDT merge tests use copy.deepcopy on operands before merging to verify that merge does not mutate or corrupt the source state.
+- Source: /home/forge/workspace/entries/2026/05/29/conflict-free-replicated-data-types-test_crdts.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] orset-remove-only-tombstones-known-tags
+ORSet.remove only tombstones tags that are locally known, so tags added by other replicas survive a local remove and can cause the element to remain present after merge.
+- Source: /home/forge/workspace/entries/2026/05/29/conflict-free-replicated-data-types-test_crdts.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] pncounter-supports-negative-values
+PNCounter permits negative values; decrementing below zero is valid in its test suite.
+- Source: /home/forge/workspace/entries/2026/05/29/conflict-free-replicated-data-types-test_crdts.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] crdt-state-returns-plain-dicts
+state() returns plain inspectable dictionaries for all four CRDT types, with GCounter using a counts dict and PNCounter nesting p and n sub-counters.
+- Source: /home/forge/workspace/entries/2026/05/29/conflict-free-replicated-data-types-test_crdts.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] consistent-hash-ring-get-node-empty-ring-raises-valueerror
+ConsistentHashRing.get_node and get_nodes raise ValueError when called on an empty ring.
+- Source: /home/forge/workspace/entries/2026/05/29/consistent-hashing-consistent_hashing-ConsistentHashRing.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] consistent-hash-ring-remove-node-absent-raises-valueerror
+ConsistentHashRing.remove_node raises ValueError when the requested node is not present.
+- Source: /home/forge/workspace/entries/2026/05/29/consistent-hashing-consistent_hashing-ConsistentHashRing.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] consistent-hash-ring-get-node-wraps-to-index-zero
+ConsistentHashRing.get_node wraps to ring index 0 when the key hash is greater than all vnode positions.
+- Source: /home/forge/workspace/entries/2026/05/29/consistent-hashing-consistent_hashing-ConsistentHashRing.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] consistent-hash-ring-transfer-map-approximate
+The transfer map returned by add_node is approximate because vnodes are inserted one at a time and later vnodes of the same node can split arcs recorded earlier in the same call.
+- Source: /home/forge/workspace/entries/2026/05/29/consistent-hashing-consistent_hashing-ConsistentHashRing.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] consistent-hash-ring-get-load-distribution-sums-to-one
+ConsistentHashRing.get_load_distribution returns fractions of ring address space per node that sum to 1.0.
+- Source: /home/forge/workspace/entries/2026/05/29/consistent-hashing-consistent_hashing-ConsistentHashRing.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] consistent-hash-ring-vnode-position-is-hash-node-id-colon-index
+Each virtual node position is computed by hashing the string formed by node_id, a colon, and the vnode index.
+- Source: /home/forge/workspace/entries/2026/05/29/consistent-hashing-consistent_hashing-ConsistentHashRing.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] consistent-hash-ring-nodes-registry-maps-id-to-weight
+ConsistentHashRing stores physical node IDs in the _nodes dict mapping to their float weights.
+- Source: /home/forge/workspace/entries/2026/05/29/consistent-hashing-consistent_hashing.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] consistent-hash-ring-remove-node-iterates-in-reverse
+ConsistentHashRing.remove_node iterates indices in reverse when deleting vnodes to avoid index invalidation during removal.
+- Source: /home/forge/workspace/entries/2026/05/29/consistent-hashing-consistent_hashing.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] consistent-hash-ring-get-node-uses-bisect-right
+ConsistentHashRing.get_node uses bisect.bisect (bisect_right) on the sorted position list to locate the clockwise successor vnode for a key hash.
+- Source: /home/forge/workspace/entries/2026/05/29/consistent-hashing-consistent_hashing.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] consistent-hash-ring-get-nodes-worst-case-linear-scan
+ConsistentHashRing.get_nodes can traverse up to len(_ring_positions) entries in the worst case when most vnodes belong to a small number of physical nodes.
+- Source: /home/forge/workspace/entries/2026/05/29/consistent-hashing-consistent_hashing.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] consistent-hash-tests-use-10000-keys-for-statistical-tests
+The consistent hashing statistical tests use populations of 10,000 keys to obtain stable key distribution measurements.
+- Source: /home/forge/workspace/entries/2026/05/29/consistent-hashing-test_consistent_hashing.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] consistent-hash-load-balance-test-requires-imbalance-below-1-5
+The load balance test with 150 vnodes and 3 nodes asserts ring imbalance remains below 1.5x.
+- Source: /home/forge/workspace/entries/2026/05/29/consistent-hashing-test_consistent_hashing.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] consistent-hash-vnode-count-test-sweeps-specified-values
+The vnode count test sweeps vnode counts [1, 10, 50, 150, 500] and asserts 500 vnodes produce better balance than 1 vnode.
+- Source: /home/forge/workspace/entries/2026/05/29/consistent-hashing-test_consistent_hashing.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] consistent-hash-weighted-nodes-get-proportional-keys
+The weighted node test asserts that a node with 3x weight receives roughly 3x the keys of a normal-weight node.
+- Source: /home/forge/workspace/entries/2026/05/29/consistent-hashing-test_consistent_hashing.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] consistent-hash-test-suite-is-flat-pytest-functions
+The consistent hashing test suite is a flat collection of pytest test functions with no test classes.
+- Source: /home/forge/workspace/entries/2026/05/29/consistent-hashing-test_consistent_hashing.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] live-projection-auto-snapshots-every-n-events
+When snapshot_interval is set to N, LiveProjection auto-saves a snapshot after every N events processed and resets its events-since-snapshot counter.
+- Source: /home/forge/workspace/entries/2026/05/29/event-sourcing-store-event_store-LiveProjection.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] live-projection-handlers-registered-after-events-are-skipped
+Handlers registered after events have already flowed do not receive those earlier events because LiveProjection has no replay triggered by handler registration.
+- Source: /home/forge/workspace/entries/2026/05/29/event-sourcing-store-event_store-LiveProjection.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] live-projection-constructor-sets-position-zero
+LiveProjection's base Projection initialization sets _position to 0 before any events are processed.
+- Source: /home/forge/workspace/entries/2026/05/29/event-sourcing-store-event_store-LiveProjection.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] persist-event-serializes-timestamp-via-isoformat
+`_persist_event` converts the event timestamp from a `datetime` object to an ISO-8601 string via `.isoformat()` before JSON serialization.
+- Source: /home/forge/workspace/entries/2026/05/29/event-sourcing-store-event_store-_persist_event.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] persist-event-propagates-io-errors
+`_persist_event` has no exception handling; file-open or write errors propagate uncaught to `append` or `append_batch` callers.
+- Source: /home/forge/workspace/entries/2026/05/29/event-sourcing-store-event_store-_persist_event.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] persist-event-append-mode-creates-missing-file
+`_persist_event` opens the persist path in append mode, which creates the file if it does not already exist.
+- Source: /home/forge/workspace/entries/2026/05/29/event-sourcing-store-event_store-_persist_event.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] persist-event-callers-gate-on-persist-path
+`_persist_event` itself does not check `self._persist_path`; every caller gates on `if self._persist_path:` before calling it.
+- Source: /home/forge/workspace/entries/2026/05/29/event-sourcing-store-event_store-_persist_event.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] append-batch-empty-events-returns-empty-list
+`append_batch` with an empty `events` list returns an empty list and notifies no subscribers.
+- Source: /home/forge/workspace/entries/2026/05/29/event-sourcing-store-event_store-append_batch.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] append-batch-subscriber-exception-aborts-remaining-notification
+If a subscriber raises during `append_batch` notification, remaining subscribers and remaining events are not notified, although all events are already stored.
+- Source: /home/forge/workspace/entries/2026/05/29/event-sourcing-store-event_store-append_batch.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] append-batch-bad-tuple-causes-partial-mutation
+If an element in the `events` list is not a 2-tuple, `append_batch` can raise `KeyError` or `ValueError` after some events have already been appended, with no rollback.
+- Source: /home/forge/workspace/entries/2026/05/29/event-sourcing-store-event_store-append_batch.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] append-batch-timestamps-use-datetime-now-wall-clock
+`append_batch` assigns event timestamps using `datetime.now()` wall-clock time, with no timezone or monotonic clock.
+- Source: /home/forge/workspace/entries/2026/05/29/event-sourcing-store-event_store-append_batch.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] catch-up-returns-processed-event-count
+`Projection.catch_up` returns the integer count of events processed during the call, returning zero if the projection was already caught up.
+- Source: /home/forge/workspace/entries/2026/05/29/event-sourcing-store-event_store-catch_up.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] catch-up-resets-snapshot-counter-after-save
+When the snapshot interval threshold is reached during `Projection.catch_up`, it calls `save_snapshot()` and resets `_events_since_snapshot` to zero.
+- Source: /home/forge/workspace/entries/2026/05/29/event-sourcing-store-event_store-catch_up.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] catch-up-save-snapshot-deep-copies-state
+`Projection.catch_up` triggers `save_snapshot()`, which deep-copies the projection state before storing it in the store's `_snapshots` mapping.
+- Source: /home/forge/workspace/entries/2026/05/29/event-sourcing-store-event_store-catch_up.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] reconstruct-state-missing-stream-returns-empty-dict
+If `stream_id` does not exist, `reconstruct_state` returns an empty dict.
+- Source: /home/forge/workspace/entries/2026/05/29/event-sourcing-store-event_store-reconstruct_state.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] reconstruct-state-empty-handlers-returns-empty-dict
+If `handlers` is empty, `reconstruct_state` returns an empty dict regardless of what events are in the stream.
+- Source: /home/forge/workspace/entries/2026/05/29/event-sourcing-store-event_store-reconstruct_state.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] reconstruct-state-up-to-zero-applies-no-events
+If `up_to` is 0, `reconstruct_state` applies no events because all event IDs are at least 1.
+- Source: /home/forge/workspace/entries/2026/05/29/event-sourcing-store-event_store-reconstruct_state.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] reconstruct-state-fetches-entire-stream-before-up-to-filter
+`reconstruct_state` calls `read_stream(stream_id)` for the entire stream and only then breaks on `up_to`, rather than passing the cutoff to the read.
+- Source: /home/forge/workspace/entries/2026/05/29/event-sourcing-store-event_store-reconstruct_state.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] event-store-persistence-is-optional
+`EventStore` persistence is optional; if `persist_path` is not provided, events are stored only in memory.
+- Source: /home/forge/workspace/entries/2026/05/29/event-sourcing-store-event_store.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] event-store-loads-ndjson-on-init
+On initialization with an existing persist file, `EventStore` replays the NDJSON file to rebuild `_events` and `_streams`.
+- Source: /home/forge/workspace/entries/2026/05/29/event-sourcing-store-event_store.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] event-store-has-no-update-or-delete-operations
+The `EventStore` exposes no update or delete operation on events; it is append-only.
+- Source: /home/forge/workspace/entries/2026/05/29/event-sourcing-store-event_store.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] event-store-accepts-arbitrary-event-data
+`EventStore.append` and `append_batch` do not validate event data; any dict is accepted.
+- Source: /home/forge/workspace/entries/2026/05/29/event-sourcing-store-event_store.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] event-store-uses-stdlib-only-dependencies
+`event_store.py` imports only Python standard-library modules: `copy`, `json`, `os`, `dataclasses`, `datetime`, and `typing`.
+- Source: /home/forge/workspace/entries/2026/05/29/event-sourcing-store-event_store.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] test-event-store-seed-account-produces-balance-120
+`_seed_account` appends four events to `account:1` (open balance 0, deposit 100, withdraw 30, deposit 50) and produces a final balance of 120.
+- Source: /home/forge/workspace/entries/2026/05/29/event-sourcing-store-test_event_store.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] test-event-store-only-tests-concurrency-error-path
+The only explicit error path tested by `test_event_store.py` is optimistic concurrency via `pytest.raises(ConcurrencyConflict)`; it does not test invalid event types, missing fields, or corrupt persistence.
+- Source: /home/forge/workspace/entries/2026/05/29/event-sourcing-store-test_event_store.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] event-store-read-all-filters-by-position
+`read_all(from_position=N)` returns the global event log filtered by position.
+- Source: /home/forge/workspace/entries/2026/05/29/event-sourcing-store-test_event_store.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] event-store-projection-registers-handlers-via-when
+`make_projection` creates a `Projection`, registers all three handlers via `.when()`, and returns the projection.
+- Source: /home/forge/workspace/entries/2026/05/29/event-sourcing-store-test_event_store.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] es-projection-position-tracks-global-offset
+`Projection.position` is a global event offset, not a per-stream version; it is 5 after processing five events across all streams.
+- Source: /home/forge/workspace/entries/2026/05/29/event-sourcing-store-test_verify.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] test-verify-reconstruct-up-to-two-balance-100
+In `test_verify.py`, `reconstruct_state` with `up_to=2` replays only AccountOpened and MoneyDeposited, yielding balance 100.
+- Source: /home/forge/workspace/entries/2026/05/29/event-sourcing-store-test_verify.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] event-store-read-all-returns-insertion-order
+`read_all()` returns events in insertion order across all streams.
+- Source: /home/forge/workspace/entries/2026/05/29/event-sourcing-store-test_verify.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] event-store-append-batch-returns-event-objects
+`append_batch` writes three events atomically and returns the event objects.
+- Source: /home/forge/workspace/entries/2026/05/29/event-sourcing-store-test_verify.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] fencing-token-expiry-inclusive-boundary
+`FencingToken.is_expired(current_time)` returns true when `current_time >= issued_at + ttl`, making expiry inclusive of the boundary.
+- Source: /home/forge/workspace/entries/2026/05/29/fencing-tokens-fencing_tokens.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lock-release-deletes-entry
+`LockService.release()` deletes the lock entry entirely when called by the current holder.
+- Source: /home/forge/workspace/entries/2026/05/29/fencing-tokens-fencing_tokens.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] fencing-tokens-use-explicit-current-time
+All time-dependent fencing token methods take `current_time` as a parameter rather than reading the system clock.
+- Source: /home/forge/workspace/entries/2026/05/29/fencing-tokens-fencing_tokens.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] client-write-attaches-cached-fencing-token
+`Client.write_to_resource()` automatically attaches the client's cached fencing token for the named lock to the write.
+- Source: /home/forge/workspace/entries/2026/05/29/fencing-tokens-fencing_tokens.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] fencing-tests-organized-into-five-contract-classes
+The fencing token test suite is organized into five test classes: `TestLockAcquisition`, `TestLockRenewal`, `TestFencedServer`, `TestScenarios`, and `TestClientEdgeCases`.
+- Source: /home/forge/workspace/entries/2026/05/29/fencing-tokens-test_fencing_tokens.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] fencing-tests-use-plain-methods-no-fixtures
+The fencing token tests are plain method-based with `pytest` imported but no fixtures or `parametrize` decorators.
+- Source: /home/forge/workspace/entries/2026/05/29/fencing-tokens-test_fencing_tokens.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] unsafe-scenario-test-demonstrates-stale-write-corruption
+`test_unsafe_scenario_stale_write_corrupts` asserts that data corruption occurs without fencing, contrasted with the safe scenario test.
+- Source: /home/forge/workspace/entries/2026/05/29/fencing-tokens-test_fencing_tokens.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] receive-gossip-equal-counter-death-acceptance
+`receive_gossip` accepts a death notification with an equal heartbeat counter specifically to support voluntary `leave()` where the counter is not incremented.
+- Source: /home/forge/workspace/entries/2026/05/29/gossip-protocol-gossip_protocol-receive_gossip.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] receive-gossip-mutates-membership-in-place
+`receive_gossip` returns `None` and mutates `self.membership` in place.
+- Source: /home/forge/workspace/entries/2026/05/29/gossip-protocol-gossip_protocol-receive_gossip.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] receive-gossip-adds-unknown-alive-nodes
+If the remote reports an unknown node as alive, `receive_gossip` deep-copies the entry, stamps it with `current_time`, and adds it to local membership.
+- Source: /home/forge/workspace/entries/2026/05/29/gossip-protocol-gossip_protocol-receive_gossip.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] receive-gossip-updates-timestamp-on-higher-heartbeat
+When a remote heartbeat counter is higher, `receive_gossip` resets the local `timestamp_last_updated` to `current_time`.
+- Source: /home/forge/workspace/entries/2026/05/29/gossip-protocol-gossip_protocol-receive_gossip.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] receive-gossip-assumes-well-formed-input
+`receive_gossip` performs no input validation; missing `heartbeat_counter`, `status`, or `timestamp_last_updated` keys raise `KeyError` at runtime.
+- Source: /home/forge/workspace/entries/2026/05/29/gossip-protocol-gossip_protocol-receive_gossip.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] gossip-join-copies-seed-membership-and-registers-self
+`GossipNode.join(seed_node)` copies the seed's membership list and registers the joining node with the seed, mutating both nodes.
+- Source: /home/forge/workspace/entries/2026/05/29/gossip-protocol-gossip_protocol.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] gossip-heartbeat-noop-when-dead
+`GossipNode.heartbeat(current_time)` increments the node's counter and updates its timestamp, but no-ops if the node's status is already dead.
+- Source: /home/forge/workspace/entries/2026/05/29/gossip-protocol-gossip_protocol.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] gossip-failure-detection-skips-self-entry
+`GossipNode.detect_failures(current_time)` skips the node's own entry by checking `nid == self.node_id` before applying timeout transitions.
+- Source: /home/forge/workspace/entries/2026/05/29/gossip-protocol-gossip_protocol.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] gossip-cluster-add-node-joins-existing-alive
+`GossipCluster.add_node(node_id)` creates a node and joins it to an existing alive node when one is present.
+- Source: /home/forge/workspace/entries/2026/05/29/gossip-protocol-gossip_protocol.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] gossip-cluster-remove-node-simulates-crash
+`GossipCluster.remove_node(node_id)` simulates a crash by stopping the node's heartbeats without sending a leave message.
+- Source: /home/forge/workspace/entries/2026/05/29/gossip-protocol-gossip_protocol.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] gossip-round-four-phase-order
+`GossipCluster.gossip_round(current_time)` executes leave broadcast, heartbeats, random pairwise exchange, and failure detection in that order.
+- Source: /home/forge/workspace/entries/2026/05/29/gossip-protocol-gossip_protocol.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] gossip-heartbeat-counter-monotonic
+A gossip node's heartbeat counter is monotonically increasing and never decreases.
+- Source: /home/forge/workspace/entries/2026/05/29/gossip-protocol-gossip_protocol.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] gossip-test-convergence-five-nodes-ten-rounds
+`test_convergence_same_membership` verifies that all five nodes see the same alive set after ten gossip rounds.
+- Source: /home/forge/workspace/entries/2026/05/29/gossip-protocol-test_gossip_protocol.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] gossip-test-timeout-values-3-6-12
+`test_crash_suspect_dead_cleanup` uses timeout values `t_suspect=3`, `t_dead=6`, and `t_cleanup=12`.
+- Source: /home/forge/workspace/entries/2026/05/29/gossip-protocol-test_gossip_protocol.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] gossip-test-merge-handcrafted-stale-gossip
+`test_merge_conflicting_info` constructs a `stale_gossip` dict by hand to verify that lower heartbeat counters are rejected during merge.
+- Source: /home/forge/workspace/entries/2026/05/29/gossip-protocol-test_gossip_protocol.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] gossip-test-rejoin-manipulates-failed-nodes
+`test_dead_node_rejoin` directly manipulates `GossipCluster.failed_nodes` to allow a cleaned-up node to rejoin with fresh state.
+- Source: /home/forge/workspace/entries/2026/05/29/gossip-protocol-test_gossip_protocol.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] gossip-test-suite-is-leaf-module
+`test_gossip_protocol.py` is a leaf module that no other file imports; it is run directly by pytest or its `__main__` block.
+- Source: /home/forge/workspace/entries/2026/05/29/gossip-protocol-test_gossip_protocol.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] gossip-test-crash-transition-assertion-tolerant
+`test_crash_suspect_dead_cleanup` checks the first failure transition with `in ('suspected', 'dead')` because exact timing depends on gossip propagation.
+- Source: /home/forge/workspace/entries/2026/05/29/gossip-protocol-test_gossip_protocol.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hint-load-bulk-reads-file
+`_load_hint_file` reads the entire hint file into memory as one `bytes` object before parsing records.
+- Source: /home/forge/workspace/entries/2026/05/29/hash-index-storage-bitcask-_load_hint_file.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hint-load-no-cached-reader
+`_load_hint_file` does not cache a read handle in `self.file_handles`; hint files are opened and closed once during startup.
+- Source: /home/forge/workspace/entries/2026/05/29/hash-index-storage-bitcask-_load_hint_file.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hint-load-last-entry-wins
+`_load_hint_file` silently overwrites existing `keydir` entries when duplicate keys appear, so the last hint record wins.
+- Source: /home/forge/workspace/entries/2026/05/29/hash-index-storage-bitcask-_load_hint_file.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hint-load-uses-embedded-fid
+`_load_hint_file` uses the `fid` embedded in each hint record rather than the `file_id` parameter when creating `KeyEntry` objects.
+- Source: /home/forge/workspace/entries/2026/05/29/hash-index-storage-bitcask-_load_hint_file.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hint-load-utf8-keys-only
+`_load_hint_file` decodes hint-file keys as UTF-8 with no fallback, so invalid UTF-8 raises `UnicodeDecodeError`.
+- Source: /home/forge/workspace/entries/2026/05/29/hash-index-storage-bitcask-_load_hint_file.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hint-record-fields-fid-offset-size-timestamp
+Each hint record's fixed header stores `fid` (uint32), `offset` (uint64), `size` (uint32), and `timestamp` (double).
+- Source: /home/forge/workspace/entries/2026/05/29/hash-index-storage-bitcask-_load_hint_file.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-rotation-uses-tell-for-size
+`_maybe_rotate` uses `self.active_file.tell()` as the current active-file size check.
+- Source: /home/forge/workspace/entries/2026/05/29/hash-index-storage-bitcask-_maybe_rotate.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-rotation-called-before-put-and-delete
+`_maybe_rotate()` is called at the start of both `put` and `delete` before `_write_record()` is invoked.
+- Source: /home/forge/workspace/entries/2026/05/29/hash-index-storage-bitcask-_maybe_rotate.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-rotation-failure-leaves-inconsistent-state
+If `_open_active_file()` fails after `_maybe_rotate` closes the old file and increments `active_file_id`, the store is left in an inconsistent state.
+- Source: /home/forge/workspace/entries/2026/05/29/hash-index-storage-bitcask-_maybe_rotate.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-max-file-size-default-10mib
+`BitcaskStore.max_file_size` defaults to 10 MiB.
+- Source: /home/forge/workspace/entries/2026/05/29/hash-index-storage-bitcask-_maybe_rotate.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-read-record-returns-key-value-timestamp
+`_read_record(file_id, offset, size)` returns a `(key, value, timestamp)` tuple.
+- Source: /home/forge/workspace/entries/2026/05/29/hash-index-storage-bitcask-_read_record.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-read-record-slices-key-value-from-header-lengths
+`_read_record` unpacks the record header and slices the key and value using the header's `key_size` and `val_size` fields after a single bulk read.
+- Source: /home/forge/workspace/entries/2026/05/29/hash-index-storage-bitcask-_read_record.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-read-record-trusts-keydir-coordinates
+`_read_record` trusts the `file_id`, `offset`, and `size` supplied from `keydir` and performs no bounds checking.
+- Source: /home/forge/workspace/entries/2026/05/29/hash-index-storage-bitcask-_read_record.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-read-record-utf8-decode-no-fallback
+`_read_record` decodes both key and value bytes as UTF-8 with no fallback or error recovery.
+- Source: /home/forge/workspace/entries/2026/05/29/hash-index-storage-bitcask-_read_record.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-read-record-size-param-redundant
+The `size` parameter to `_read_record` is redundant with `HEADER_SIZE + key_size + val_size` and is used only for the single bulk `read()` call.
+- Source: /home/forge/workspace/entries/2026/05/29/hash-index-storage-bitcask-_read_record.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-scan-ascending-file-order-required
+`_scan_data_file` relies on `_rebuild_index` invoking it in ascending file ID order so records in later files overwrite earlier keydir entries.
+- Source: /home/forge/workspace/entries/2026/05/29/hash-index-storage-bitcask-_scan_data_file.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-scan-key-decode-unvalidated
+`_scan_data_file` decodes record keys as UTF-8 without pre-validating them; invalid key bytes can raise `UnicodeDecodeError` during index rebuild.
+- Source: /home/forge/workspace/entries/2026/05/29/hash-index-storage-bitcask-_scan_data_file.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-scan-ignores-concurrent-appends
+`_scan_data_file` reads the file size once at start and does not account for records appended during the scan; such appends are silently skipped.
+- Source: /home/forge/workspace/entries/2026/05/29/hash-index-storage-bitcask-_scan_data_file.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-record-header-format-dii-16-bytes
+`_write_record` packs the record header with `struct` format `<dII` (little-endian double plus two uint32s), producing a 16-byte header.
+- Source: /home/forge/workspace/entries/2026/05/29/hash-index-storage-bitcask-_write_record.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-record-size-fields-uint32-limit
+`_write_record` stores key and value byte lengths in uint32 fields, so byte lengths exceeding 2^32-1 cause `struct.error`.
+- Source: /home/forge/workspace/entries/2026/05/29/hash-index-storage-bitcask-_write_record.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] write-record-does-not-handle-rotation
+`_write_record` does not perform file rotation; its caller must invoke `_maybe_rotate()` before writing if size limits matter.
+- Source: /home/forge/workspace/entries/2026/05/29/hash-index-storage-bitcask-_write_record.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] write-record-timestamp-captured-before-io
+`_write_record` captures `time.time()` before encoding and writing, so the record timestamp reflects the start of the write call rather than I/O completion.
+- Source: /home/forge/workspace/entries/2026/05/29/hash-index-storage-bitcask-_write_record.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] tester-bitcask-sync-writes-disabled
+Every test in `tester_test_bitcask.py` instantiates `BitcaskStore` with `sync_writes=False` to avoid fsync overhead.
+- Source: /home/forge/workspace/entries/2026/05/29/hash-index-storage-tester_test_bitcask.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] tester-bitcask-recovery-two-paths
+The tester suite verifies both hint-file-based recovery and full data-file scan recovery by testing startup with hint files intact and again after deleting `.hint` files.
+- Source: /home/forge/workspace/entries/2026/05/29/hash-index-storage-tester_test_bitcask.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] tester-bitcask-delete-nonexistent-safe
+`test_edge_cases` in `tester_test_bitcask.py` verifies that deleting a nonexistent key does not raise an exception.
+- Source: /home/forge/workspace/entries/2026/05/29/hash-index-storage-tester_test_bitcask.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] tester-bitcask-tempdir-isolation
+Each tester Bitcask test uses `tempfile.TemporaryDirectory` to create an isolated store directory that is cleaned up by the context manager.
+- Source: /home/forge/workspace/entries/2026/05/29/hash-index-storage-tester_test_bitcask.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] tester-bitcask-large-dataset-10k
+`test_large_dataset` inserts 10,000 keys with 5,000 overwrites and spot-checks both updated and untouched keys.
+- Source: /home/forge/workspace/entries/2026/05/29/hash-index-storage-tester_test_bitcask.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hinted-handoff-replica-placement-hash-mod-n
+`get_preferred_nodes(key)` selects replicas by computing `hash(key) % N` over a sorted node list and returning `replication_factor` node IDs walking the ring.
+- Source: /home/forge/workspace/entries/2026/05/29/hinted-handoff-hinted_handoff.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hinted-handoff-get-returns-highest-version
+`get(key)` queries available preferred replicas and returns the value with the highest version among the responses.
+- Source: /home/forge/workspace/entries/2026/05/29/hinted-handoff-hinted_handoff.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hinted-handoff-node-stores-hints-for-other-nodes
+A `Node`'s hint log stores `Hint` objects for other nodes; a node does not store hints for itself.
+- Source: /home/forge/workspace/entries/2026/05/29/hinted-handoff-hinted_handoff.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hinted-handoff-trigger-handoff-replays-non-expired-hints
+`trigger_handoff(recovered_node_id, current_time)` scans every other node for hints targeting the recovered node and replays each non-expired hint via `put()`.
+- Source: /home/forge/workspace/entries/2026/05/29/hinted-handoff-hinted_handoff.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hinted-handoff-test-default-cluster-five-nodes
+The `make_store()` helper in the hinted handoff tests defaults to 5 nodes labeled A through E, replication factor 3, read/write quorum 2, hint TTL 50, and sloppy quorum enabled.
+- Source: /home/forge/workspace/entries/2026/05/29/hinted-handoff-test_hinted_handoff.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hinted-handoff-result-dict-protocol
+Hinted handoff `put()` and `get()` return plain result dictionaries with fields including `success`, `sloppy`, `hints_stored`, `replicas_written`, `value`, and `version`.
+- Source: /home/forge/workspace/entries/2026/05/29/hinted-handoff-test_hinted_handoff.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hinted-handoff-tests-discover-preferred-nodes
+The hinted handoff tests call `get_preferred_nodes(key)` to discover which nodes own a key before selectively disabling those nodes.
+- Source: /home/forge/workspace/entries/2026/05/29/hinted-handoff-test_hinted_handoff.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] reaches-performs-backward-bfs-from-target
+`_reaches` performs a backward BFS from `target` through `_parent` and `_cause` edges to check whether `source` is reachable.
+- Source: /home/forge/workspace/entries/2026/05/29/lamport-clocks-lamport-_reaches.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] reaches-does-not-mutate-event-graph
+`_reaches` is a pure function that reads the event graph but never mutates it.
+- Source: /home/forge/workspace/entries/2026/05/29/lamport-clocks-lamport-_reaches.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] reaches-called-exclusively-by-happens-before
+`_reaches` is a private helper called exclusively by `happens_before`.
+- Source: /home/forge/workspace/entries/2026/05/29/lamport-clocks-lamport-_reaches.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] reaches-returns-true-when-source-is-target
+If `source is target`, `_reaches` returns `True` on the first iteration due to the identity check.
+- Source: /home/forge/workspace/entries/2026/05/29/lamport-clocks-lamport-_reaches.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lamport-clock-tick-increments-counter
+`LamportClock.tick()` increments the counter and returns the new value.
+- Source: /home/forge/workspace/entries/2026/05/29/lamport-clocks-lamport.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lamport-send-tick-is-alias-of-tick
+`send_tick()` is identical to `tick()` and exists as a separate method for semantic clarity.
+- Source: /home/forge/workspace/entries/2026/05/29/lamport-clocks-lamport.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lamport-message-carries-sender-timestamp
+`Message` carries `sender_timestamp` so the receiver can update its clock using the sender's timestamp.
+- Source: /home/forge/workspace/entries/2026/05/29/lamport-clocks-lamport.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lamport-mutex-request-queue-sorted-by-timestamp-and-node-id
+The Lamport mutex request queue is sorted by `(timestamp, node_id)`, giving a deterministic total order when timestamps collide.
+- Source: /home/forge/workspace/entries/2026/05/29/lamport-clocks-lamport.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lamport-mutex-request-broadcasts-and-collects-acks
+`LamportMutex.request(node)` ticks the clock, adds `(timestamp, node_id)` to the request queue, broadcasts REQUEST messages to all other nodes, and recipients immediately send ACK back.
+- Source: /home/forge/workspace/entries/2026/05/29/lamport-clocks-lamport.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lamport-mutex-release-removes-request-and-broadcasts-release
+`LamportMutex.release(node)` removes the node's request from the queue and broadcasts RELEASE to all other nodes.
+- Source: /home/forge/workspace/entries/2026/05/29/lamport-clocks-lamport.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lamport-clock-never-decreases
+A node's Lamport clock never decreases; `tick()` and `send_tick()` always increment, and `receive_tick()` takes `max + 1`.
+- Source: /home/forge/workspace/entries/2026/05/29/lamport-clocks-lamport.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lamport-message-counter-is-module-level
+`_msg_counter = itertools.count(1)` is module-level state that generates unique message IDs across all nodes.
+- Source: /home/forge/workspace/entries/2026/05/29/lamport-clocks-lamport.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] test-lamport-has-no-fixtures-or-setup
+Every test in `test_lamport.py` constructs its own `Node` instances from scratch with no fixtures or setup.
+- Source: /home/forge/workspace/entries/2026/05/29/lamport-clocks-test_lamport.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] test-lamport-inline-runner-iterates-globals
+The `if __name__ == "__main__"` block iterates over `globals()` to find and run all `test_*` functions.
+- Source: /home/forge/workspace/entries/2026/05/29/lamport-clocks-test_lamport.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] test-lamport-imports-only-local-lamport-module
+`test_lamport.py` imports all entities from `lamport.py` in the same directory and uses no external libraries, including pytest.
+- Source: /home/forge/workspace/entries/2026/05/29/lamport-clocks-test_lamport.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] test-lamport-five-node-chain-tests-transitive-happens-before
+`test_five_node_chain` uses a 5-node linear message chain (N0→N1→N2→N3→N4) to verify total order consistency and transitive happens-before across the full chain.
+- Source: /home/forge/workspace/entries/2026/05/29/lamport-clocks-test_lamport.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] test-lamport-self-comparison-returns-none
+`happens_before(e, e, [e])` returns `None`, enforcing irreflexivity of the strict partial order.
+- Source: /home/forge/workspace/entries/2026/05/29/lamport-clocks-test_lamport.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] test-lamport-no-error-handling
+Tests rely on `assert` statements; failures raise `AssertionError`, and the inline runner does not catch exceptions.
+- Source: /home/forge/workspace/entries/2026/05/29/lamport-clocks-test_lamport.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] split-brain-demotes-losers-via-start-election
+`_resolve_split_brain` demotes each losing leader by calling `node.start_election(current_time)`, which increments the term, sets state to candidate, clears leader_id, and returns ELECTION messages.
+- Source: /home/forge/workspace/entries/2026/05/29/leader-election-leader_election-_resolve_split_brain.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] split-brain-leaves-winner-untouched
+`_resolve_split_brain` leaves the highest-ID leader completely untouched, keeping its leader state, term, and heartbeat schedule.
+- Source: /home/forge/workspace/entries/2026/05/29/leader-election-leader_election-_resolve_split_brain.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] split-brain-called-once-per-tick
+`_resolve_split_brain` is called exactly once per `tick()`, as the final step after all normal message delivery.
+- Source: /home/forge/workspace/entries/2026/05/29/leader-election-leader_election-_resolve_split_brain.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] split-brain-current-time-no-validation
+`_resolve_split_brain` performs no validation on `current_time` and assumes it is a monotonically increasing integer consistent with the simulation.
+- Source: /home/forge/workspace/entries/2026/05/29/leader-election-leader_election-_resolve_split_brain.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] split-brain-no-error-handling
+`_resolve_split_brain` has no explicit error handling; missing receivers are silently dropped via `self.nodes.get(msg.receiver_id)` returning `None` and the `if receiver` guard.
+- Source: /home/forge/workspace/entries/2026/05/29/leader-election-leader_election-_resolve_split_brain.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bully-has-four-message-types
+The Bully leader election implementation defines four message types: ELECTION, ALIVE, COORDINATOR, and HEARTBEAT.
+- Source: /home/forge/workspace/entries/2026/05/29/leader-election-leader_election.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bully-node-has-three-states
+Each `BullyNode` is in one of three states: follower, candidate, or leader.
+- Source: /home/forge/workspace/entries/2026/05/29/leader-election-leader_election.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bully-start-election-declares-victory-when-no-higher-nodes
+`start_election` declares victory immediately if no higher-ID nodes exist.
+- Source: /home/forge/workspace/entries/2026/05/29/leader-election-leader_election.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bully-term-never-decrements
+`_current_term` is incremented on every `start_election` call and is never decremented.
+- Source: /home/forge/workspace/entries/2026/05/29/leader-election-leader_election.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bully-unavailable-nodes-return-empty-from-tick-and-receive
+`receive_message` and `tick` both early-return `[]` when a node's `_available` field is `False`.
+- Source: /home/forge/workspace/entries/2026/05/29/leader-election-leader_election.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bully-coordinator-from-lower-id-triggers-election
+A node rejects a COORDINATOR from a lower-ID sender by starting its own election.
+- Source: /home/forge/workspace/entries/2026/05/29/leader-election-leader_election.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bully-run-until-leader-returns-none-after-max-ticks
+`run_until_leader(start_time, max_ticks)` ticks until all available nodes agree on a single leader, or returns `None` after `max_ticks`.
+- Source: /home/forge/workspace/entries/2026/05/29/leader-election-leader_election.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bully-no-external-dependencies
+The `leader_election.py` implementation is pure Python with zero imports, and all networking and timing are simulated through the tick-based harness.
+- Source: /home/forge/workspace/entries/2026/05/29/leader-election-leader_election.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bully-election-highest-id-wins
+The Bully Algorithm implementation guarantees the highest-ID alive node becomes leader across initial election, failure recovery, and multi-failure scenarios.
+- Source: /home/forge/workspace/entries/2026/05/29/leader-election-test_leader_election.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bully-election-alive-nodes-agree-on-leader
+After `run_until_leader()`, all alive nodes agree on the same leader.
+- Source: /home/forge/workspace/entries/2026/05/29/leader-election-test_leader_election.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bully-test-imports-unused-symbols
+`Message` and `BullyNode` are imported in `test_leader_election.py` but never directly referenced; tests interact through `BullyElectionCluster`.
+- Source: /home/forge/workspace/entries/2026/05/29/leader-election-test_leader_election.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bully-standalone-runner-exits-1-on-failure
+The standalone runner in `test_leader_election.py` prints PASS/FAIL per test and exits with code 1 if any test fails.
+- Source: /home/forge/workspace/entries/2026/05/29/leader-election-test_leader_election.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] anti-entropy-complements-read-repair
+Anti-entropy repair is complementary to read repair: read repair fixes divergence lazily per-key on read, while anti-entropy proactively sweeps the full keyspace to catch keys that are never read.
+- Source: /home/forge/workspace/entries/2026/05/29/leaderless-replication-dynamo-anti_entropy_repair.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] anti-entropy-two-pass-per-key
+For each key, anti-entropy repair performs two passes over available nodes: first to find the highest version, then to push that version to nodes missing the key or holding a stale version.
+- Source: /home/forge/workspace/entries/2026/05/29/leaderless-replication-dynamo-anti_entropy_repair.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] anti-entropy-no-hint-generation
+`anti_entropy_repair()` does not interact with or generate hinted handoff entries.
+- Source: /home/forge/workspace/entries/2026/05/29/leaderless-replication-dynamo-anti_entropy_repair.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] anti-entropy-returns-zero-when-all-unavailable
+If all nodes are unavailable, `anti_entropy_repair()` returns 0 because no keys are discovered.
+- Source: /home/forge/workspace/entries/2026/05/29/leaderless-replication-dynamo-anti_entropy_repair.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] dynamo-get-reads-all-available-nodes
+`DynamoCluster.get()` fans out reads to all nodes and collects `VersionedValue` responses from available ones, not just R nodes.
+- Source: /home/forge/workspace/entries/2026/05/29/leaderless-replication-dynamo.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] dynamo-quorum-not-met-only-exception
+`QuorumNotMet` is the only exception type raised by `DynamoCluster.put()` and `DynamoCluster.get()`.
+- Source: /home/forge/workspace/entries/2026/05/29/leaderless-replication-dynamo.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] dynamo-unavailable-nodes-return-false-none
+Unavailable `ReplicaNode` write and read operations return `False` and `None` respectively rather than raising exceptions.
+- Source: /home/forge/workspace/entries/2026/05/29/leaderless-replication-dynamo.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] dynamo-deliver-hints-requeues-undeliverable
+When `deliver_hints()` cannot deliver a hint because the target node is still down, it re-queues the hint on the same node.
+- Source: /home/forge/workspace/entries/2026/05/29/leaderless-replication-dynamo.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] dynamo-missing-key-read-returns-none-version-zero
+Reading a nonexistent key in `DynamoCluster.get()` returns `None` with version 0 and `is_conflict=False`.
+- Source: /home/forge/workspace/entries/2026/05/29/leaderless-replication-test_dynamo_tester.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] dynamo-tester-injects-conflicts-directly-into-store
+`test_dynamo_tester.py` injects conflict scenarios by directly writing divergent `VersionedValue` entries into each node's `_store` rather than orchestrating concurrent writes.
+- Source: /home/forge/workspace/entries/2026/05/29/leaderless-replication-test_dynamo_tester.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] dynamo-tester-lacks-partial-read-quorum-test
+`test_dynamo_tester.py` has no test for partial read quorum failure where R=2 but only one node responds.
+- Source: /home/forge/workspace/entries/2026/05/29/leaderless-replication-test_dynamo_tester.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-segment-discovery-returns-absolute-paths
+`_find_existing_segments` returns `(segment_id, absolute_path)` pairs where each path is joined with `self._dir`.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-hash-table-bitcask-_find_existing_segments.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-segment-discovery-has-no-side-effects
+`_find_existing_segments` has no side effects: it does not create or modify files and does not mutate the `Bitcask` instance.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-hash-table-bitcask-_find_existing_segments.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-segment-discovery-returns-empty-list-when-none
+`_find_existing_segments` returns an empty list when no matching segment files exist.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-hash-table-bitcask-_find_existing_segments.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-segment-filename-format-six-digit-padded
+Bitcask segment filenames follow the zero-padded format `segment_{id:06d}.dat`.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-hash-table-bitcask-_find_existing_segments.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hint-file-format-repeated-key-size-offset-key
+A hint file is a repeated sequence of entries formatted as [key_size: u32, offset: u32, key_bytes: var], with no value bytes or checksums.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-hash-table-bitcask-_load_hint_file.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hint-load-no-bounds-check-key-size
+`_load_hint_file` does not bounds-check the `key_size` field; a malformed hint file with an absurdly large `key_size` can cause a large allocation and potentially raise `OverflowError` or `MemoryError`.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-hash-table-bitcask-_load_hint_file.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hint-load-requires-valid-utf8-keys
+`_load_hint_file` decodes key bytes as UTF-8 and will raise `UnicodeDecodeError` on malformed data, which is its only failure mode that is not silently swallowed.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-hash-table-bitcask-_load_hint_file.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hint-load-does-not-open-segment-file
+`_load_hint_file` never opens the segment file; it only stores the provided `seg_path` as the index value paired with the hint entry's offset.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-hash-table-bitcask-_load_hint_file.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hint-load-overwrites-existing-index-entry
+`_load_hint_file` unconditionally inserts each hint entry into `self._index`, overwriting any prior index entry for the same key and relying on the caller to process segments oldest-to-newest.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-hash-table-bitcask-_load_hint_file.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] recover-activates-highest-id-segment
+After recovery, `_recover` opens the segment with the numerically highest ID as the active writable segment.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-hash-table-bitcask-_recover.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] recover-empty-directory-opens-new-segment
+If no segments exist on disk, `_recover` sets the segment counter to 0 and opens a new empty segment.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-hash-table-bitcask-_recover.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] recover-called-once-from-init
+`_recover` is called exactly once from `BitcaskStore.__init__` and is not intended for external use.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-hash-table-bitcask-_recover.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] recover-segment-filename-parsing-raises-value-error
+`_find_existing_segments` parses segment IDs by slicing filenames; any file matching `segment_*.dat` with a non-numeric middle raises `ValueError`.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-hash-table-bitcask-_recover.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] rebuild-index-does-not-reset-active-state
+`rebuild_index()` does not reset `_active_file` or `_segment_counter`, unlike `_recover` which sets them.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-hash-table-bitcask-_recover.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] recover-propagates-file-errors
+`_recover` does not catch `OSError` or `FileNotFoundError`; these exceptions propagate and crash the constructor.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-hash-table-bitcask-_recover.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] write-record-header-format-iii
+`_write_record` packs a 12-byte header as `[crc32 | key_size | value_size]` using `struct` format `!III` (network byte order, three unsigned 32-bit integers).
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-hash-table-bitcask-_write_record.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] write-record-no-length-validation
+`_write_record` performs no length validation on key or value; arbitrarily large keys and values are accepted until struct packing overflows at approximately 4 GB.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-hash-table-bitcask-_write_record.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] write-record-propagates-errors-unhandled
+`_write_record` catches no exceptions; `UnicodeEncodeError`, `OSError`/`IOError`, and `struct.error` propagate to callers unhandled.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-hash-table-bitcask-_write_record.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] write-record-single-contiguous-write
+`_write_record` writes the 12-byte header and the key+value payload as a single contiguous write.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-hash-table-bitcask-_write_record.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] write-record-advances-file-position
+`_write_record` advances the active file position by the record size, and `put` uses `tell()` to detect when the segment exceeds `_max_segment_size` and needs rotation.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-hash-table-bitcask-_write_record.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hint-entry-format-u32-pair-plus-key
+Each hint entry is written as `struct.pack("!II", key_size, offset)` followed by the raw key bytes, with no value bytes or checksum.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-hash-table-bitcask-create_hint_files.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hint-generation-overwrites-existing-hint-files
+`create_hint_files` opens a new hint file with overwrite for each frozen segment, replacing any existing hint file for that segment.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-hash-table-bitcask-create_hint_files.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hint-generation-breaks-on-partial-segment-read
+During hint generation, a short header or payload read causes the scan loop to break, treating the segment tail as truncated rather than raising an error.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-hash-table-bitcask-create_hint_files.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hint-generation-propagates-errors-unhandled
+`create_hint_files` has no error handling; `FileNotFoundError`, `struct.error`, and `UnicodeDecodeError` propagate to callers.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-hash-table-bitcask-create_hint_files.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] log-structured-compact-does-not-call-create-hint-files
+In log-structured-hash-table/bitcask.py, `compact()` does not call `create_hint_files`; callers must invoke hint generation explicitly.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-hash-table-bitcask-create_hint_files.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-put-rotation-check-before-write
+`BitcaskStore.put` checks the active file's write position against `max_segment_size` before writing and rotates to a new segment when the position is at or past the limit.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-hash-table-bitcask-put.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-put-returns-record-byte-offset
+`BitcaskStore.put` returns the byte offset within the active segment where the new record header begins.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-hash-table-bitcask-put.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-put-invalidates-active-read-handle
+`BitcaskStore.put` removes any cached read file handle for the active segment path from `_file_handles` after appending the record.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-hash-table-bitcask-put.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-put-auto-compaction-threshold-trigger
+`BitcaskStore.put` triggers `compact()` when the number of frozen segments meets or exceeds `auto_compact_threshold`.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-hash-table-bitcask-put.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-put-crash-after-write-orphans-record
+A crash after `_write_record` but before the in-memory index update leaves the record on disk unindexed until `_recover` replays the segment on startup.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-hash-table-bitcask-put.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] tester-bitcask-fixture-forces-rotation
+The `store` fixture constructs `BitcaskStore` with `max_segment_size=100` and `auto_compact_threshold=100`, so segment rotation occurs after only a few writes.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-hash-table-tester_test_bitcask.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] tester-bitcask-suite-covers-eight-properties
+The tester file validates eight behavioral properties: basic CRUD, segment rotation, compaction, CRC integrity, hint-file recovery, partial-write tolerance, auto-compaction, and large-dataset correctness.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-hash-table-tester_test_bitcask.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] tester-bitcask-fault-injection-mutates-raw-bytes
+The tester file's CRC-corruption and partial-write tests directly mutate segment file bytes using `struct.pack` and raw file I/O rather than mocking.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-hash-table-tester_test_bitcask.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] tester-bitcask-auto-compaction-bounds-segments
+`test_auto_compaction` uses `auto_compact_threshold=3` and `max_segment_size=50` and asserts `num_segments <= 5` after 50 writes.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-hash-table-tester_test_bitcask.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] tester-bitcask-crc-corruption-flips-payload-byte
+`test_crc_corruption` flips a byte at `offset + HEADER_SIZE + 2`, inside the payload, and asserts `get` raises `CorruptionError`.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-hash-table-tester_test_bitcask.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-wal-record-format-be-uint32-lengths
+The LSM WAL record format uses a 4-byte big-endian unsigned integer key length, UTF-8 key bytes, a 4-byte big-endian unsigned integer value length, and value bytes.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-merge-tree-lsm-WAL.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-wal-append-flushes-without-fsync
+`WAL.append` calls `flush()` after writing each record but never calls `os.fsync()`.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-merge-tree-lsm-WAL.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-wal-truncate-reopens-append-mode
+`WAL.truncate()` closes the current descriptor, reopens the file with `"wb"` to truncate it, closes that descriptor, and reopens the file with `"ab"` for future appends.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-merge-tree-lsm-WAL.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-wal-append-before-memtable-mutation
+`LSMTree.put` and `LSMTree.delete` call `WAL.append` before modifying the in-memory memtable.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-merge-tree-lsm-WAL.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-flush-skips-empty-memtable
+`LSMTree._flush` returns immediately without creating an SSTable when the memtable is empty.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-merge-tree-lsm-_flush.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-flush-freezes-memtable-by-pointer-swap
+`LSMTree._flush` freezes the current memtable by saving a reference to it and replacing `self._memtable` with a new empty `SortedDict`.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-merge-tree-lsm-_flush.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-flush-called-by-put-delete-close
+`LSMTree._flush` is called from `put()` and `delete()` when the memtable size reaches its threshold, and unconditionally from `close()`.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-merge-tree-lsm-_flush.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-flush-no-explicit-error-handling
+`LSMTree._flush` has no explicit exception handling; I/O errors from writing the SSTable or truncating the WAL propagate to the caller.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-merge-tree-lsm-_flush.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] scan-range-tombstone-transparent
+`_scan_range_for_key` returns tombstone values (`b""`) as found and does not interpret them; tombstone filtering is the caller's responsibility.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-merge-tree-lsm-_scan_range_for_key.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] scan-range-opens-file-per-call
+`_scan_range_for_key` opens `self.path` in binary read mode on each call inside a `with` block.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-merge-tree-lsm-_scan_range_for_key.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] scan-range-end-exclusive
+`_scan_range_for_key` treats the `end` byte offset as exclusive and stops scanning before reaching it.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-merge-tree-lsm-_scan_range_for_key.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] scan-range-file-open-errors-propagate
+`_scan_range_for_key` has no explicit exception handling for file-open errors; a missing or unreadable SSTable file raises `FileNotFoundError` or `OSError` to the caller.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-merge-tree-lsm-_scan_range_for_key.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sstable-get-returns-tombstone-as-found
+`SSTable.get` does not filter tombstones; a deleted key is returned as found with the tombstone value, leaving interpretation to the caller.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-merge-tree-lsm-get.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sstable-get-clamps-before-first-index-to-zero
+If the target key is smaller than every sparse-index key, `SSTable.get` clamps the selected index to 0 instead of returning a miss.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-merge-tree-lsm-get.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sstable-get-bisect-right-minus-one
+`SSTable.get` uses `bisect.bisect_right(keys, key) - 1` to find the rightmost sparse-index key less than or equal to the target.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-merge-tree-lsm-get.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-wal-replay-loads-entire-file
+`WAL.replay` reads the entire WAL file into memory as a single bytes object before deserializing entries.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-merge-tree-lsm-replay.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-wal-replay-is-side-effect-free
+`WAL.replay` does not modify the WAL file or in-memory memtable; it returns entries for the caller to insert.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-merge-tree-lsm-replay.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-wal-replay-returns-raw-bytes-including-tombstones
+`WAL.replay` returns raw value bytes for every entry, including tombstones represented as an empty byte string, without distinguishing puts from deletes.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-merge-tree-lsm-replay.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-wal-truncate-nonatomic-handle-swap
+`WAL.truncate` is not atomic: a crash between opening the file in write-binary mode and reopening it in append-binary mode leaves an empty WAL with no open append handle.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-merge-tree-lsm-truncate.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-wal-truncate-called-after-sstable-write
+`LSMTree._flush` calls `WAL.truncate()` only after `SSTable.write()` has completed.
+- Source: /home/forge/workspace/entries/2026/05/29/log-structured-merge-tree-lsm-truncate.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] map-side-join-key-appears-once-in-output
+`_merge_records` includes the join key exactly once in merged output by taking the left record's key and excluding both source key fields.
+- Source: /home/forge/workspace/entries/2026/05/29/map-side-join-map_side_joins.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sort-dataset-appends-missing-keys-unsorted
+`sort_dataset` returns a sorted list but appends records missing the join key at the end without sorting them.
+- Source: /home/forge/workspace/entries/2026/05/29/map-side-join-map_side_joins.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] broadcast-left-join-preserves-large-side
+In `BroadcastHashJoin`, a left join preserves unmatched records from the large streamed side because the small side is the hash table.
+- Source: /home/forge/workspace/entries/2026/05/29/map-side-join-map_side_joins.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] compare-join-strategies-normalizes-output
+`compare_join_strategies` strips `_mapper_id` and sorts records before comparing the three join strategies' outputs.
+- Source: /home/forge/workspace/entries/2026/05/29/map-side-join-map_side_joins.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] map-side-join-test-large-dataset-seeded-42-expects-2000
+`test_large_dataset` seeds `random` with 42 and expects exactly 2000 matches from a 1000-by-2000 join.
+- Source: /home/forge/workspace/entries/2026/05/29/map-side-join-test_map_side_joins.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] broadcast-join-mapper-count-does-not-affect-correctness
+`test_broadcast_mapper_counts` verifies `BroadcastHashJoin` correctness for 1, 2, 4, and 8 mappers.
+- Source: /home/forge/workspace/entries/2026/05/29/map-side-join-test_map_side_joins.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] map-side-join-tests-cover-edge-case-matrix
+The map-side join test suite includes separate tests for inner and left joins, one-to-many, many-to-many, empty datasets, missing keys, field collisions, and sorted versus unsorted input.
+- Source: /home/forge/workspace/entries/2026/05/29/map-side-join-test_map_side_joins.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] mapreduce-mapper-contract
+MapReduceJob mapper has contract `(key, value) -> list[(key, value)]`, taking one input record and emitting zero or more intermediate key-value pairs.
+- Source: /home/forge/workspace/entries/2026/05/29/mapreduce-framework-mapreduce.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] mapreduce-reducer-contract
+MapReduceJob reducer has contract `(key, list[values]) -> list[(key, value)]`, taking a key and all values for that key.
+- Source: /home/forge/workspace/entries/2026/05/29/mapreduce-framework-mapreduce.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] mapreduce-combiner-same-signature-as-reducer
+The optional combiner in MapReduceJob has the same signature as the reducer.
+- Source: /home/forge/workspace/entries/2026/05/29/mapreduce-framework-mapreduce.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] mapreduce-string-input-keyed-by-line-number
+When `input_data` is a string, `MapReduceJob.run()` treats it as a file path and keys each line by its 1-indexed line number.
+- Source: /home/forge/workspace/entries/2026/05/29/mapreduce-framework-mapreduce.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] mapreduce-input-split-preserves-record-count
+`_split_input` uses integer division with remainder distribution so the sum of chunk lengths equals the input length.
+- Source: /home/forge/workspace/entries/2026/05/29/mapreduce-framework-mapreduce.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] mapreduce-temp-directory-cleaned-in-finally
+`MapReduceJob.run()` removes the temp directory in a `finally` block even when mapper or reducer exceptions occur.
+- Source: /home/forge/workspace/entries/2026/05/29/mapreduce-framework-mapreduce.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] mapreduce-pipeline-feeds-stage-output-to-next
+`MapReducePipeline.run()` feeds the output of stage N into the input of stage N+1 and collects each stage's `JobStats` in `_stage_stats`.
+- Source: /home/forge/workspace/entries/2026/05/29/mapreduce-framework-mapreduce.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] mapreduce-tests-use-manual-runner
+The test module's `if __name__ == '__main__'` block implements a minimal runner that iterates over test functions, prints PASS/FAIL, and exits with status.
+- Source: /home/forge/workspace/entries/2026/05/29/mapreduce-framework-test_mapreduce.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] mapreduce-tests-are-fixture-free
+Each test in the MapReduce test module constructs its own `MapReduceJob` using inline mapper/reducer functions, with no shared state between tests.
+- Source: /home/forge/workspace/entries/2026/05/29/mapreduce-framework-test_mapreduce.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] mapreduce-test-statistics-hardcodes-corpus-counts
+`test_statistics` hardcodes expected counts of 3 input records, 11 intermediate records, and 8 output records for the fox/dog corpus.
+- Source: /home/forge/workspace/entries/2026/05/29/mapreduce-framework-test_mapreduce.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] mapreduce-test-file-input-unlinks-in-finally
+`test_file_input` uses `tempfile.NamedTemporaryFile(delete=False)` and explicitly calls `os.unlink` in a `finally` block for cleanup.
+- Source: /home/forge/workspace/entries/2026/05/29/mapreduce-framework-test_mapreduce.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] mapreduce-test-multi-worker-loops-four-configs
+`test_multi_worker_consistency` manually loops over four different `(num_mappers, num_reducers)` configurations.
+- Source: /home/forge/workspace/entries/2026/05/29/mapreduce-framework-test_mapreduce.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] merkle-diff-requires-same-padded-size
+`MerkleTree.diff` raises `ValueError` if the two trees have different `_padded_size`, so both trees must round to the same power of 2.
+- Source: /home/forge/workspace/entries/2026/05/29/merkle-tree-merkle_tree-diff.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] merkle-diff-returns-leaf-indices-not-data
+`MerkleTree.diff` returns a list of leaf indices where the trees disagree, not the differing data values.
+- Source: /home/forge/workspace/entries/2026/05/29/merkle-tree-merkle_tree-diff.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] merkle-diff-leaf-result-index-is-relative-to-leaf-start
+In `_diff_recursive`, a differing leaf appends `idx - leaf_start` to the result, mapping the array index back to the original data index.
+- Source: /home/forge/workspace/entries/2026/05/29/merkle-tree-merkle_tree-diff.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] merkle-get-proof-raises-indexerror-out-of-range
+`MerkleTree.get_proof` raises `IndexError` if `index < 0` or `index >= self._leaf_count`.
+- Source: /home/forge/workspace/entries/2026/05/29/merkle-tree-merkle_tree-get_proof.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] merkle-get-proof-returns-merkleproof-dataclass
+`MerkleTree.get_proof` returns a `MerkleProof` dataclass containing `leaf_hash`, `leaf_index`, `siblings`, and `root_hash`.
+- Source: /home/forge/workspace/entries/2026/05/29/merkle-tree-merkle_tree-get_proof.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] merkle-get-proof-negative-index-rejected
+`MerkleTree.get_proof` explicitly rejects negative indices rather than using Python-style negative indexing.
+- Source: /home/forge/workspace/entries/2026/05/29/merkle-tree-merkle_tree-get_proof.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] verify-proof-returns-false-on-leaf-hash-mismatch
+`MerkleTree.verify_proof` returns `False` immediately when `_sha256(data)` does not match `proof.leaf_hash`.
+- Source: /home/forge/workspace/entries/2026/05/29/merkle-tree-merkle_tree-verify_proof.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] verify-proof-empty-siblings-checks-single-leaf
+With an empty `proof.siblings` list, `verify_proof` checks only that `hash(data) == leaf_hash == root_hash`.
+- Source: /home/forge/workspace/entries/2026/05/29/merkle-tree-merkle_tree-verify_proof.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] verify-proof-raises-typeerror-non-bytes
+If `data` is not `bytes`, `verify_proof` propagates a `TypeError` from `_sha256`/`hashlib.sha256()`.
+- Source: /home/forge/workspace/entries/2026/05/29/merkle-tree-merkle_tree-verify_proof.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] merkle-diff-requires-same-padded-size
+MerkleTree.diff() raises ValueError when the two trees have different _padded_size values, so only trees with the same padded size can be diffed.
+- Source: /home/forge/workspace/entries/2026/05/29/merkle-tree-merkle_tree.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] merkle-proof-four-leaf-sibling-count-two
+In a 4-leaf Merkle tree, a proof for a leaf contains exactly 2 sibling hashes.
+- Source: /home/forge/workspace/entries/2026/05/29/merkle-tree-test_merkle.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] merkle-update-leaf-is-logarithmic
+MerkleTree.update_leaf(index, new_data) mutates one leaf and walks up to the root recomputing hashes in O(log N) time.
+- Source: /home/forge/workspace/entries/2026/05/29/merkle-tree-merkle_tree.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] key-range-merkle-encodes-pairs-as-key-colon-value
+KeyRangeMerkleTree encodes each key-value pair as "key:value" bytes before hashing it in the Merkle tree.
+- Source: /home/forge/workspace/entries/2026/05/29/merkle-tree-merkle_tree.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] merkle-empty-tree-has-zero-leaf-count
+Constructing MerkleTree() with no data blocks produces a tree with leaf_count == 0.
+- Source: /home/forge/workspace/entries/2026/05/29/merkle-tree-test_merkle.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] multi-leader-all-converged-requires-identical-key-sets
+MultiLeaderCluster.all_converged() returns true only when every node has the same key set and matching (value, timestamp, is_tombstone) tuples for every key.
+- Source: /home/forge/workspace/entries/2026/05/29/multi-leader-replication-multi_leader-MultiLeaderCluster.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] multi-leader-sync-until-converged-raises-runtimeerror
+MultiLeaderCluster.sync_until_converged() raises RuntimeError if convergence is not reached within max_rounds.
+- Source: /home/forge/workspace/entries/2026/05/29/multi-leader-replication-multi_leader-MultiLeaderCluster.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] apply-remote-change-returns-conflict-record-only-on-conflict
+ReplicaNode.apply_remote_change() returns None when no conflict occurs and returns a ConflictRecord when a conflict is detected and resolved.
+- Source: /home/forge/workspace/entries/2026/05/29/multi-leader-replication-multi_leader-apply_remote_change.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] multi-leader-test-file-dual-run-mode
+multi-leader-replication/test_multi_leader.py can run both as a pytest-compatible suite and as a standalone script via its __main__ block.
+- Source: /home/forge/workspace/entries/2026/05/29/multi-leader-replication-test_multi_leader.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] multi-leader-cluster-constructor-options
+MultiLeaderCluster accepts a list of node IDs plus optional topology, strategy, and merge_fn parameters, with topology defaulting to fully connected.
+- Source: /home/forge/workspace/entries/2026/05/29/multi-leader-replication-test_multi_leader.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] multi-leader-tests-use-all-converged-oracle
+The multi-leader test suite uses the cluster-level all_converged() predicate as its primary eventual-consistency assertion.
+- Source: /home/forge/workspace/entries/2026/05/29/multi-leader-replication-test_multi_leader.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] multi-leader-delete-propagates-tombstone
+A ReplicaNode.delete() creates a tombstone that, once synced, causes get() to return None on all nodes in the cluster.
+- Source: /home/forge/workspace/entries/2026/05/29/multi-leader-replication-test_multi_leader.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] multi-leader-tests-are-self-contained
+Each multi-leader test function creates its own MultiLeaderCluster and uses no shared fixtures or setup/teardown.
+- Source: /home/forge/workspace/entries/2026/05/29/multi-leader-replication-test_multi_leader.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] multi-leader-tester-standalone-runner
+tester_test_multi_leader.py runs standalone via python tester_test_multi_leader.py with a manual __main__ runner that prints PASS/FAIL and exits with code 1 on any failure.
+- Source: /home/forge/workspace/entries/2026/05/29/multi-leader-replication-tester_test_multi_leader.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] multi-leader-tester-basic-no-conflict
+test_basic_replication_no_conflict verifies that non-conflicting writes across 3 nodes converge after one sync with zero conflict records.
+- Source: /home/forge/workspace/entries/2026/05/29/multi-leader-replication-tester_test_multi_leader.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] multi-leader-tester-many-keys-converge
+test_convergence_many_keys verifies that 5 nodes with 20 keys each all converge after sync.
+- Source: /home/forge/workspace/entries/2026/05/29/multi-leader-replication-tester_test_multi_leader.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] multi-leader-tester-strategy-at-construction
+In tester_test_multi_leader.py, conflict resolution strategy is passed at MultiLeaderCluster construction time via ConflictStrategy and merge_fn, not per operation.
+- Source: /home/forge/workspace/entries/2026/05/29/multi-leader-replication-tester_test_multi_leader.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] partitioned-log-topic-append-assigns-next-offset
+Topic.append assigns the next partition offset and stamps the Message with topic, partition, and offset.
+- Source: /home/forge/workspace/entries/2026/05/29/partitioned-log-partitioned_log.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] partitioned-log-truncate-advances-base-offset
+Topic.truncate removes count messages from the head of a partition and advances _base_offsets to preserve offset continuity.
+- Source: /home/forge/workspace/entries/2026/05/29/partitioned-log-partitioned_log.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] partitioned-log-producer-partition-resolution-order
+Producer.send resolves a partition by explicit partition first, then MD5 key hash mod partition count, then per-topic round-robin for keyless messages.
+- Source: /home/forge/workspace/entries/2026/05/29/partitioned-log-partitioned_log.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] partitioned-log-auto-commit-after-nonempty-poll
+When auto_commit is enabled, Consumer.poll commits offsets after every non-empty poll.
+- Source: /home/forge/workspace/entries/2026/05/29/partitioned-log-partitioned_log.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] partitioned-log-retention-size-based
+Broker.enforce_retention truncates a partition from the head when the partition exceeds max_log_size.
+- Source: /home/forge/workspace/entries/2026/05/29/partitioned-log-partitioned_log.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] partitioned-log-retention-time-based
+Broker.enforce_retention truncates messages older than retention_ms when retention_ms > 0.
+- Source: /home/forge/workspace/entries/2026/05/29/partitioned-log-partitioned_log.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] partitioned-log-test-suite-14-tests
+partitioned-log/test_partitioned_log.py contains 14 test functions.
+- Source: /home/forge/workspace/entries/2026/05/29/partitioned-log-test_partitioned_log.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] partitioned-log-group-assignment-complete-disjoint-cover
+Consumer group partition assignment forms a complete, non-overlapping partition of all topic partitions across group members.
+- Source: /home/forge/workspace/entries/2026/05/29/partitioned-log-test_partitioned_log.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] partitioned-log-idle-consumers-when-group-exceeds-partitions
+With 1 partition and 3 consumers in a group, exactly 2 consumers are idle with empty assignments.
+- Source: /home/forge/workspace/entries/2026/05/29/partitioned-log-test_partitioned_log.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] partitioned-log-round-robin-even-distribution
+Round-robin routing distributes 9 keyless messages evenly across 3 partitions as [3,3,3].
+- Source: /home/forge/workspace/entries/2026/05/29/partitioned-log-test_partitioned_log.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] partitioned-log-poll-advances-position
+Consumer.poll() advances the consumer's internal offset so a second poll with no new messages returns an empty list.
+- Source: /home/forge/workspace/entries/2026/05/29/partitioned-log-test_partitioned_log.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] partitioned-log-committed-offset-resumes-consumer
+A new consumer in the same group resumes from the last committed offset after the previous consumer partially consumes with max_messages=3, commits, and closes.
+- Source: /home/forge/workspace/entries/2026/05/29/partitioned-log-test_partitioned_log.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] raft-advance-commit-no-early-exit
+raft._advance_commit_index continues scanning after finding a committable index so _commit_index ends at the highest majority-replicated current-term entry.
+- Source: /home/forge/workspace/entries/2026/05/29/raft-consensus-raft-_advance_commit_index.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] raft-advance-commit-leader-guard-at-call-sites
+Both call sites of _advance_commit_index verify self._state == 'leader' before invoking it.
+- Source: /home/forge/workspace/entries/2026/05/29/raft-consensus-raft-_advance_commit_index.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] raft-advance-commit-no-internal-leader-guard
+_advance_commit_index contains no internal leader-state guard.
+- Source: /home/forge/workspace/entries/2026/05/29/raft-consensus-raft-_advance_commit_index.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] raft-advance-commit-only-mutates-commit-index
+_advance_commit_index's only state mutation is self._commit_index.
+- Source: /home/forge/workspace/entries/2026/05/29/raft-consensus-raft-_advance_commit_index.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] raft-follower-commit-min-leader-commit-last-log
+On the follower side, handle_append_entries sets the commit index to min(leader_commit, last_log_index).
+- Source: /home/forge/workspace/entries/2026/05/29/raft-consensus-raft-_advance_commit_index.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] raft-log-sentinel-index-zero
+raft.py's log is indexed from a sentinel at position 0.
+- Source: /home/forge/workspace/entries/2026/05/29/raft-consensus-raft-_advance_commit_index.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] raft-state-persistent-volatile-leader-only
+`RaftNode` separates state into persistent (`_current_term`, `_voted_for`, `_log`), volatile (`_state`, `_commit_index`, `_last_applied`), and leader-only (`_next_index`, `_match_index`) categories.
+- Source: /home/forge/workspace/entries/2026/05/29/raft-consensus-raft.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] raft-vote-granted-requires-up-to-date-log
+`handle_request_vote` grants a vote only if the voter has not voted in the term (or already voted for the candidate) and the candidate's log is at least as up-to-date by comparing term first, then index.
+- Source: /home/forge/workspace/entries/2026/05/29/raft-consensus-raft.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] raft-append-mismatch-returns-match-index-for-backtracking
+`handle_append_entries` returns `success=False` with the follower's current `match_index` on a log mismatch, which the leader uses to back up `next_index` and retry.
+- Source: /home/forge/workspace/entries/2026/05/29/raft-consensus-raft.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] raft-step-down-on-higher-term-rpc
+Every Raft RPC handler calls `_become_follower(term)` when the incoming term is greater than `_current_term`.
+- Source: /home/forge/workspace/entries/2026/05/29/raft-consensus-raft.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] raft-committed-entries-exclude-sentinel
+`get_committed_entries()` returns log entries at or below `_commit_index` and excludes the sentinel entry at index 0.
+- Source: /home/forge/workspace/entries/2026/05/29/raft-consensus-raft.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] raft-tests-use-cluster-facade-not-node-methods
+The Raft test suite drives protocol behavior through `RaftCluster` methods (`run_until_leader`, `submit`, `run_until_committed`, `partition_node`, `heal_node`, `get_committed_log`) rather than calling `RaftNode` protocol methods directly.
+- Source: /home/forge/workspace/entries/2026/05/29/raft-consensus-test_raft.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] raft-split-vote-test-seeds-random-and-narrow-timeout
+`test_split_vote_resolves` sets `random.seed(42)` and uses an election timeout range of `(150, 155)` ms to provoke split votes deterministically.
+- Source: /home/forge/workspace/entries/2026/05/29/raft-consensus-test_raft.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] raft-nodes-start-as-followers-term-zero
+`test_all_nodes_start_as_followers` asserts that every node begins in the follower role with `current_term == 0`.
+- Source: /home/forge/workspace/entries/2026/05/29/raft-consensus-test_raft.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] raft-heartbeat-keeps-leader-stable-100-ticks
+`test_heartbeat_prevents_elections` verifies that heartbeats keep the elected leader and term stable across 100 ticks.
+- Source: /home/forge/workspace/entries/2026/05/29/raft-consensus-test_raft.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] raft-committed-data-survives-consecutive-leader-failures
+`test_sequential_leader_failures` verifies that committed data survives two consecutive leader failures.
+- Source: /home/forge/workspace/entries/2026/05/29/raft-consensus-test_raft.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] raft-healed-follower-catches-up-on-missed-entries
+`test_heal_and_log_consistency` verifies that a healed follower catches up on log entries it missed during a partition.
+- Source: /home/forge/workspace/entries/2026/05/29/raft-consensus-test_raft.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] range-scan-uses-bisect-left-for-both-bounds
+`Partition.range_scan` uses `bisect.bisect_left` for both the inclusive lower bound and the exclusive upper bound of the half-open interval.
+- Source: /home/forge/workspace/entries/2026/05/29/range-partitioning-range_partitioning-range_scan.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] range-scan-complexity-log-n-plus-k
+`Partition.range_scan` runs in O(log n) for the two binary searches plus O(k) to materialize k result pairs.
+- Source: /home/forge/workspace/entries/2026/05/29/range-partitioning-range_partitioning-range_scan.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] range-scan-reversed-range-returns-empty
+If `start >= end`, `Partition.range_scan` returns an empty list rather than raising an error.
+- Source: /home/forge/workspace/entries/2026/05/29/range-partitioning-range_partitioning-range_scan.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] range-scan-zip-silently-truncates-mismatched-values
+If `_keys` and `_values` diverge in length, `Partition.range_scan`'s `zip` silently truncates results to the shorter list.
+- Source: /home/forge/workspace/entries/2026/05/29/range-partitioning-range_partitioning-range_scan.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] range-scan-non-string-bounds-cause-typeerror
+`Partition.range_scan` does not validate bound types; passing a non-string `start` or `end` causes a `TypeError` from comparisons inside `bisect_left`.
+- Source: /home/forge/workspace/entries/2026/05/29/range-partitioning-range_partitioning-range_scan.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] range-partition-put-uses-bisect-left-o-n-insert
+`Partition.put` uses `bisect_left` to find the sorted insertion point and then performs O(n) list insertion while maintaining sorted key order.
+- Source: /home/forge/workspace/entries/2026/05/29/range-partitioning-range_partitioning.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] range-partition-get-is-o-log-n
+`Partition.get` performs an O(log n) binary search lookup.
+- Source: /home/forge/workspace/entries/2026/05/29/range-partitioning-range_partitioning.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] range-partition-delete-is-o-n-pop
+`Partition.delete` removes a key with an O(n) list pop and returns a boolean indicating whether the key existed.
+- Source: /home/forge/workspace/entries/2026/05/29/range-partitioning-range_partitioning.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] range-partition-contains-key-tests-range-membership-only
+`Partition.contains_key(key)` returns `True` if the key lies in the partition's `[start_key, end_key)` range regardless of whether data exists for that key.
+- Source: /home/forge/workspace/entries/2026/05/29/range-partitioning-range_partitioning.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] range-partition-merge-rechecks-same-index
+After merging two adjacent partitions, `merge_small_partitions()` re-checks the same index without incrementing `i`, allowing cascading merges.
+- Source: /home/forge/workspace/entries/2026/05/29/range-partitioning-range_partitioning.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] range-partition-split-empty-raises-indexerror
+Calling `Partition.split()` on an empty partition raises `IndexError` because it indexes `_keys[len(_keys)//2]` without checking for emptiness.
+- Source: /home/forge/workspace/entries/2026/05/29/range-partitioning-range_partitioning.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] range-partition-store-scan-handles-end-boundary-match
+`RangePartitionedStore.range_scan` special-cases an `end_key` that exactly matches a partition boundary to avoid including an empty scan of the next partition.
+- Source: /home/forge/workspace/entries/2026/05/29/range-partitioning-range_partitioning.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] range-partition-update-does-not-change-total-keys
+`test_update_value` verifies that overwriting an existing key with `put` updates the value without changing `total_keys`.
+- Source: /home/forge/workspace/entries/2026/05/29/range-partitioning-test_range_partitioning.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] range-partition-large-scale-test-verifies-size-bound-at-10000-keys
+`test_large_scale_balanced` inserts 10,000 keys and asserts that no partition exceeds `max_partition_size`, boundaries stay contiguous, and the total key count is preserved.
+- Source: /home/forge/workspace/entries/2026/05/29/range-partitioning-test_range_partitioning.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] range-partition-delete-then-merge-preserves-surviving-keys
+`test_delete_then_merge` verifies that bulk deletion followed by `merge_small_partitions()` consolidates partitions while surviving keys remain accessible.
+- Source: /home/forge/workspace/entries/2026/05/29/range-partitioning-test_range_partitioning.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] range-partition-routing-after-splits-returns-correct-metadata
+`test_routing_after_splits` verifies that `get_partition_for_key` returns the correct partition metadata for each key after splits.
+- Source: /home/forge/workspace/entries/2026/05/29/range-partitioning-test_range_partitioning.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] replica-get-returns-stored-tuple-without-copy
+Replica.get returns the stored `(value, version)` tuple directly from `_store` without making a copy.
+- Source: /home/forge/workspace/entries/2026/05/29/read-repair-read_repair-get.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] replica-get-no-version-filtering
+Replica.get performs no version filtering, tombstone handling, or conflict resolution; those responsibilities live in ReadRepairStore.
+- Source: /home/forge/workspace/entries/2026/05/29/read-repair-read_repair-get.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] replica-get-accepts-empty-string
+Replica.get accepts any string key, including the empty string, because it performs no key validation.
+- Source: /home/forge/workspace/entries/2026/05/29/read-repair-read_repair-get.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] replica-put-pure-in-memory-mutation
+Replica.put has no I/O, logging, or callbacks; on success it only mutates `self._store`.
+- Source: /home/forge/workspace/entries/2026/05/29/read-repair-read_repair-put.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] replica-put-does-not-validate-version-type
+Replica.put does not validate that `version` is an integer; passing a non-comparable type such as a string would raise a TypeError at the comparison.
+- Source: /home/forge/workspace/entries/2026/05/29/read-repair-read_repair-put.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] replica-put-success-stores-exact-tuple
+After a successful Replica.put, `self._store[key]` equals the exact `(value, version)` tuple supplied by the caller.
+- Source: /home/forge/workspace/entries/2026/05/29/read-repair-read_repair-put.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] read-repair-put-writes-first-w-available
+ReadRepairStore.put writes the newly computed version to the first W available replicas in replica order.
+- Source: /home/forge/workspace/entries/2026/05/29/read-repair-read_repair.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] read-repair-get-selects-highest-version
+ReadRepairStore.get reads the first R available replicas and selects the response with the highest version as the winning value.
+- Source: /home/forge/workspace/entries/2026/05/29/read-repair-read_repair.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] read-repair-raises-insufficient-replicas
+ReadRepairStore raises InsufficientReplicasError when fewer replicas are available than the read or write quorum requires.
+- Source: /home/forge/workspace/entries/2026/05/29/read-repair-read_repair.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] read-repair-replica-selection-deterministic-first-n
+ReadRepairStore selects replicas deterministically as the first N available replicas, with no randomization or load balancing.
+- Source: /home/forge/workspace/entries/2026/05/29/read-repair-read_repair.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] read-repair-uses-scalar-integer-versions
+ReadRepairStore uses scalar incrementing integer versions rather than vector clocks, assuming a single logical writer for version assignment.
+- Source: /home/forge/workspace/entries/2026/05/29/read-repair-read_repair.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] repo-contains-37-ddia-modules
+The ddia-implementations repository contains 37 standalone Python implementations of DDIA concepts.
+- Source: /home/forge/workspace/entries/2026/05/29/repo-overview.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] repo-modules-are-strictly-isolated
+Every top-level module in ddia-implementations is an independent implementation with no shared libraries, base classes, or cross-module imports.
+- Source: /home/forge/workspace/entries/2026/05/29/repo-overview.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] repo-modules-follow-three-file-pattern
+Each ddia-implementations module follows a three-file pattern: `<implementation>.py`, `test_<name>.py`, and `tester_test_<name>.py`.
+- Source: /home/forge/workspace/entries/2026/05/29/repo-overview.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] repo-runtime-uses-stdlib-only
+All ddia-implementations modules use only the Python standard library at runtime, with pytest used only for testing.
+- Source: /home/forge/workspace/entries/2026/05/29/repo-overview.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] repo-modules-group-into-six-layers
+The 37 ddia-implementations modules are grouped into six layers mirroring DDIA's structure: storage engines, replication, consensus, partitioning, transactions, and stream/batch processing.
+- Source: /home/forge/workspace/entries/2026/05/29/repo-overview.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-reimplements-wal-internally
+b-tree-storage-engine/btree.py contains its own WAL and PageManager classes internally rather than importing from write-ahead-log/wal.py.
+- Source: /home/forge/workspace/entries/2026/05/29/repo-overview.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] secondary-index-uses-inverted-index-nested-dict
+Both DocumentPartitionedDB and TermPartitionedDB store secondary indexes as nested dicts of the shape `{field: {value: set(pks)}}`.
+- Source: /home/forge/workspace/entries/2026/05/29/secondary-index-partitioning-secondary_index_partitioning.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] secondary-index-partition-assignment-uses-hash-modulo
+DocumentPartitionedDB assigns documents by `hash(pk) % num_partitions`, while TermPartitionedDB assigns index terms by `hash(value) % num_partitions`.
+- Source: /home/forge/workspace/entries/2026/05/29/secondary-index-partitioning-secondary_index_partitioning.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] doc-partitioned-get-delete-touch-one
+DocumentPartitionedDB.get and delete each touch exactly one partition because the primary key hashes to a single document partition.
+- Source: /home/forge/workspace/entries/2026/05/29/secondary-index-partitioning-secondary_index_partitioning.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] term-partitioned-range-query-scans-all
+TermPartitionedDB.query_range scans all partitions for range matches, so it does not retain the targeted-query advantage of term-partitioned point lookups.
+- Source: /home/forge/workspace/entries/2026/05/29/secondary-index-partitioning-secondary_index_partitioning.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] secondary-index-invalid-partition-raises-indexerror
+`get_partition` in secondary_index_partitioning.py raises IndexError on an invalid partition_id because there is no guard.
+- Source: /home/forge/workspace/entries/2026/05/29/secondary-index-partitioning-secondary_index_partitioning.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] secondary-index-empty-index-entry-deleted
+When the last primary key is removed from an index entry, both DB classes delete the entry from the index dict rather than leaving an empty set.
+- Source: /home/forge/workspace/entries/2026/05/29/secondary-index-partitioning-secondary_index_partitioning.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] compare-strategies-runs-identical-workload
+`compare_strategies` runs the same document insert and field query workload against both DB types and returns their stats side-by-side.
+- Source: /home/forge/workspace/entries/2026/05/29/secondary-index-partitioning-secondary_index_partitioning.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] both-partitioning-strategies-return-identical-results
+For the same data, DocumentPartitionedDB and TermPartitionedDB return identical query results; TestManyDocuments asserts equal result counts for each color.
+- Source: /home/forge/workspace/entries/2026/05/29/secondary-index-partitioning-test_secondary_index_partitioning.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] partition-local-index-only-own-documents
+A document-partitioned index stores each partition's local_index entries only for documents held by that same partition.
+- Source: /home/forge/workspace/entries/2026/05/29/secondary-index-partitioning-test_secondary_index_partitioning.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] term-partitioned-supports-range-query
+TermPartitionedDB supports query_range() for range-partitioned terms, as exercised by TestRangeQuery with query_range("color", "a", "d").
+- Source: /home/forge/workspace/entries/2026/05/29/secondary-index-partitioning-test_secondary_index_partitioning.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] visibility-does-not-check-transaction-active
+_is_visible does not verify that the observing transaction is active; callers such as read are responsible for checking transaction activity separately.
+- Source: /home/forge/workspace/entries/2026/05/29/snapshot-isolation-mvcc_database-_is_visible.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] own-deletion-hides-version
+When version.deleted_by equals tx.tx_id, _is_visible returns False, so a transaction does not see versions it deleted itself.
+- Source: /home/forge/workspace/entries/2026/05/29/snapshot-isolation-mvcc_database-_is_visible.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] visibility-unknown-creator-falls-through-invisible
+If a version's created_by is neither committed, aborted, nor equal to tx.tx_id, _is_visible falls through to the not-in-snapshot case and returns False.
+- Source: /home/forge/workspace/entries/2026/05/29/snapshot-isolation-mvcc_database-_is_visible.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] visibility-assumes-committed-aborted-disjoint
+_is_visible assumes a transaction ID appears in at most one of _committed and _aborted; if it appeared in both, the aborted check runs first and aborted would win.
+- Source: /home/forge/workspace/entries/2026/05/29/snapshot-isolation-mvcc_database-_is_visible.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] commit-first-committer-wins
+MVCCDatabase.commit() enforces first-committer-wins: if another transaction wrote to the same key and committed during the current transaction's lifetime, the current transaction is aborted.
+- Source: /home/forge/workspace/entries/2026/05/29/snapshot-isolation-mvcc_database-commit.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] commit-raises-on-inactive-transaction
+commit() raises TransactionError if the transaction is not active, meaning it has already committed or aborted.
+- Source: /home/forge/workspace/entries/2026/05/29/snapshot-isolation-mvcc_database-commit.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] commit-conflict-only-for-concurrent-writers
+In commit(), a version conflicts only if its creator is different, not aborted, committed, and was either active at the observing transaction's start or has tx_id >= tx.tx_id; writers committed before the snapshot are not conflicts.
+- Source: /home/forge/workspace/entries/2026/05/29/snapshot-isolation-mvcc_database-commit.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] gc-deletes-empty-key-entries
+When garbage_collect() removes all versions for a key, it deletes that key from _versions rather than leaving an empty version list.
+- Source: /home/forge/workspace/entries/2026/05/29/snapshot-isolation-mvcc_database-garbage_collect.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] gc-is-idempotent
+garbage_collect() is idempotent: calling it twice with no intervening state changes removes zero versions on the second call.
+- Source: /home/forge/workspace/entries/2026/05/29/snapshot-isolation-mvcc_database-garbage_collect.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] gc-assumes-version-list-txid-order
+The no-active-transactions GC path selects the latest surviving version by iterating the version list forward, assuming versions are appended in transaction-ID order.
+- Source: /home/forge/workspace/entries/2026/05/29/snapshot-isolation-mvcc_database-garbage_collect.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] compaction-manager-requires-existing-data-dir
+CompactionManager requires data_dir to already exist and be writable; it never creates the directory itself.
+- Source: /home/forge/workspace/entries/2026/05/29/sstable-and-compaction-sstable-CompactionManager.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] compaction-output-filename-uses-counter-and-timestamp
+Every CompactionManager merge writes a new .sst file to data_dir with a monotonic counter plus a millisecond timestamp in the filename.
+- Source: /home/forge/workspace/entries/2026/05/29/sstable-and-compaction-sstable-CompactionManager.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lcs-requires-caller-set-sstable-level
+For leveled compaction, the caller must set each SSTableReader.level correctly before registration; CompactionManager trusts this attribute without validating it.
+- Source: /home/forge/workspace/entries/2026/05/29/sstable-and-compaction-sstable-CompactionManager.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lcs-default-l0-trigger-four
+`_lcs_compact` uses a default `_l0_trigger` of 4, meaning L0 to L1 compaction is checked when the L0 count is at least 4.
+- Source: /home/forge/workspace/entries/2026/05/29/sstable-and-compaction-sstable-_lcs_compact.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lcs-max-levels-default-seven-exclusive
+`_lcs_compact` uses `_max_levels = 7` as an exclusive upper bound when iterating level-N compaction from L1 through L6.
+- Source: /home/forge/workspace/entries/2026/05/29/sstable-and-compaction-sstable-_lcs_compact.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lcs-assumes-l1-plus-non-overlapping
+`_lcs_compact` assumes the LCS invariant that SSTables within each L1+ level have non-overlapping key ranges; it does not enforce or validate this precondition.
+- Source: /home/forge/workspace/entries/2026/05/29/sstable-and-compaction-sstable-_lcs_compact.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lcs-io-error-leaves-partial-state
+If `merge_sstables` raises an I/O error during `_lcs_compact`, `self._sstables` can be left partially modified with some input SSTables removed but no merged SSTable added.
+- Source: /home/forge/workspace/entries/2026/05/29/sstable-and-compaction-sstable-_lcs_compact.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lcs-dedups-overlapping-l1-by-id
+During L0 compaction, `_lcs_compact` collects overlapping L1 SSTables into a set keyed by `id()` so an L1 SSTable overlapping multiple L0 SSTables appears only once in the merge set.
+- Source: /home/forge/workspace/entries/2026/05/29/sstable-and-compaction-sstable-_lcs_compact.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] overlapping-preserves-candidate-order
+`_overlapping` returns the overlapping subset in the same order as the input `candidates` list.
+- Source: /home/forge/workspace/entries/2026/05/29/sstable-and-compaction-sstable-_overlapping.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] overlapping-query-window-defined-by-first-sstable
+`_overlapping(sst, candidates)` uses the first `sst` argument's key range as the query window and tests every candidate against that window.
+- Source: /home/forge/workspace/entries/2026/05/29/sstable-and-compaction-sstable-_overlapping.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] overlapping-single-key-sstable-matches-containing-range
+If the query SSTable has `min_key == max_key`, `_overlapping` still finds any candidate whose key range contains that single key.
+- Source: /home/forge/workspace/entries/2026/05/29/sstable-and-compaction-sstable-_overlapping.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] overlapping-no-explicit-error-handling
+`_overlapping` has no explicit error handling; it assumes every `SSTableReader` was constructed successfully and its cached metadata is valid.
+- Source: /home/forge/workspace/entries/2026/05/29/sstable-and-compaction-sstable-_overlapping.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] stcs-no-op-returns-empty-when-no-bucket-qualifies
+Calling `_stcs_compact` when no size bucket meets `_min_threshold` is safe and returns an empty list without merging anything.
+- Source: /home/forge/workspace/entries/2026/05/29/sstable-and-compaction-sstable-_stcs_compact.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] stcs-duplicate-sstable-remove-raises-valueerror
+`_stcs_compact` uses `list.remove(sst)` on each compacted input; if an SSTable appears in multiple buckets or was already removed, this raises `ValueError` and is not defended against.
+- Source: /home/forge/workspace/entries/2026/05/29/sstable-and-compaction-sstable-_stcs_compact.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] stcs-output-path-collision-overwrites-existing-file
+If `_next_path()` returns a path that already exists, `SSTableWriter` opens it with `wb` and silently overwrites the existing file.
+- Source: /home/forge/workspace/entries/2026/05/29/sstable-and-compaction-sstable-_stcs_compact.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] stcs-assumes-input-sstables-sorted
+`_stcs_compact` relies on `merge_sstables` assuming each input SSTable yields entries in key order; `add_sstable()` does not prevent adding an unsorted SSTable.
+- Source: /home/forge/workspace/entries/2026/05/29/sstable-and-compaction-sstable-_stcs_compact.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sstable-tester-helper-default-block-size-four
+The `make_sstable` test helper defaults to `block_size=4`, so a five-entry SSTable spans at least two blocks and exercises sparse-index lookups.
+- Source: /home/forge/workspace/entries/2026/05/29/sstable-and-compaction-tester_test_sstable.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sstable-tester-range-scan-exclusive-end
+`SSTableReader.range_scan(start, end)` uses an inclusive start and exclusive end boundary, as verified by the tester suite.
+- Source: /home/forge/workspace/entries/2026/05/29/sstable-and-compaction-tester_test_sstable.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sstable-tester-uses-tmp-path-fixture
+Every test method in `tester_test_sstable.py` uses pytest's `tmp_path` fixture, giving each test an isolated temporary directory with automatic cleanup.
+- Source: /home/forge/workspace/entries/2026/05/29/sstable-and-compaction-tester_test_sstable.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sstable-tester-input-entries-pre-sorted
+The tester suite always supplies pre-sorted keys to `make_sstable`; it never tests out-of-order insertion.
+- Source: /home/forge/workspace/entries/2026/05/29/sstable-and-compaction-tester_test_sstable.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sstable-tester-covers-empty-single-entry-and-all-tombstone-cases
+`TestEdgeCases` covers an empty SSTable, a single-entry SSTable, and a merge where all entries are tombstones.
+- Source: /home/forge/workspace/entries/2026/05/29/sstable-and-compaction-tester_test_sstable.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sstable-tester-tests-happy-path-only
+`tester_test_sstable.py` does not exercise error paths such as corrupt files, out-of-order keys, duplicate keys, or disk errors.
+- Source: /home/forge/workspace/entries/2026/05/29/sstable-and-compaction-tester_test_sstable.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] merge-sstables-tombstone-removal-optional-flag
+`merge_sstables()` strips tombstones only when called with `remove_tombstones=True`; by default tombstones survive the merge.
+- Source: /home/forge/workspace/entries/2026/05/29/sstable-and-compaction-tester_test_sstable.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] stream-join-event-timestamp-is-event-time
+`StreamEvent.timestamp` represents event time, not processing time.
+- Source: /home/forge/workspace/entries/2026/05/29/stream-join-processor-stream_join_processor.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] stream-join-result-timestamp-later-of-two
+`JoinResult.join_timestamp` is set to the later of the two matched events' timestamps.
+- Source: /home/forge/workspace/entries/2026/05/29/stream-join-processor-stream_join_processor.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] stream-join-buffers-keyed-by-join-key
+`StreamJoinProcessor` buffers events in per-side `defaultdict(list)` keyed by join key and probes only the same key in the opposite buffer.
+- Source: /home/forge/workspace/entries/2026/05/29/stream-join-processor-stream_join_processor.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] stream-join-process-event-returns-new-results-only
+`process_event` returns only the results produced during that call while still accumulating all results in the shared `_results` list.
+- Source: /home/forge/workspace/entries/2026/05/29/stream-join-processor-stream_join_processor.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] stream-join-has-no-right-join-type
+The `JoinType` enum contains only `INNER`, `LEFT`, and `FULL_OUTER`; there is no `RIGHT`, so right-join semantics require swapping the configured stream names.
+- Source: /home/forge/workspace/entries/2026/05/29/stream-join-processor-stream_join_processor.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] stream-join-late-events-silently-dropped
+Events with timestamp below `watermark - allowed_lateness` are silently dropped, with only the `late_events_dropped` counter incremented.
+- Source: /home/forge/workspace/entries/2026/05/29/stream-join-processor-stream_join_processor.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] time-window-contains-uses-absolute-difference
+`TimeWindow.contains(t1, t2)` checks whether the absolute difference between two timestamps is within the configured duration, making the match symmetric in arrival order.
+- Source: /home/forge/workspace/entries/2026/05/29/stream-join-processor-stream_join_processor.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] tumbling-aggregator-closes-window-at-end-boundary
+`TumblingWindowAggregator.advance_time(t)` closes every window whose end (`window_start + duration`) is less than or equal to the current window start derived from `t`.
+- Source: /home/forge/workspace/entries/2026/05/29/stream-join-processor-stream_join_processor.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] stream-join-left-miss-emitted-on-expiration
+Unmatched left events in a LEFT join emit a JoinResult with right_event=None only when advance_time expires them, not eagerly during process_event.
+- Source: /home/forge/workspace/entries/2026/05/29/stream-join-processor-test_stream_join_processor.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] stream-join-matched-left-event-not-missed-on-expiration
+In a LEFT join, a left event that matched a right event does not also produce a miss result when it is later expired.
+- Source: /home/forge/workspace/entries/2026/05/29/stream-join-processor-test_stream_join_processor.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] stream-join-full-outer-emits-both-side-misses
+In a FULL_OUTER join, unmatched left events produce miss results with right_event=None and unmatched right events produce miss results with left_event=None.
+- Source: /home/forge/workspace/entries/2026/05/29/stream-join-processor-test_stream_join_processor.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] 2pc-recovery-only-handles-committing-and-aborting
+Coordinator.recover() scans for transactions in committing or aborting states and does not resolve transactions stuck in preparing state.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-2pc-blocking-problem.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] 2pc-participant-prepare-acquires-locks-and-buffers-operations
+Participant.prepare(), when voting yes, acquires key-level locks via self.locks[op["key"]] = tx_id and buffers the transaction operations in self._pending[tx_id].
+- Source: /home/forge/workspace/entries/2026/05/29/topic-2pc-blocking-problem.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] read-repair-only-fixes-queried-replicas
+ReadRepairStore.get() only repairs replicas included in the R-sized quorum read; replicas not contacted remain stale until anti-entropy or a future read includes them.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-anti-entropy-vs-read-repair.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] merkle-update-leaf-rehashes-path-to-root
+MerkleTree.update_leaf() rehashes from the changed leaf up to the root, costing O(log N) per update to keep the tree current.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-anti-entropy-vs-read-repair.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] read-repair-stats-track-repair-rate
+ReadRepairStore tracks repair_rate as the fraction of reads that trigger write-back repairs; the test observes a 50% repair rate when 1 of 2 reads triggers repair.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-anti-entropy-vs-read-repair.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-analysis-omits-dirty-page-and-transaction-tables
+WAL recovery only recovers the highest sequence number; it does not build the ARIES analysis-phase dirty page table or transaction table.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-aries-three-pass-recovery.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] async-index-queues-remove-and-add-on-update
+In async_index mode, updating an indexed value queues both the remove-old-index-entry and add-new-index-entry operations in self._pending before flush_index() applies them.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-async-index-consistency.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] document-partitioned-query-touches-all-partitions
+A document-partitioned query_by_field must query all partitions via scatter/gather, unlike term-partitioned query_by_field which touches at most one partition.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-async-index-consistency.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] crash-safe-file-creation-requires-temp-rename-dirfsync
+The crash-safe file creation pattern requires writing to a temp path, fsyncing the file, renaming it to the final path, and fsyncing the parent directory.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-atomic-write-via-temp-rename.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sstable-writer-opens-final-path-directly
+SSTableWriter.__init__ opens the SSTable at its final path with open(filepath, 'wb') rather than using a temporary path.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-atomic-write-via-temp-rename.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] avro-positive-count-requires-parsing-elements
+With a positive Avro block count, the reader must parse each element to find the end of the block.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-avro-block-encoding.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] avro-maps-use-array-block-structure
+Avro maps use the same count-prefixed block structure as arrays, with each element encoded as a string key followed by its value.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-avro-block-encoding.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] avro-decoder-must-handle-negative-block-counts
+An Avro decoder must handle negative block counts because read_long returns a signed zigzag-decoded integer and other encoders may emit negative counts.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-avro-block-encoding.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bplus-range-scan-cost-h-plus-l
+A B+-tree range scan costs O(h + L) page reads for height h and L leaves walked, versus O(N × h) for a plain B-tree in-order traversal.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-b-plus-tree-leaf-chains.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bplus-full-scan-walks-leaf-chain
+A full-table scan in this B+-tree descends to the leftmost leaf and then follows next_sibling pointers without touching internal nodes after the initial descent.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-b-plus-tree-leaf-chains.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] truncated-page-breaks-deserialization
+If PageManager.write_page truncates a page, _deserialize_leaf will try to unpack the header's declared key count from missing bytes, causing a struct.unpack error or corrupted data.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-b-tree-page-overflow.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] production-btrees-split-on-byte-fullness
+Production B-trees such as InnoDB and SQLite split pages based on byte fullness rather than a fixed key count.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-b-tree-page-overflow.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-rotates-before-put
+Bitcask calls _maybe_rotate() before each put, allowing consecutive puts to be written to different segment files.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-batch-atomicity-across-rotation.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-overshoot-file-rotates-on-reopen
+_open_latest checks os.path.getsize(last) < max_file_size on startup, so a WAL file overshot by a batch triggers a new file on the next open.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-batch-atomicity-across-rotation.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] event-store-persist-path-gates-persistence
+EventStore.append_batch calls _persist_event only when self._persist_path is set; otherwise events are not written to NDJSON.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-batch-atomicity-gap.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] event-store-lacks-wal-truncate-compaction-equivalent
+The event store has no equivalent to WAL truncate for garbage-collecting old records after checkpoint.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-batch-atomicity-gap.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] event-store-append-batch-updates-events-and-streams
+EventStore.append_batch updates both the _events and _streams in-memory structures atomically from a single-threaded perspective.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-batch-atomicity-gap.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-sync-mode-flush-plus-fsync
+In sync mode, _do_sync always calls both fd.flush() and os.fsync().
+- Source: /home/forge/workspace/entries/2026/05/29/topic-batch-sync-mode.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-batch-sync-counter-reset
+In batch mode, _do_sync resets _write_count to 0 after each fsync, so up to _batch_sync_count - 1 records can be lost on crash.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-batch-sync-mode.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-none-mode-no-sync
+When _sync_mode is neither sync nor batch, _do_sync performs no flush or fsync.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-batch-sync-mode.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-op-commit-constant-value-3
+OP_COMMIT is defined as integer value 3 in write-ahead-log/wal.py.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-batch-write-durability.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-commit-record-has-empty-key-and-value
+The OP_COMMIT record written by append_batch is encoded with an empty key and empty value.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-batch-write-durability.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-append-batch-returns-commit-sequence-number
+WriteAheadLog.append_batch returns the sequence number assigned to the COMMIT record.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-batch-write-durability.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] beam-sbt-flag-controls-scheduler-binding
+The BEAM +sbt flag controls how scheduler threads are bound to CPU topology.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-beam-scheduler-binding.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] beam-default-one-scheduler-per-core
+By default, the BEAM VM starts one scheduler thread per available CPU core.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-beam-scheduler-binding.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] beam-sbt-u-leaves-schedulers-unbound
++sbt u leaves BEAM schedulers unbound so the OS decides which core runs each scheduler.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-beam-scheduler-binding.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] beam-migrates-processes-between-schedulers
+BEAM performs load balancing by migrating Erlang processes between scheduler run queues rather than requiring OS thread migration.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-beam-scheduler-binding.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] numa-creates-ets-access-asymmetry
+On multi-socket servers, schedulers on the same NUMA node as the ETS table have lower-latency access than schedulers on remote NUMA nodes.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-beam-scheduler-binding.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-leaf-search-bounds-check-before-match
+Leaf lookup uses bisect_left and checks idx < len(keys) before comparing keys[idx] == key.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bisect-right-vs-left-in-btrees.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-bisect-left-internal-would-misroute
+Using bisect_left instead of bisect_right at internal B-tree nodes would route separator-equal keys into the left child, causing false-negative lookups and duplicate insertions in the wrong leaf.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bisect-right-vs-left-in-btrees.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-test4-record-size-26-bytes
+In test_segment_rotation, a record with a 4-byte key and a 10-byte value occupies 26 bytes on disk (12-byte header + 4 + 10).
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-binary-format.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-segment-rotation-100-rotates-on-fourth-write
+With max_segment_size=100 and 26-byte records, segment rotation occurs on the fourth write because cumulative size reaches 104 bytes.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-binary-format.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-test6-record-size-22-or-23-bytes
+In test_disk_usage_decreases, records for key 'key' overwritten with values 'value_0' through 'value_9' are 22 or 23 bytes each (12 + 3 + 7/8).
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-binary-format.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-test9-corrupts-payload-byte
+Test 9 corrupts a record by seeking to offset + HEADER_SIZE + 2, which is inside the key/value payload and causes the stored CRC to mismatch.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-binary-format.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-wal-append-flushes-without-fsync
+The LSM Tree WAL append method calls flush() but never os.fsync(), so WAL entries may remain in the OS page cache after put().
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-crash-recovery-guarantees.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-wal-log-write-fsyncs-each-entry
+The B-tree WAL log_write method calls both flush() and os.fsync() on each logged page image.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-crash-recovery-guarantees.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-page-manager-sync-and-close-fsync
+The B-tree PageManager sync() and close() methods call flush() followed by os.fsync() on the data file.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-crash-recovery-guarantees.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-record-length-prefix-is-4-bytes
+The WAL record format uses a 4-byte record_length prefix before the CRC, sequence number, operation type, key length, key, value length, and value.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-crash-recovery-semantics.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-record-sequence-number-is-8-bytes
+The WAL record format stores an 8-byte sequence number after the 4-byte CRC field.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-crash-recovery-semantics.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-record-op-type-is-1-byte
+The WAL record format stores a 1-byte op_type field after the sequence number.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-crash-recovery-semantics.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-none-sync-mode-is-no-op
+In WAL sync mode 'none', the _do_sync method performs neither flush() nor fsync().
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-crash-recovery-semantics.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-compaction-no-manifest
+Neither Bitcask implementation uses a manifest or journal file to make the compaction file switch atomic; they rely on in-memory index updates that are lost on crash.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-crash-safety.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-compaction-crash-after-new-file-before-index-update-recoverable
+A crash after Bitcask compaction writes the new file but before updating the in-memory index is recoverable because recovery scans all files and resolves duplicates with newest-wins.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-crash-safety.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-compaction-crash-during-old-file-deletion-mostly-recoverable
+A crash mid-way through old file deletion during Bitcask compaction is mostly recoverable if the new compacted file is complete; remaining old files add redundant data.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-crash-safety.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-crash-recovery-test-masks-missing-fsync
+The LSM test_crash_recovery simulates a crash by reopening the tree without close(), but because it runs in-process the kernel page cache still holds flushed data and masks the missing fsync.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-durability-guarantees.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-sync-writes-false-matches-lsm-wal-durability-gap
+When Bitcask sync_writes=False, its active-file writes have the same durability gap as the LSM WAL because neither calls os.fsync() after flush().
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-durability-guarantees.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] flush-survives-process-crash-not-power-loss
+`flush()` moves data from the Python userspace buffer to the OS kernel page cache, which survives a process crash but not a power loss.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-durability-tradeoffs.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] fsync-forces-kernel-page-cache-to-stable-storage
+`os.fsync()` forces the OS to write kernel page cache data to physical disk, providing durability across power loss.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-durability-tradeoffs.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] ext4-file-fsync-does-not-fsync-directory-entry
+On ext4, `fsync()` on a file does not guarantee the directory entry is durable, so creating a new file requires `fsync()` on the parent directory as well.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-durability-tradeoffs.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] riak-bitcask-hint-entries-have-checksums
+Production Bitcask (Riak) includes a checksum in each hint entry so partial hint-file writes are detected.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-hint-durability.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] riak-bitcask-fsyncs-hint-before-deleting-old-segments
+Production Bitcask (Riak) fsyncs a hint file before deleting the old segments it replaces.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-hint-durability.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] riak-bitcask-writes-hint-via-atomic-rename
+Production Bitcask (Riak) writes hint files to a temporary file, fsyncs, then renames atomically so a hint file is either fully present or absent.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-hint-durability.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-paper-hint-entry-format
+The Bitcask paper defines a hint entry as `| tstamp | ksz | value_sz | value_pos | key |`.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-hint-file-format.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] log-structured-hint-format-stores-key-size-and-offset
+`log-structured-hash-table/bitcask.py` uses `HINT_ENTRY_FMT = "!II"`, storing only key size and offset in each hint entry.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-hint-file-format.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hash-index-hint-key-length-is-separate-prefix
+In `hash-index-storage/bitcask.py`, the hint key size is encoded as a separate 4-byte `<I` prefix after the fixed `HINT_FORMAT` header.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-hint-file-format.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-paper-data-records-include-crc
+The Bitcask paper specifies that data records carry a CRC for integrity.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-hint-file-format.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-compaction-threshold-default-4
+The `LSMTree` constructor defaults `compaction_threshold` to 4, and compaction fires inline during writes when `len(self._sstables) >= self._compaction_threshold`.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-merge-window-scheduling.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sstable-size-tiered-min-threshold-2
+In `sstable-and-compaction/sstable.py`, size-tiered compaction uses `min_threshold=2`.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-merge-window-scheduling.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sstable-leveled-l0-compaction-trigger-2
+In `sstable-and-compaction/sstable.py`, leveled compaction uses `l0_compaction_trigger=2`.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-merge-window-scheduling.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] rocksdb-rate-limiter-throttles-compaction-io
+RocksDB's `rate_limiter` throttles compaction I/O to protect foreground latency.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-merge-window-scheduling.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] cassandra-has-time-window-compaction-strategy
+Cassandra provides `TimeWindowCompactionStrategy` for time-aware compaction scheduling.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-merge-window-scheduling.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] cassandra-compaction-throughput-config
+Cassandra exposes `compaction_throughput_mb_per_sec` to rate-limit compaction I/O.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-merge-window-scheduling.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-paper-keydir-stored-in-ets-table
+The Bitcask paper stores the keydir in an Erlang ETS table shared across Erlang processes.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-paper-comparison.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-paper-uses-lock-file-single-writer
+The Bitcask paper enforces single-writer exclusion with OS lock files that record the writer PID for crash detection.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-paper-comparison.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-paper-merge-is-background-process
+The Bitcask paper runs merge as a separate Erlang process with automatic triggers and atomic ETS keydir updates while reads and writes continue.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-paper-comparison.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-paper-crc-checks-every-read
+The Bitcask paper mandates CRC checks on every read to detect bitrot and partial writes.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-paper-comparison.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] log-structured-auto-compact-threshold-default-5
+`log-structured-hash-table/bitcask.py` triggers synchronous auto-compaction inside `put()` when frozen segment count reaches `auto_compact_threshold` (default 5).
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-paper-comparison.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hash-index-keydir-has-four-fields
+The hash-index-storage Bitcask KeyEntry stores four fields: file_id, offset, size, and timestamp.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-paper-design.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hash-index-keyentry-size-is-total-record-size
+In hash-index-storage/bitcask.py, KeyEntry.size stores the total record size including header, key, and value, not just the value size.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-paper-design.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hash-index-compact-uses-keydir-liveness
+hash-index-storage/bitcask.py compact() determines record liveness by checking whether the keydir still points to the immutable file and offset, rather than comparing timestamps.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-paper-design.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] log-structured-auto-compact-threshold-default-5
+log-structured-hash-table/bitcask.py defaults auto_compact_threshold to 5 and calls compact() inside put() when the number of frozen segments reaches that threshold.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-paper-vs-implementation.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hash-index-record-header-is-16-bytes-no-crc
+hash-index-storage/bitcask.py uses the record header format <dII (timestamp, key_size, value_size), which is 16 bytes and contains no checksum field.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-paper-vs-implementation.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hash-index-stores-string-values-only
+hash-index-storage/bitcask.py stores string values rather than arbitrary byte sequences.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-paper-vs-implementation.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] log-structured-stores-byte-values
+log-structured-hash-table/bitcask.py stores raw bytes values.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-paper-vs-implementation.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hash-index-empty-string-tombstone-collides-with-empty-value
+hash-index-storage/bitcask.py uses an empty string as the tombstone sentinel, so a legitimately stored empty-string value is indistinguishable from a deleted key and get() returns None.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-paper-vs-implementation.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hint-files-have-no-inter-file-dependencies
+Each Bitcask hint file is self-contained and describes exactly one data file's keys, so hint file reads have no inter-file dependencies during the loading phase.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-parallel-hint-loading.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] ets-enables-concurrent-keydir-writes
+Erlang ETS tables support atomic per-key updates from multiple Erlang processes without explicit locking, enabling parallel hint loaders to insert into a shared keydir concurrently.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-parallel-hint-loading.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] parallel-hint-loading-requires-barrier
+Parallel hint loading requires a barrier: all hint-file loading processes must finish before the keydir is declared consistent, with file ID ordering and last-writer-wins resolving duplicate keys.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-parallel-hint-loading.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] slow-path-parallelism-requires-ordered-merge
+Full Bitcask data file scans have cross-file tombstone dependencies, so scan results must be applied to the keydir in ascending file ID order even if the scans run concurrently.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-parallel-hint-loading.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hash-index-loads-entire-hint-file-into-memory
+hash-index-storage/bitcask.py _load_hint_file reads the entire hint file into a single bytes object and walks it with a manual cursor.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-startup-cost.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hash-index-hint-entry-fixed-size-28-bytes-plus-key
+Each hash-index hint entry has a 24-byte fixed header plus a 4-byte key length plus the key bytes, totaling 28 fixed bytes plus key length.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-startup-cost.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hash-index-compact-updates-keydir-in-place
+In hash-index-storage/bitcask.py compact(), after merged live records are written to new data files, the keydir is updated in place to point to the new file and offset locations.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-paper.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hash-index-compact-rotates-merged-output-at-max-file-size
+During hash-index-storage/bitcask.py compaction, merged output rotates to a new data file when the max_file_size limit is reached.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-paper.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hash-index-delete-writes-empty-string-value
+In `hash-index-storage/bitcask.py`, `delete(key)` writes an empty-string value via `_write_record`, producing `val_size == 0` on disk.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-tombstone-lifecycle.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hash-index-compaction-pops-zero-length-tombstones-from-latest
+During `hash-index-storage` compaction, a record with `val_size == 0` is removed from the `latest` dict while scanning immutable files in ascending ID order.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-tombstone-lifecycle.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] log-structured-compaction-pops-sentinel-tombstones-from-live-entries
+During `log-structured-hash-table` compaction, records whose value equals the `TOMBSTONE` sentinel are removed from the `live_entries` dict.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-tombstone-lifecycle.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] log-structured-hint-generation-separate-from-compaction
+`log-structured-hash-table`'s `compact()` does not call `create_hint_files()`; hint generation is an explicit separate step.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-tombstone-lifecycle.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hash-index-hint-entries-include-file-id-offset-size-timestamp
+`hash-index-storage` hint entries include `file_id`, `offset`, `size`, and `timestamp` in a 24-byte header plus key bytes.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-tombstone-lifecycle.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] log-structured-hint-entries-store-only-key-size-and-offset
+`log-structured-hash-table` hint entries store `key_size` and `offset` in an 8-byte header plus key bytes, with no timestamp or file ID.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-tombstone-lifecycle.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-memtable-is-sorteddict
+The LSM-tree uses `SortedDict` from `sortedcontainers` as its in-memory memtable (`log-structured-merge-tree/lsm.py:8`).
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-vs-lsm-tree.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-range-scan-uses-heap-based-merge
+The LSM-tree's `range_scan` merges results from the memtable and all SSTables using a heap-based merge (`heapq` import at `lsm.py:5`).
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-vs-lsm-tree.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-wal-replay-recovers-only-unflushed-writes
+The LSM-tree's WAL replay only needs to recover entries written since the last memtable flush; data already flushed to SSTables is durable by construction.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-vs-lsm-tree.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-flush-writes-memtable-to-sorted-sstable
+The LSM-tree flushes a full memtable as a sorted on-disk SSTable with lexicographic key order and a sparse index.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bitcask-vs-lsm-tree.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lehman-yao-uses-right-links-for-latch-coupling
+Lehman and Yao's B-tree protocol adds right-links to every node so a searcher can follow a link after a split without acquiring a read lock on the parent, reducing locking to at most one node at a time (latch coupling).
+- Source: /home/forge/workspace/entries/2026/05/29/topic-blink-tree-paper.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lehman-yao-solves-concurrent-split-traversal-race
+The Lehman-Yao paper addresses concurrency, not range scans; its protocol prevents a searcher from being invalidated mid-traversal by a splitter modifying a node the searcher already passed through.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-blink-tree-paper.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-record-header-contains-record-length-crc32-seq-num-op-type-key-len
+`write-ahead-log/wal.py:_encode_record` writes a length-prefixed record with 4-byte record length, 4-byte CRC32, 8-byte seq_num, 1-byte op_type, 4-byte key_len, key, 4-byte value_len, and value.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-block-aligned-wal-records.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] leveldb-log-uses-32kb-blocks
+LevelDB divides its log file into fixed 32 KB (32768-byte) blocks.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-block-aligned-wal-records.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] leveldb-log-records-have-full-first-middle-last-types
+LevelDB's log record `type` field is one of `FULL`, `FIRST`, `MIDDLE`, or `LAST`, allowing a single logical record to span multiple blocks.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-block-aligned-wal-records.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] leveldb-log-fragments-independently-checksummed
+Each fragmented LevelDB log record chunk is independently checksummed.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-block-aligned-wal-records.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] leveldb-block-alignment-contains-torn-writes-to-single-block
+LevelDB's block alignment guarantees a torn write falls within a single block, so recovery can seek to the last block boundary instead of scanning the whole file.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-block-aligned-wal-records.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] leveldb-block-format-enables-skip-past-corruption
+LevelDB's fixed 32KB block format lets a reader skip to the next block boundary after detecting corruption and resume reading, losing only records in the corrupted block.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-block-based-wal-format.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] leveldb-block-overhead-is-negligible-at-32kb
+LevelDB's original design cites about 0.03% overhead for block headers at 32KB.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-block-based-wal-format.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sstable-has-no-in-place-mutation-api
+SSTable and SSTableReader expose no method to delete, update, or remove entries in place; deletes are written as tombstone entries and compaction rewrites whole files.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bloom-filter-on-sstables.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] counting-bloom-saturated-counters-not-decremented
+CountingBloomFilter.remove leaves saturated counters fixed instead of decrementing them to avoid underflow corruption.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bloom-filter-on-sstables.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bloom-membership-lacks-key-attribution
+Standard BloomFilter.__contains__ checks whether all k bit positions are set but cannot determine which key set any bit.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bloom-filter-on-sstables.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bloom-filter-skip-definitely-absent-sstable
+A per-SSTable Bloom filter can return "definitely absent" from memory, letting the read path skip that SSTable's sparse-index search and block scan entirely.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bloom-filter-optimization.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bloom-size-and-hash-count-computed-from-expected-items-and-fpr
+BloomFilter computes bit-array size m and hash count k from expected_items and false_positive_rate using standard Bloom formulas.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bloom-filter-optimization.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bloom-1pct-fpr-uses-about-10-bits-per-key
+A Bloom filter tuned to a 1% false-positive rate uses approximately 10 bits per key.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bloom-filter-optimization.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bloom-filters-reduce-merge-iterator-input-count
+Bloom filters on SSTables reduce the number of inputs to a point-lookup merge/iterator by eliminating tables that definitely lack the key, reducing heap size and file opens.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bloom-filter-optimization.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] size-tiered-compaction-produces-overlapping-key-ranges
+Under size-tiered compaction, SSTables at the same tier have overlapping key ranges, so min/max key bounds cannot rule out an SSTable during lookups.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bloom-filters-for-read-optimization.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] leveled-compaction-non-overlapping-ranges-enable-level-skipping
+In leveled compaction, each level except L0 has non-overlapping key ranges, so min/max key bounds can skip an entire level.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bloom-filters-for-read-optimization.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bloom-filter-module-provides-three-variants
+The Bloom filter module provides standard, counting, and scalable variants plus serialization.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bloom-filters-for-read-optimization.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] page-manager-allocate-page-read-modify-write-race
+PageManager.allocate_page performs an unprotected read-modify-write on the metadata page, so two concurrent callers can allocate the same page number.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-btree-concurrency-control.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-needs-latches-not-transaction-locks
+Concurrent B-tree access uses page latches held for microseconds to protect physical page structures, separate from transaction locks held for logical isolation.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-btree-concurrency-control.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lock-coupling-holds-at-most-two-latches
+Lock coupling (crabbing) traverses a B-tree holding at most the parent and child latches simultaneously, releasing the parent when the child is safe.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-btree-concurrency-control.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] unlatched-btree-split-can-hide-sibling-keys
+If a split writes the new sibling before updating the parent separator and no latch coordinates readers, a concurrent reader can traverse the old parent and miss keys in the new sibling.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-btree-concurrency-control.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] innodb-uses-optimistic-lock-coupling
+InnoDB uses read-write latches on buffer pool pages and optimistic lock coupling, acquiring shared latches on descent and restarting with exclusive latches only when a split is needed.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-btree-concurrency-control.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] freed-pages-reused-via-free-list
+PageManager.free_page links freed pages into a singly-linked free list, and allocate_page reclaims from this list before extending the file.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-btree-delete-underflow-handling.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] textbook-btree-minimum-fill-invariant
+Textbook B-tree deletion maintains a minimum fill invariant where every non-root node has at least ceil(m/2) keys for order m.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-btree-delete-underflow-handling.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] textbook-btree-merge-propagates-underflow
+In textbook B-tree deletion, a merge that causes underflow can propagate upward and potentially shrink the root.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-btree-delete-underflow-handling.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-tests-default-max-keys-per-page-4
+The B-tree tests use a default max_keys_per_page=4.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-btree-delete-underflow-handling.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bully-sends-election-to-higher-only
+`start_election` sends ELECTION messages only to nodes whose IDs are higher than the sender's, not to all peers.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bully-vs-ring-election.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bully-state-machine-handles-four-message-types
+`receive_message` in the Bully implementation handles exactly four message types: ELECTION, ALIVE, COORDINATOR, and HEARTBEAT.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bully-vs-ring-election.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bully-unavailable-nodes-return-empty-response
+In `receive_message`, a node with `_available` false returns an empty list and sends no response.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bully-vs-ring-election.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] ring-election-message-complexity-linear
+Ring-based Chang-Roberts election uses O(n) messages per election because the election message traverses the ring once.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bully-vs-ring-election.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] ring-election-requires-ring-repair-on-failure
+A ring-based election requires ring repair if a node fails mid-election, unlike the Bully implementation where unavailable nodes simply do not respond.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-bully-vs-ring-election.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] pbft-quorum-thresholds-2f-and-2f1
+PBFT prepare quorum requires 2f matching PREPARE messages, while commit quorum requires 2f+1 matching COMMIT messages.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-byzantine-fault-tolerance.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] byzantine-wrong-digest-sends-prefixed-node-id
+The WRONG_DIGEST Byzantine mode sends a string formed by prefixing the node ID with bad_digest_.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-byzantine-fault-tolerance.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] byzantine-equivocating-sends-peer-sequence-digest
+The EQUIVOCATING Byzantine mode sends each peer a digest derived from the peer identifier and message sequence number.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-byzantine-fault-tolerance.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] test-wrong-digest-byzantine-preserves-consensus
+The `test_wrong_digest_byzantine` test confirms honest nodes still reach agreement when one node sends bad digests.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-byzantine-fault-tolerance.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] test-equivocating-byzantine-preserves-consensus
+The `test_equivocating_byzantine` test confirms equivocating digest messages do not disrupt consensus.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-byzantine-fault-tolerance.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] catch-up-read-all-returns-snapshot
+`catch_up()` obtains events via `read_all()`, which returns a snapshot of the event list at the moment of the call.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-catch-up-subscription-gap.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] append-batch-notifies-after-storing-all-events
+`append_batch` notifies subscribers only after all events in the batch have been stored, creating a different timing window than single `append`.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-catch-up-subscription-gap.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] single-threaded-cpython-masks-live-projection-race
+In single-threaded CPython execution, no `append()` can interleave during `catch_up()` because `read_all()` returns a snapshot and append notifications occur only between calls.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-catch-up-subscription-gap.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] debezium-reads-source-transaction-log-passively
+Debezium reads the database's own transaction log, such as PostgreSQL WAL or MySQL binlog, rather than participating in the write path.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-cdc-flush-semantics.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] kafka-connect-offsets-durable-in-consumer-offsets
+Kafka Connect stores connector offsets in Kafka's internal `__consumer_offsets` topic or a Connect offset backing store so it can resume from the last acknowledged offset.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-cdc-flush-semantics.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] kafka-compaction-runs-asynchronously-on-broker
+Kafka log compaction runs as a background broker thread and can remove events that consumers have not yet read.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-cdc-flush-semantics.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] materialized-view-refresh-advances-position-after-apply
+`MaterializedView.refresh()` reads events, applies them, and advances `self._position` at the end.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-cdc-flush-semantics.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] cdc-consumer-and-database-share-process
+In this CDC implementation, `CDCConsumer` and the database share the same process.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-cdc-flush-semantics.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] iterate-returns-marker-records
+`iterate()` returns all WAL records including COMMIT and CHECKPOINT markers, while `replay()` filters those markers out.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-checkpoint-vs-commit-semantics.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-three-op-batch-commit-seq-seven
+A three-operation WAL batch produces a COMMIT record at sequence 7 in the test case.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-checkpoint-vs-commit-semantics.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-sync-has-three-modes
+The WAL `_do_sync` method supports three sync modes: sync, batch, and none.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-checkpoint-vs-commit-semantics.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] code-expert-directory-contains-only-topics-json
+The `.code-expert/` directory contains only `topics.json`, with no templates, specs, or generation scripts.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-code-expert-generation-pipeline.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] tester-files-live-in-target-repository
+The `tester_test_*.py` files reside in the target repository `/Users/ben/git/ddia-implementations`, not in the knowledge base.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-code-expert-generation-pipeline.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] code-expert-tooling-has-zero-tester-test-matches
+A grep for `tester_test` across all code-expert tooling returned zero matches.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-code-expert-generation-pipeline.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] combiner-requires-associativity-and-commutativity
+Correctness of a MapReduce combiner requires the combine function to be associative and commutative.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-combiner-correctness.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] combiner-groups-by-key-with-sort-groupby
+`_apply_combiner` sorts pairs by key and uses `groupby` to collect values per key before invoking the combiner.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-combiner-correctness.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] combiner-test-asserts-same-result-with-and-without
+The combiner test uses `word_count_reducer` as the combiner and asserts the result is identical with and without the combiner.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-combiner-correctness.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] combiner-has-no-negative-test
+The test suite contains no negative test showing a non-associative or non-commutative combiner producing wrong results.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-combiner-correctness.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] batch-word-count-pipeline-has-no-combiner
+The `batch-word-count/pipeline.py` Count stage performs full in-memory aggregation in one pass and has no combiner concept.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-combiner-correctness.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] mapreduce-input-split-depends-on-num-mappers
+MapReduce input splitting in `_split_input` depends on `num_mappers`, so changing worker count changes which records land together.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-combiner-correctness.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-replay-accepts-after-seq-filter
+The WAL `replay()` method accepts an `after_seq` parameter used to filter records by sequence number.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-commit-aware-replay-design.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-batch-commit-record-has-sequence-number
+`append_batch` assigns each operation a consecutive sequence number and appends a COMMIT record with its own sequence number.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-commit-aware-replay-design.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-test-basic-covers-individual-and-batch-writes
+`test_basic` exercises three individual appends followed by a three-operation batch and asserts replay returns six PUT/DELETE records with COMMIT/CHECKPOINT filtered out.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-commit-aware-replay-design.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-op-commit-value-is-3
+`OP_COMMIT` is defined with value `3` at `wal.py:12`.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-commit-record-replay-semantics.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-test-crash-recovery-omits-partial-batch
+`test_crash_recovery` only verifies standalone PUTs survive a reopen and does not test the partial-batch scenario where PUTs exist on disk without a trailing COMMIT.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-commit-record-replay-semantics.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-frozen-segment-paths-determine-compaction-eligibility
+In `log-structured-hash-table/bitcask.py`, the `_frozen_segment_paths` method referenced by `put` determines which segments are eligible for compaction.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-compaction-input-deletion-ordering.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] merge-resolves-duplicates-by-timestamp
+When multiple SSTables contain the same key, the multi-way merge keeps only the entry with the highest timestamp (verified by the 'shared' key test at line 97 of test_sstable.py).
+- Source: /home/forge/workspace/entries/2026/05/29/topic-compaction-output-splitting.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] merge-sstables-uses-heap-k-way-merge
+The `merge_sstables` function uses a heap to pick the entry with the smallest key during k-way merge.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-compaction-output-splitting.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] merge-sstables-accepts-remove-tombstones-flag
+`merge_sstables` accepts a `remove_tombstones` boolean parameter that optionally drops tombstone entries during merge.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-compaction-output-splitting.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] merge-sstables-has-no-max-file-size-parameter
+`merge_sstables` has no `max_file_size` parameter or callback for splitting output into multiple files.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-compaction-output-splitting.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-no-concurrency-control
+The `BTree` class in `btree.py` has no latches, mutexes, or synchronization; concurrent access to any method is unsafe and would corrupt the tree.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-concurrency-and-latch-coupling.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] concurrent-range-scan-skips-keys-on-split
+Without latching, a range scan that caches a `next_sibling` pointer can miss keys moved to a new sibling page by a concurrent split — the core phantom problem at the physical level.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-concurrency-and-latch-coupling.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-allocate-page-unsafe-under-concurrency
+`PageManager.allocate_page` performs an unprotected read-modify-write on metadata, so two concurrent page allocations could return the same page number.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-concurrency-and-latch-coupling.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-flush-does-not-register-frozen-memtable
+`_flush` assigns `frozen = self._memtable` but never appends it to `self._immutable_memtables`, relying on synchronous execution to avoid a read visibility gap.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-concurrent-flush-safety.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-flush-synchronous-invariant
+The correctness of the LSM tree depends on `_flush` completing (memtable swap through SSTable registration) without any interleaved read or write operations.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-concurrent-flush-safety.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] async-flush-without-immutable-registration-causes-read-invisibility
+If `_flush` were made asynchronous without adding the frozen memtable to `_immutable_memtables`, `get()` calls during the flush would not find recently written keys.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-concurrent-flush-safety.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] neither-bitcask-has-atomic-switchover
+Neither Python Bitcask implementation maintains the paper's invariant that old files are deleted only after the keydir is fully updated; both interleave keydir mutation with file handle closure and file deletion.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-concurrent-merge-safety.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] crash-between-delete-and-rename-loses-data
+In both Bitcask implementations, a crash after old segment files are deleted but before the active file is renamed leaves committed data permanently unrecoverable, because no manifest or log records the intent.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-concurrent-merge-safety.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] log-structured-compact-updates-index-and-deletes-in-same-phase
+In `log-structured-hash-table/bitcask.py` compaction, the index is updated and old segment files are deleted in the same phase without a barrier, so a concurrent reader could see an old index entry pointing to a deleted file.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-concurrent-merge-safety.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] custom-merge-accepts-callback-with-five-arguments
+The `CUSTOM_MERGE` strategy in `multi_leader.py` invokes a user-provided `merge_fn` callback with `(key, local_val, remote_val, local_ts, remote_ts)` arguments.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-conflict-resolution-strategies.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] concurrency-detection-uses-origin-mismatch-heuristic
+The multi-leader module treats a write as concurrent if `local_origin != remote_node`, using origin mismatch as a heuristic instead of vector clocks.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-conflict-resolution-strategies.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] crdt-module-implements-four-types
+The CRDT module in `crdts.py` implements four types: `GCounter`, `PNCounter`, `LWWRegister`, and `ORSet`.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-conflict-resolution-strategies.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] schema-registry-encode-with-id-appends-avro-payload
+SchemaRegistry.encode_with_id returns a 4-byte big-endian schema ID immediately followed by the Avro-encoded payload.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-confluent-schema-registry-protocol.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] schema-registry-decode-with-id-fetches-writer-schema
+SchemaRegistry.decode_with_id parses the first four bytes as a big-endian uint32 and uses that ID to retrieve the writer schema from the registry before Avro decoding.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-confluent-schema-registry-protocol.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] avro-registry-roundtrip-tests-reader-schema-with-default
+The Avro schema registry round-trip test registers a schema, encodes with its ID, and decodes with a different reader schema that adds a field with a default.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-confluent-schema-registry-protocol.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] ddia-root-has-37-module-directories-plus-gitignore
+The ddia-implementations repo root contains 37 module directories plus a .gitignore.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-conftest-and-pytest-config.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] ddia-gitignore-ignores-pycache-pyc-pytest-cache
+The ddia-implementations .gitignore ignores `__pycache__/`, `*.pyc`, and `.pytest_cache/`.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-conftest-and-pytest-config.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] ddia-conftest-grep-matches-only-topics-json
+The only matches for the string `conftest` in the ddia-implementations repo are 11 occurrences in `.code-expert/topics.json`.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-conftest-hierarchy.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] ddia-module-directories-have-147-entries-with-consistent-structure
+The 147 directory entries across all ddia-implementations module directories show a consistent per-module structure of an implementation file, a `test_*.py` file, and sometimes a `tester_test_*.py` file.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-conftest-hierarchy.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] standard-bloom-filter-uses-one-bit-per-position
+BloomFilter stores its bit array in `bytearray((self._m + 7) // 8)`, using one bit per position.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-counter-overflow-and-cuckoo-filters.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] counting-bloom-add-silently-ignores-saturated-increments
+CountingBloomFilter.add increments a counter only while it is below `_max_val`, silently ignoring further additions that hash to a saturated position.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-counter-overflow-and-cuckoo-filters.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] cuckoo-filter-stores-fingerprints-in-two-candidate-buckets
+A cuckoo filter stores a small fingerprint of each item in a hash table with two candidate bucket positions and deletes by removing the fingerprint.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-counter-overflow-and-cuckoo-filters.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] cuckoo-filter-insertion-relocates-existing-fingerprints
+Cuckoo filter insertion handles collisions by evicting existing fingerprints to their alternate bucket, allowing high occupancy (~95%).
+- Source: /home/forge/workspace/entries/2026/05/29/topic-counter-overflow-and-cuckoo-filters.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] counting-bloom-remove-decrements-count-despite-saturated-counters
+CountingBloomFilter.remove decrements `_count` even when saturated counters are not decremented, so `len()` can underreport the filter's active item count.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-counter-saturation-probability.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] fan-2000-four-bit-counters-sufficient
+Fan et al. (2000) found that 4-bit counters are sufficient for most practical counting Bloom filter workloads.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-counter-saturation-probability.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] event-store-enforces-expected-version-concurrency
+The `EventStore.append()` and `append_batch()` methods accept an `expected_version` parameter to enforce optimistic concurrency on the write side.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-cqrs-read-models.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] live-projection-uses-subscriber-push
+`LiveProjection` subscribes to `EventStore._subscribers` and its handler fires immediately when an event is appended, making new events visible without another `catch_up()` call.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-cqrs-read-models.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] snapshot-captures-position-and-state
+Snapshots store both the projection's `_state` dict and its `_position`, enabling catch-up to resume from the snapshot point rather than replaying the full log.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-cqrs-read-models.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] projection-auto-snapshots-after-interval
+The `_snapshot_interval` parameter causes a projection to automatically snapshot after processing N events.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-cqrs-read-models.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] reconstruct-state-supports-point-in-time-query
+`reconstruct_state` replays a stream's events only up to a specified event ID, returning the state as it was at that point in time.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-cqrs-read-models.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] log-structured-hash-table-never-fsyncs
+In `log-structured-hash-table/bitcask.py`, `_write_record` calls only `flush()` and never `os.fsync()`, so writes are not power-loss durable.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-crash-recovery-invariants.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-wal-never-fsyncs
+The LSM tree's WAL calls `self._fd.flush()` but never `os.fsync()`, so WAL entries can be lost on power failure.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-crash-recovery-invariants.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-sstable-write-no-fsync
+The LSM tree's `SSTable.write()` closes the SSTable file without calling `fsync()`, so the file contents may not be durable.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-crash-recovery-invariants.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-compaction-has-no-wal-backup
+Because the LSM tree's WAL is truncated after each memtable flush, SSTable data has no WAL backup if a later compaction deletes old SSTables before the new one is durable.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-crash-recovery-testing.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] safe-compaction-uses-write-temp-fsync-rename
+The standard safe compaction pattern writes the new SSTable to a temporary file, fsyncs it, atomically renames it over the old file, then deletes the input SSTables.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-crash-recovery-testing.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-truncate-rewrites-in-place
+`WriteAheadLog.truncate()` rewrites each WAL file in place with the kept records rather than writing to a temporary file and atomically renaming it.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-crash-safety-of-truncate.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-truncate-deletes-files-with-no-kept-records
+If no records remain above the truncation sequence number, `WriteAheadLog.truncate()` deletes the WAL file entirely.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-crash-safety-of-truncate.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sqlite-wal-header-salt-invalidates-frames
+SQLite WAL mode uses a header salt value to invalidate existing WAL frames without physically removing them, so replay after a crash is idempotent.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-crash-safety-of-truncate.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] postgresql-wal-segment-recycling-uses-rename
+PostgreSQL recycles old WAL segment files using `os.rename()`, which is atomic on POSIX, rather than rewriting segments in place.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-crash-safety-of-truncate.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hash-index-bitcask-header-has-no-crc
+In `hash-index-storage/bitcask.py`, the record header packs timestamp, key_size, and value_size with no CRC field.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-crc-coverage-audit.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bloom-filter-has-no-checksum
+The Bloom filter serialization packs `m`, `k`, and `count` plus the bit array with no checksum protecting either the header or the filter data.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-crc-coverage-audit.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-op-type-is-redundantly-crc-protected
+In `write-ahead-log/wal.py`, `op_type_byte` is included in both the CRC input and the record header, making it the only header field that receives CRC protection.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-crc-coverage-audit.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsht-tombstone-sentinel-is-bitcask-tombstone
+In `log-structured-hash-table/bitcask.py`, `TOMBSTONE` is defined as the byte-string sentinel `b"__BITCASK_TOMBSTONE__"`.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-crc-integrity-on-tombstones.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] his-scanner-treats-zero-val-size-as-tombstone
+In `hash-index-storage/bitcask.py`, `_scan_data_file` treats any record with `val_size == 0` in the header as a tombstone and removes the key from the index.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-crc-integrity-on-tombstones.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsht-crc-detects-val-size-corruption-via-payload-mismatch
+In `log-structured-hash-table/bitcask.py`, if a record's on-disk `value_size` is corrupted to 0, the scanner reads only the key bytes and computes a CRC that does not match the stored CRC computed over key plus original value.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-crc-integrity-on-tombstones.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] his-corruption-can-crash-recovery-on-utf8-decode
+In `hash-index-storage/bitcask.py`, corruption that causes value bytes to be parsed as a record header can crash recovery when `key_bytes.decode("utf-8")` encounters invalid UTF-8.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-crc-integrity-on-tombstones.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] standalone-wal-header-packs-length-then-crc
+The standalone WAL record header format `<IIQBi` serializes the record length before the CRC field.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-crc-scope-comparison-across-implementations.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsht-header-orders-crc-before-lengths
+In `log-structured-hash-table/bitcask.py`, the record header format `!III` places the CRC32 field before `key_size` and `value_size`.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-crc-scope-comparison-across-implementations.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] leveldb-block-checksum-covers-data-and-type-not-length
+LevelDB block checksums cover the block data plus the type byte but exclude the length framing.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-crc-scope-comparison-across-implementations.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] crc32c-hardware-instruction-implements-castagnoli-only
+Intel SSE4.2 CRC32 and ARMv8 CRC32 instructions implement the Castagnoli polynomial specifically, not the ISO 3309 polynomial.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-crc32-vs-crc32c.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] crc-polynomial-switch-touches-five-files-thirteen-sites
+Switching the codebase from `zlib.crc32` to CRC-32C touches 5 files across 13 call sites.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-crc32-vs-crc32c.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] python-crc32c-package-auto-detects-hardware
+The Python `crc32c` package auto-detects and uses hardware SSE4.2 or ARM CRC instructions when available.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-crc32-vs-crc32c.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] postgresql-added-crc32c-in-9-5-with-wal-format-version-bump
+PostgreSQL added CRC-32C in version 9.5 with a WAL format version bump.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-crc32-vs-crc32c.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] crc32-is-linear-and-forgeable
+CRC32 is a linear function, so an attacker with write access can alter a record and recompute a matching CRC without knowing the original data.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-crc32-vs-cryptographic-hash.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] merkle-proof-requires-collision-resistant-hash
+Merkle inclusion proofs are only secure if the hash function is collision-resistant, because a collision would let a modified data block produce the same proof hash.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-crc32-vs-cryptographic-hash.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sha256-preimage-resistance-prevents-network-hash-tampering
+SHA-256's preimage resistance makes it computationally infeasible for a network adversary to modify a hash and have it match the original data.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-crc32-vs-cryptographic-hash.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] crc32-detects-all-single-double-bit-and-32-bit-burst-errors
+CRC32 polynomial properties catch all single-bit errors, all double-bit errors, and all burst errors up to 32 bits.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-crc32-vs-xxhash-choice.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] crc32-undetected-corruption-probability-is-one-in-4294967296
+For random corruption, CRC32's probability of an undetected error is approximately 1 in 4.3 billion per record (2^32).
+- Source: /home/forge/workspace/entries/2026/05/29/topic-crc32-vs-xxhash-choice.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] xxhash-about-3x-faster-than-crc32-without-hardware
+xxHash is about 3x faster than CRC32 on large inputs when no hardware acceleration is available.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-crc32-vs-xxhash-choice.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] counting-bloom-counter-saturation-breaks-delete
+When a CountingBloomFilter counter reaches `_max_val` (default 15), it pins and is never decremented on remove, silently breaking deletion correctness for that position.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-cuckoo-filters.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] cuckoo-filter-stores-fingerprints-in-two-buckets
+A cuckoo filter stores small fingerprints (typically 8-12 bits) in a hash table with two candidate buckets per item, using cuckoo hashing for placement.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-cuckoo-filters.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] cuckoo-filter-space-overhead-1-05-to-1-2x
+Cuckoo filters use approximately 1.05-1.2x the space of a standard Bloom filter at similar false positive rates.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-cuckoo-filters.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] cuckoo-filter-insertion-can-fail-at-high-load
+Cuckoo filter insertion may require a chain of relocations and can fail if the table is more than 95% full.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-cuckoo-filters.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] cuckoo-filter-duplicate-inserts-capped-at-2kb
+Most cuckoo filter implementations cap duplicate inserts at 2 times the bucket size (2kb).
+- Source: /home/forge/workspace/entries/2026/05/29/topic-cuckoo-filters.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sqlite-wal-chains-checksums-by-seeding-with-previous
+SQLite's WAL computes each frame's checksum by feeding the previous frame's checksum as the initial value, forming a hash chain.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-cumulative-checksums.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-wal-recovery-writes-to-wrong-location-on-page-num-corruption
+During B-tree WAL recovery, a corrupted `page_num` passes the payload-only CRC and causes a valid page to be written to the wrong disk location.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-cumulative-checksums.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] mapreduce-shuffle-uses-hash-partitioning
+The MapReduce framework assigns intermediate key-value pairs to reducers via `hash(k) % self.num_reducers` (mapreduce.py line 104).
+- Source: /home/forge/workspace/entries/2026/05/29/topic-ddia-ch10-reduce-side-joins.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] reduce-side-sort-group-uses-itertools-groupby
+The reducer in `mapreduce.py` relies on `itertools.groupby` over pre-sorted pairs (line 141–142), meaning records must be sorted by key before grouping.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-ddia-ch10-reduce-side-joins.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] broadcast-hash-join-eliminates-network-shuffle
+The BroadcastHashJoin eliminates network shuffle by broadcasting the small dataset to all mappers and performing hash lookups per record.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-ddia-ch10-reduce-side-joins.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sort-merge-join-linear-time-when-sorted
+The SortMergeJoin executes a single linear pass (O(n + m) time) when both inputs are pre-sorted by the join key, requiring no hash table.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-ddia-ch10-reduce-side-joins.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] unbundled-database-add-derived-system-does-not-modify-write-path
+Adding a new derived system to the unbundled database requires only calling `db.add_derived_system(idx)` and the next `db.flush()` feeds pending CDC events to all registered consumers; no change to the write path is needed.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-ddia-ch12-unbundling.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] cdc-log-compact-keeps-latest-event-per-table-key
+The `CDCLog.compact()` method keeps only the latest event per `(table, key)`, implementing log compaction while allowing new consumers to bootstrap from current state.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-ddia-ch12-unbundling.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] event-sourcing-projection-catch-up-uses-snapshot-to-avoid-full-replay
+The event sourcing `Projection` uses snapshots to periodically capture state so that `catch_up()` doesn't have to replay the entire log from the beginning.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-ddia-ch12-unbundling.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] fenced-server-tracks-highest-token-per-resource
+The `FencedResourceServer` maintains a `_highest_token` dictionary per resource, rejecting writes with tokens strictly lower than the highest seen for that resource.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-ddia-ch8-process-pauses.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] unfenced-resource-server-accepts-all-writes
+The `UnfencedResourceServer.write` method accepts every write unconditionally, with no token validation.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-ddia-ch8-process-pauses.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] codebase-does-not-explicitly-model-gc-pauses
+The codebase contains no explicit modeling of GC pauses or network delays; there are zero grep matches for `gc_pause`, `sleep`, `delay`, `frozen`, `network_delay`, or `latency`.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-ddia-ch8-process-pauses.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] pipeline-add-stage-returns-self
+`Pipeline.add_stage()` returns `self` to support fluent builder-style chaining.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-ddia-chapter-10-batch-processing.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] pipeline-exposes-three-execution-modes
+`pipeline.py` exposes `run()`, `run_lazy()`, and `run_to_file()` as three execution modes for materializing output, piping it, or redirecting to a file.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-ddia-chapter-10-batch-processing.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] topn-uses-bounded-heap
+`TopN` uses an O(N) bounded heap and yields only at the end, making it a partial materialization stage.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-ddia-chapter-10-batch-processing.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sort-merge-join-compares-strategy-results
+`compare_join_strategies()` runs `BroadcastHashJoin`, `PartitionedHashJoin`, and `SortMergeJoin` on the same data and verifies identical results after normalizing away `_mapper_id` tags.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-ddia-chapter-10-batch-processing.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] stream-join-probes-on-arrival
+`StreamJoinProcessor` buffers an arriving event and immediately probes it against the opposite buffer.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-ddia-chapter-10-batch-processing.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] stream-join-defers-miss-emission-until-expiration
+`StreamJoinProcessor` emits outer-join misses only at expiration (`watermark - window_duration`), not eagerly on arrival.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-ddia-chapter-10-batch-processing.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] range-partition-owns-half-open-interval
+Each `Partition` in `range_partitioning.py` owns a half-open key interval `[start_key, end_key)`.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-ddia-chapter-6-partitioning.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] range-scan-touches-first-and-last-partitions
+`RangePartitionedStore.range_scan` identifies the first and last relevant partitions and concatenates their results.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-ddia-chapter-6-partitioning.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] consistent-hash-get-node-walks-clockwise
+`ConsistentHashRing.get_node` walks clockwise from the key's hash position to the next virtual node.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-ddia-chapter-6-partitioning.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] consistent-hash-get-nodes-collects-replication-factor-distinct-nodes
+`ConsistentHashRing.get_nodes` walks the ring collecting `replication_factor` distinct physical nodes, implementing a Dynamo-style preference list.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-ddia-chapter-6-partitioning.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] document-partitioned-query-touches-all
+`DocumentPartitionedDB.query_by_field` scans every partition and records `num_partitions` as the number of partitions touched.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-ddia-chapter-6-partitioning.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] term-partitioned-query-hits-one-partition
+`TermPartitionedDB` routes an index-term query to exactly one partition.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-ddia-chapter-6-partitioning.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] consumer-group-rebalance-redistributes-partitions
+`partitioned_log.py` redistributes partitions among consumers when consumers join or leave a consumer group.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-ddia-chapter-6-partitioning.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-writes-are-sequential-appends
+Both Bitcask implementations write records by appending to the active file and never overwrite data in place.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-ddia-chapter3-hash-indexes.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-deletes-append-tombstones
+Both Bitcask implementations represent deletion by appending a tombstone record (an empty-string value or a `TOMBSTONE` sentinel) and removing the key from the in-memory index.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-ddia-chapter3-hash-indexes.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-rotates-segment-at-max-file-size
+Both Bitcask implementations rotate to a new segment when the active file exceeds `max_file_size`.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-ddia-chapter3-hash-indexes.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-sparse-index-interval-default-16
+`log-structured-merge-tree/lsm.py` defaults `sparse_index_interval` to 16.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-ddia-chapter3-hash-indexes.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sstable-block-size-default-64
+`sstable-and-compaction/sstable.py` defaults `block_size` to 64.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-ddia-chapter3-hash-indexes.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sstable-range-scan-is-sequential-read
+Because SSTable entries are sorted on disk, a range scan seeks via the sparse index and then reads sequentially.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-ddia-chapter3-hash-indexes.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] cdc-log-compaction-keeps-latest-per-table-key
+`CDCLog.compact()` keeps only the latest event per `(table, key)`, bounding log growth while preserving the ability to bootstrap new consumers.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-ddia-unbundling-concept.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] derived-system-interface-requires-process-event-rebuild-position
+The `DerivedSystem` contract requires `process_event()`, `rebuild()`, and a `position` attribute.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-ddia-unbundling-concept.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] live-projection-processes-events-synchronously-in-append
+`LiveProjection` subscribes to `EventStore._subscribers` and processes events synchronously inside `append()`, making the read model immediately consistent.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-ddia-unbundling-concept.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] reconstruct-state-enables-temporal-queries
+`reconstruct_state()` replays a stream's events through handlers up to a specific point in time, enabling temporal queries.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-ddia-unbundling-concept.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hash-index-compaction-fsyncs-data-before-rename
+In `hash-index-storage/bitcask.py` compaction, live entries are written and the data file contents are fsynced before `os.rename()` renames the old files.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-directory-fsync-after-rename.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] posix-rename-is-atomic-not-durable
+POSIX `os.rename()` is atomic but does not by itself make the directory-entry change durable across a crash without fsyncing the parent directory.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-directory-fsync-after-rename.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] rename-modifies-source-and-destination-directory-entries
+`os.rename()` modifies directory entries in both the source and destination directories.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-directory-fsync-after-unlink.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] batch-word-count-deletes-intermediate-files-without-dir-fsync
+`batch-word-count/pipeline.py:184` deletes intermediate files with `os.remove()` without fsyncing the parent directory afterward.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-directory-fsync-after-unlink.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] gossip-round-bidirectional-membership-exchange
+`GossipCluster.gossip_round` performs a bidirectional exchange of membership lists between each node and a randomly selected peer.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-dynamo-anti-entropy.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] gossip-round-detects-failures-after-exchange
+After each gossip round, every node runs `detect_failures` to update suspicion states.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-dynamo-anti-entropy.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hinted-handoff-trigger-replays-buffered-writes-on-recovery
+`hinted-handoff.trigger_handoff` replays stored `Hint` objects when a node recovers and gossip marks it alive again.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-dynamo-anti-entropy.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] receive-replica-uses-vector-clock-for-conflict-resolution
+`_receive_replica` uses the supplied vector clock to decide whether to accept, reject, or flag a conflict for an incoming replica value.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-dynamo-anti-entropy.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] ets-is-builtin-concurrent-hash-table
+ETS is a shared-memory concurrent hash table built into the BEAM VM.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-erlang-ets-concurrency-model.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] ets-is-zero-copy-across-processes
+All BEAM processes on a node reference the same physical memory for an ETS table, so multiple Erlang processes can read it without serialization or copying.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-erlang-ets-concurrency-model.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] ets-named-lookup-enables-shared-keydir
+Any process on a BEAM node can find a named ETS table by name via ets:lookup/2, allowing Riak vnodes to share one in-memory keydir.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-erlang-ets-concurrency-model.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] ets-insert-is-per-key-atomic
+A single ets:insert/2 call atomically replaces one ETS row, and concurrent writes to the same key are serialized with a last-writer-wins result.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-erlang-ets-concurrency-model.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] gil-does-not-cross-process-boundaries
+Python's GIL serializes threads within one OS process but provides no synchronization across multiprocessing processes, so a dict in one process is invisible to another.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-erlang-ets-concurrency-model.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] gil-does-not-guarantee-check-then-act-atomicity
+The GIL prevents interpreter-level corruption of dict operations but does not make a multi-step check-then-act sequence in application code atomic.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-erlang-ets-concurrency-model.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] append-batch-defers-subscriber-notification
+In append_batch, subscriber callbacks run only after all events in the batch have been appended to _events and _streams.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-event-sourcing-concurrency-model.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] stream-version-derived-from-list-length
+stream_version derives a stream's version from the length of its event list rather than from a separately stored version counter.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-event-sourcing-concurrency-model.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] snapshot-captures-state-and-position
+A projection snapshot stores both the materialized state and the event position as a pair, allowing replay to resume from the position after the snapshot.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-event-sourcing-snapshots.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] projection-auto-snapshot-interval
+When a Projection is constructed with snapshot_interval, catch_up() automatically calls save_snapshot() after that many events and resets its since-snapshot counter.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-event-sourcing-snapshots.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] reconstruct-state-full-replay
+reconstruct_state rebuilds state by replaying all events from the start up to a specified event_id.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-event-sourcing-snapshots.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] snapshots-keyed-by-projection-name
+Projection snapshots are stored in EventStore._snapshots keyed by the projection's name.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-event-sourcing-snapshots.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] fsync-flushes-all-file-metadata
+fsync flushes file data plus all inode metadata such as mtime, atime, permissions, and size to stable storage.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-fdatasync-vs-fsync-optimization.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] fdatasync-flushes-data-and-retrieval-metadata
+fdatasync flushes file data and only metadata required for subsequent data retrieval, skipping mtime/atime updates.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-fdatasync-vs-fsync-optimization.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] fdatasync-can-be-2-3x-faster-on-ext4
+On Linux ext4, eliminating the extra metadata barrier with fdatasync can yield 2-3x throughput improvement under heavy write loads.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-fdatasync-vs-fsync-optimization.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] fdatasync-handles-truncation-size-change
+fdatasync flushes file-size changes, so truncation paths remain data-safe even though they are usually kept on fsync for conservatism.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-fdatasync-vs-fsync-optimization.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-page-manager-sync-on-committed-write-path
+b-tree-storage-engine/btree.py PageManager.sync() is called on every committed write path.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-fdatasync-vs-fsync-tradeoffs.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] codebase-has-13-fsync-calls-and-zero-fdatasync
+The codebase contains 13 os.fsync() call sites and zero os.fdatasync() calls.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-fdatasync-vs-fsync-tradeoffs.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] fdatasync-benefit-limited-to-linux-filesystems
+The fdatasync performance benefit applies on Linux filesystems such as ext4, xfs, and btrfs rather than on macOS.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-fdatasync-vs-fsync-tradeoffs.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-wal-recover-ignores-metadata
+WAL.recover replays page data writes but does not validate or restore the metadata page's next_free or free_head fields.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-free-list-corruption-risks.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-free-page-writes-link-before-metadata
+free_page writes the free-list link into the page before updating metadata, creating a crash window where a page can be orphaned from both the tree and the free list.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-free-list-corruption-risks.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-allocate-crash-leaks-page
+A crash after allocate_page bumps next_free but before the page content is written results in the page being permanently leaked (not reachable and not on the free list).
+- Source: /home/forge/workspace/entries/2026/05/29/topic-free-list-corruption-risks.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-allocate-crash-double-allocation
+A crash after allocate_page flushes metadata but before it is fsynced, combined with a fsynced WAL entry for the page, can cause the page to be allocated twice on recovery.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-free-list-corruption-risks.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-page-size-default-4096
+The B-tree uses fixed-size pages of 4096 bytes by default, with every page (leaf, internal, or free) occupying exactly that size on disk.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-free-list-fragmentation.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-test-delete-frees-empty-leaf-no-file-size-check
+The test test_delete_frees_empty_leaf verifies that pages move to the free list but does not assert that the file size decreases.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-free-list-fragmentation.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-meta-page-five-u32-fields
+The B-tree metadata page (page 0) stores five 4-byte unsigned integers: root_page, height, total_keys, next_free_page, and free_list_head.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-free-list-reuse-under-churn.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-insert-delete-cycle-recycles-pages
+During insert/delete cycles, freed pages are reused from the free list before extending the file, preventing unbounded growth as long as free_page is called during deletion.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-free-list-reuse-under-churn.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-next-free-page-vs-free-list-head
+next_free_page only increases (high-water mark), while free_list_head is the recycling mechanism that prevents file growth by pointing to freed pages.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-free-list-reuse-under-churn.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-rename-sites-two
+os.rename() is used in exactly two files (hash-index-storage/bitcask.py:297 and log-structured-hash-table/bitcask.py:301), both during Bitcask compaction to transition data files from active to immutable.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-fsync-directory-durability.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-rename-not-durable
+The Bitcask compaction rename is atomic but not durable because the containing directory is not fsynced after the rename, so a power loss can revert the filename.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-fsync-directory-durability.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] file-content-fsync-consistent
+The WAL, B-tree PageManager, and Bitcask implementations all fsync file contents after writes, making the directory fsync gap a subtle rather than gross durability defect.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-fsync-directory-durability.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] codebase-uses-fsync-not-fdatasync
+The codebase uses os.fsync exclusively (13 call sites) and never os.fdatasync or F_FULLFSYNC.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-fsync-durability-guarantees.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-sync-modes-three
+The WAL supports three sync modes: 'sync' (fsync every write), 'batch' (fsync every N writes), and implicit 'none'.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-fsync-durability-guarantees.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-flush-fsync-pairing
+The WAL and B-Tree WAL always call flush() immediately before os.fsync() at every sync point in sync/force modes.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-fsync-durability-guarantees.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-batch-sync-count-default-100
+The WAL's batch sync count defaults to 100 writes.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-fsync-durability-tradeoffs.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] flush-moves-data-to-page-cache-only
+`file.flush()` moves data from Python's internal buffer to the OS page cache but does not force it to physical storage.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-fsync-flush-distinction.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] fsync-includes-metadata-fdatasync-skips
+`os.fsync(fd)` forces both data and metadata to disk, while `os.fdatasync(fd)` skips metadata updates not needed for reading data back.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-fsync-flush-distinction.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] log-structured-crc-detects-torn-writes-not-volatile-loss
+The CRC check in log-structured hash table recovery detects partially-written (torn) records but cannot recover data that was only in volatile memory.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-fsync-guarantees.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-wal-truncate-no-fsync-replay-window
+The LSM tree's WAL `truncate` method truncates the WAL without fsyncing the truncation, creating a window where a crash can replay already-applied entries.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-fsync-guarantees.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] data-file-dir-fsync-gap-worse-than-hint
+The directory-fsync gap for data files causes data-loss consequences (unreachable data, index/disk mismatch, duplicate records) while the same gap for hint files is only a performance concern.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-fsync-on-directory.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] segment-rotation-dir-entry-unsynced
+When a new segment file is created during rotation, its directory entry is never fsynced; a crash after writing records to the new segment but before directory flush leaves records in an orphaned inode.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-fsync-on-directory.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] compaction-rename-reverts-without-dir-fsync
+Without directory fsync, a compaction rename can revert on crash, and deleted files can reappear, causing index/disk mismatch.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-fsync-on-directory.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-rotate-new-segment-dir-entry-unsynced
+In `write-ahead-log/wal.py`, `_rotate()` fsyncs the old segment's contents before closing but does not fsync the directory after creating the new segment file; the new WAL segment's directory entry could be lost.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-fsync-on-directory.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] durable-rename-requires-parent-dir-fsync
+The correct pattern for durable rename on Linux requires fsyncing the parent directory after `os.rename()`.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-fsync-on-directory.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] ext4-auto-da-alloc-protects-only-replace-via-rename
+ext4's `auto_da_alloc` mount option, enabled by default since ~2.6.30, forces new file data allocations to flush before `rename()` completes only for replace-via-rename patterns where the destination already exists.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-fsync-on-ext4-vs-other-filesystems.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] auto-da-alloc-does-not-protect-new-file-creation
+ext4 `auto_da_alloc` provides no protection for newly created files that do not replace an existing directory entry.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-fsync-on-ext4-vs-other-filesystems.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-rotation-creates-new-files-not-replacements
+WAL rotation creates new numbered `.wal` files via `open(..., "ab")` rather than replacing an existing file, so ext4 `auto_da_alloc` does not protect the new directory entry.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-fsync-on-ext4-vs-other-filesystems.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-rotation-creates-new-active-data-file
+Bitcask `_maybe_rotate` increments the active file ID and opens a fresh data file, making rotation a new file creation rather than an atomic replacement.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-fsync-on-ext4-vs-other-filesystems.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] xfs-lacks-auto-da-alloc-equivalent
+XFS provides no `auto_da_alloc` equivalent and aggressively delays allocation, fully exposing both rename and new-file directory-entry gaps.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-fsync-on-ext4-vs-other-filesystems.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] ext4-default-journal-commit-interval-5s
+On ext4 with default mount options, the journal commit interval is typically 5 seconds, providing only probabilistic directory-entry durability.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-fsync-on-ext4-vs-other-filesystems.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] ext4-data-ordered-protects-consistency-not-directory-durability
+ext4 `data=ordered` protects filesystem consistency after a crash but does not guarantee durability of recent directory-entry operations, which may sit in the journal commit queue for up to the commit interval.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-fsync-on-linux-filesystems.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] ext4-data-writeback-can-expose-stale-file-data
+In ext4 `data=writeback` mode, a directory entry for a new file can reach the journal before the file's data blocks are written, so after a crash the file may exist with stale or garbage contents.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-fsync-on-linux-filesystems.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] xfs-requires-explicit-directory-fsync-for-rename-durability
+XFS provides no implicit durability for renames or new file creation without explicit `fsync` on the parent directory.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-fsync-on-linux-filesystems.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] posix-durable-file-creation-requires-parent-directory-fsync
+POSIX durability for creating or replacing a file requires writing data, fsyncing the file, and fsyncing the parent directory to persist the name-to-inode mapping.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-fsync-on-new-file-creation.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] fsync-file-does-not-guarantee-parent-directory-entry-durability
+`fsync()` on a newly created file guarantees the file's own data and metadata but does not guarantee that the parent directory entry pointing to that file is durable.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-fsync-on-new-file-creation.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-rotate-reachable-from-all-write-paths
+`_rotate()` in `write-ahead-log/wal.py` is reachable from `_open_latest` at startup and via `_maybe_rotate` from `append()`, `append_batch()`, and `checkpoint()`, exposing all WAL write paths to the directory-fsync gap.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-fsync-on-new-file-creation.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-rotate-opens-new-segment-in-ab-mode
+`_rotate()` creates the new WAL segment by calling `open(self._current_file, "ab")`, which creates the file and modifies the parent directory.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-fsync-on-new-file-creation.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-durability-invariant-requires-wal-before-data-fsync
+WAL correctness requires the WAL record to be durable on disk before the corresponding data file mutation becomes durable.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-fsync-ordering-guarantees.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] fsync-guarantees-are-per-file-not-cross-file
+POSIX `fsync()` guarantees durability only for the file descriptor passed to it; cross-file ordering requires an explicit sequence of fsync calls by the caller.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-fsync-ordering-guarantees.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] codebase-never-uses-fdatasync
+The codebase contains zero uses of `fdatasync`; all durability calls use `os.fsync()`.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-fsync-ordering-guarantees.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] xfs-historically-zero-length-file-bug
+XFS was historically infamous for zero-length files after crash before barriers were required.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-fsync-ordering-guarantees.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] fdatasync-minimal-savings-for-append-workloads
+`fdatasync` skips metadata sync only when file size does not change, so for append-only WAL workloads its savings over `fsync` are minimal.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-fsync-ordering-guarantees.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] o-direct-never-used
+No storage engine in the codebase uses `O_DIRECT`; all writes go through the OS page cache.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-fsync-vs-fdatasync-vs-o-direct.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] fdatasync-skips-mtime-and-atime
+`fdatasync` flushes file data and file-size metadata but skips `mtime` and `atime` updates, unlike `fsync`.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-fsync-vs-fdatasync-vs-o-direct.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] o-direct-requires-sector-alignment
+`O_DIRECT` requires sector-aligned writes (typically 512B or 4KB) and aligned memory buffers.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-fsync-vs-fdatasync-vs-o-direct.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] fdatasync-unavailable-on-macos
+`os.fdatasync` is available on Linux but not on macOS, so the codebase uses `os.fsync` for portability.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-fsync-vs-fdatasync.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-truncate-syncs-before-rewrite
+The WAL's `truncate` method calls `os.fsync` before rewriting the file.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-fsync-vs-fdatasync.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-wal-appends-require-size-sync
+B-tree WAL writes are appends that extend the file, so `fdatasync` would still need to sync the file-size metadata.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-fsync-vs-fdatasync.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] flush-pushes-to-page-cache-not-disk
+Python's `.flush()` pushes bytes from the userspace buffer into the OS page cache but does not guarantee they reach physical storage.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-fsync-vs-flush-semantics.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sync-mode-none-relies-on-os-dirty-expiry
+In the WAL's implicit `"none"` sync mode, durability relies on the OS flushing dirty page-cache pages, typically within 30 seconds on Linux as controlled by `vm.dirty_expire_centisecs`, with no guarantee.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-fsync-vs-flush-semantics.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] page-manager-write-page-flushes-without-fsync
+`PageManager.write_page` flushes data to the OS page cache but does not call `os.fsync`; durability occurs only when `PageManager.sync()` or `close()` is called.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-fsync-vs-flush-semantics.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] recover-seq-num-halts-on-early-corruption
+`_recover_seq_num` breaks on `ValueError` during file scanning, so corruption in an early WAL file prevents it from discovering higher sequence numbers in later files.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-gap-detection-during-replay.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] corruption-test-checks-count-not-continuity
+The WAL corruption test (`test_wal.py:44`) verifies that replay returns fewer records after corruption but never asserts that the surviving sequence numbers are consecutive.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-gap-detection-during-replay.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-replay-iterates-segments-in-filename-order
+WAL replay iterates segment files in sorted filename order, so sequence-number monotonicity across file boundaries is not explicitly verified.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-gap-detection-during-replay.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-batch-sync-count-defaults-to-100
+The WAL's `_batch_sync_count` defaults to 100, so in `"batch"` sync mode an `fsync` is issued every 100 writes.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-group-commit-optimization.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] postgresql-group-commit-uses-leader-fsync
+PostgreSQL's group commit coordinates concurrent waiters by having a leader transaction collect pending commit requests and perform a single `fsync` covering all of them.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-group-commit-optimization.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sync-mode-hdd-throughput-cap
+In `"sync"` mode, performing one `fsync` per write caps throughput at roughly 100–200 writes/sec on HDD because an `fsync` takes 5–10ms.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-group-commit-optimization.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hash-index-bitcask-header-format-no-crc
+`hash-index-storage/bitcask.py` uses header format `"<dII"` containing timestamp, key_size, and value_size, with no CRC field.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-hash-index-bitcask-no-crc.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] log-structured-bitcask-header-includes-crc32
+`log-structured-hash-table/bitcask.py` uses header format `"!III"` containing crc32, key_size, and value_size.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-hash-index-bitcask-no-crc.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hash-index-bitcask-lacks-corruption-error-class
+`hash-index-storage/bitcask.py` defines no dedicated `CorruptionError` exception, unlike the log-structured variant.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-hash-index-bitcask-no-crc.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] range-partition-splits-at-median
+`Partition.split()` divides at the median index of stored keys, guaranteeing the two resulting partitions differ in size by at most one element.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-hash-partitioning-skew.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] range-partition-boundaries-are-contiguous
+`RangePartitionedStore` maintains that the first partition starts at `""`, the last has `end_key=None`, and each partition's `end_key` equals the next partition's `start_key`.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-hash-partitioning-skew.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] range-partition-routing-uses-bisect-right
+`RangePartitionedStore._find_partition_index` uses `bisect.bisect_right(self._boundaries, key) - 1` to route keys.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-hash-partitioning-skew.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] mapreduce-combiner-does-not-eliminate-hot-key-skew
+The MapReduce combiner reduces data volume before shuffle but does not eliminate the single-reducer bottleneck for a hot key.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-hash-partitioning-skew.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hint-file-omits-values
+Hint files store only key plus location metadata (file_id, offset, size, timestamp), never values, making them proportionally smaller as value sizes grow.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-hint-file-effectiveness.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hint-entry-fixed-header-is-20-bytes
+Each hint entry in `hash-index-storage/bitcask.py` has a 20-byte fixed header plus 4 bytes for key length and the key bytes.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-hint-file-effectiveness.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hash-index-hint-format-includes-file-id-offset-size-timestamp
+`hash-index-storage/bitcask.py` hint format `<IQId` stores file_id, offset, size, and timestamp per entry.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-hint-file-effectiveness.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-recovery-lacks-timing-instrumentation
+Neither Bitcask implementation includes timing instrumentation around `_rebuild_index`, `_load_hint_file`, or `_scan_data_file`.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-hint-file-effectiveness.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hint-load-opens-own-file-handle
+`_load_hint_file` opens and closes its own file handle, while `_scan_data_file` uses the shared `_get_reader`.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-hint-file-effectiveness.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hash-index-assert-partial-guard
+`hash-index-storage/bitcask.py:185` asserts `read_key == key` on every `get()`, which partially detects index corruption only when a wrong offset lands on a parseable record with a different key.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-hint-file-integrity.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hint-structural-corruption-crashes-on-startup
+A structurally corrupted hint file causes `struct.unpack` to read a bogus `key_size`, slice past the buffer, and raise an uncaught exception during startup.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-hint-file-integrity.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hint-corruption-detected-only-at-read-time
+In `log-structured-hash-table/bitcask.py`, a subtly corrupted hint file produces no startup error; CRC mismatch is detected only when a later `get()` reads a poisoned entry and raises `CorruptionError`.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-hint-file-integrity.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] riak-bitcask-hint-files-uses-per-entry-crc32
+Production Riak Bitcask hint files include per-entry CRC32 checksums, and a corrupted hint file triggers fallback to a data scan.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-hint-file-integrity.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-paper-hint-format-includes-value-size
+The original Bitcask paper's hint entry layout includes `tstamp, ksz, value_sz, value_pos, key`, allowing `value_size == 0` to signal tombstones.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-hint-file-tombstone-encoding.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hash-index-hint-size-field-is-record-size-not-value-size
+`hash-index-storage/bitcask.py` hint format `<IQId` uses `size` as total record size, not value size, so `_load_hint_file` cannot detect tombstones by `value_size == 0`.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-hint-file-tombstone-encoding.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hash-index-get-returns-none-on-empty-value
+`hash-index-storage/bitcask.py:get` returns `None` when the read value is an empty string.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-hint-file-tombstone-encoding.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] two-tombstone-strategies-diverge
+`hash-index-storage/bitcask.py` uses `value_size == 0` for tombstones while `log-structured-hash-table/bitcask.py` uses the sentinel byte string `b"__BITCASK_TOMBSTONE__"`.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-hint-file-tombstone-encoding.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-deleted-key-resurrects-from-stale-hint-after-compaction
+A deleted key can reappear after restart when an older surviving hint file references its pre-deletion record and the tombstone has been dropped by compaction.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-hint-file-tombstone-handling.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] get-tombstone-check-limited-to-tombstone-record-read
+The get() empty-string tombstone check only prevents resurrection when the record being read is the tombstone itself.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-hint-file-tombstone-handling.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] immutable-memtables-list-never-appended
+_immutable_memtables is initialized at line 210 but no code path ever appends to it.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-immutable-memtable-gap.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-replay-filters-commit-and-checkpoint-records
+replay() filters out COMMIT and CHECKPOINT control records and returns only PUT/DELETE records.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-incomplete-batch-recovery.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-branching-factor-is-max-keys-per-page
+The B-tree branching factor is controlled by max_keys_per_page.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-index-size-vs-scan-cost-benchmarking.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-no-block-size-parameter-or-test-large-dataset
+No block_size parameter or test_large_dataset test exists in the B-tree codebase.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-index-size-vs-scan-cost-benchmarking.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] page-size-caps-keys-per-node
+PageManager has a page_size parameter (default 4096) that physically caps how many keys fit per page.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-index-size-vs-scan-cost-benchmarking.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-lookups-read-at-most-height-plus-one-pages
+The test_page_io_counts test validates that B-tree lookups read at most height + 1 pages.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-index-size-vs-scan-cost-benchmarking.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-split-serialization-cost-scales-with-keys-per-page
+B-tree splits serialize entire nodes, so larger max_keys_per_page values increase serialization and rewrite cost.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-index-size-vs-scan-cost-benchmarking.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] leaf-no-sibling-sentinel-is-0xffffffff
+The leaf next_sibling sentinel NO_SIBLING is 0xFFFFFFFF and marks the rightmost leaf.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-internal-node-format.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] allocate-page-prefers-reuse
+`allocate_page` checks the free list before extending the file, so freed pages are reused before new pages are appended.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-intrusive-free-list-pattern.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] json-dumps-sort-keys-insufficient-for-floats
+`json.dumps(sort_keys=True)` does not guarantee canonical output for floating-point values, as Python's float-to-string conversion can vary across versions and platforms.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-json-canonicalization-risks.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-provides-durability-not-isolation
+The WAL ensures crash recovery by replaying page writes and uses fsync for durability, but provides no transaction isolation or concurrent writer support.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-latch-coupling-postgres.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sibling-sentinel-convention
+The B+ tree uses the sentinel value NO_SIBLING = 0xFFFFFFFF to mark the rightmost leaf, which is the only sibling metadata stored per node.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-lehman-yao-1981.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-wal-silent-cascading-misframes
+The LSM WAL in lsm.py:14-53 has no CRC and no resync capability; a single corrupted length field causes cascading silent data corruption through all subsequent records during replay.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-length-prefix-framing-resilience.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] leveldb-manifest-is-metadata-wal
+LevelDB's MANIFEST is a second write-ahead log that records VersionEdit metadata changes to the live SSTable file set, separate from the user-data WAL.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-leveldb-manifest-pattern.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] manifest-append-is-compaction-commit-point
+In LevelDB, appending a checksummed VersionEdit record to the MANIFEST is the durable commit point for a compaction, with earlier work tentative and later work cleanup.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-leveldb-manifest-pattern.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] current-file-stores-active-manifest-filename
+LevelDB's CURRENT file contains a single line with the filename of the active MANIFEST, and recovery reads CURRENT first then replays the MANIFEST to reconstruct the file set.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-leveldb-manifest-pattern.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] leveldb-current-updates-via-temp-rename
+LevelDB updates CURRENT by writing the new MANIFEST name to a temp file, fsyncing it, and renaming it over CURRENT, making MANIFEST rotation crash-safe.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-leveldb-manifest-pattern.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] rocksdb-versionset-snapshots-file-set
+RocksDB's VersionSet uses immutable Version snapshots of the live file set so readers can continue reading an old Version while a compaction creates and installs a new Version.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-leveldb-manifest-pattern.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] leveldb-merger-tracks-direction-state
+LevelDB's MergingIterator tracks a kForward/kReverse direction state to support bidirectional iteration via Next, Prev, Seek, and SeekToLast.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-leveldb-merger.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] leveldb-merger-find-smallest-largest-linear-scan
+LevelDB's FindSmallest and FindLargest helpers perform O(n) linear scans over child iterators to find the iterator with the smallest or largest key.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-leveldb-merger.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] leveldb-merger-rebuilds-heap-on-direction-change
+When LevelDB's merge direction changes, it repositions each child iterator and rebuilds the heap from scratch using FindSmallest or FindLargest.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-leveldb-merger.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] ddia-repo-lacks-leveldb-cpp-source
+The ddia-implementations repository contains no LevelDB C++ source; table/merger.cc, FindSmallest, FindLargest, and direction enums are absent from the codebase.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-leveldb-merger.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] leveldb-merge-seek-seeks-children-and-rebuilds-heap
+LevelDB's MergingIterator::Seek(target) calls Seek(target) on every child iterator and then rebuilds the heap, costing O(k log k) for k children.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-leveldb-merging-iterator.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] leveldb-merge-iterator-filters-by-snapshot-sequence
+LevelDB's merge iterator operates within a snapshot context and surfaces only entries visible at the reader's sequence number.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-leveldb-merging-iterator.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-range-scan-dict-priority-overrides
+LSMTree.range_scan merges sources into a key-to-(priority,value) dict with increasing priority so newer memtable or SSTable sources override older values for the same key.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-leveldb-merging-iterator.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-reversed-source-order-not-reverse-iteration
+The only reverse usage in lsm.py is reversed(self._sstables) and reversed(self._immutable_memtables), which reverse source priority order rather than iteration direction within SSTables.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-leveldb-merging-iterator.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sstable-scan-uses-sparse-index-start-key
+SSTable.scan uses its sparse index and bisect_right to locate a starting key within a single SSTable file.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-leveldb-merging-iterator.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] leveldb-log-uses-fixed-32kb-blocks
+LevelDB's log format divides the log file into fixed 32 KB blocks of 32,768 bytes.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-leveldb-record-fragmentation.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] leveldb-log-fragment-types-full-first-middle-last
+LevelDB log fragments carry a type byte with values FULL, FIRST, MIDDLE, and LAST to mark record boundaries across blocks.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-leveldb-record-fragmentation.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] leveldb-log-fragment-has-per-fragment-crc
+Each LevelDB log fragment has its own CRC in a 7-byte fragment header of CRC, length, and type.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-leveldb-record-fragmentation.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] leveldb-log-fragment-gap-loses-only-incomplete-record
+In LevelDB's log format, a crash between fragments of a multi-block record causes only that incomplete record to be lost, because block-aligned seeking lets recovery resume after the gap.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-leveldb-record-fragmentation.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] leveldb-filemetadata-includes-file-number-size-key-range
+LevelDB's FileMetaData record stores per-file metadata including file number, file size, smallest key, and largest key.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-leveldb-version-set.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] leveldb-versionedit-is-metadata-delta
+LevelDB's VersionEdit is a delta record describing metadata changes such as adding a file to a level or deleting a file from a level.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-leveldb-version-set.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] leveldb-version-set-replays-manifest-edits
+LevelDB's VersionSet reconstructs the current file catalog by replaying VersionEdit records from the MANIFEST, which is event sourcing for SSTable metadata.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-leveldb-version-set.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sstable-reader-reconstructs-metadata-by-scanning-first-last
+SSTableReader reconstructs min_key and max_key on open by reading the first and last entries from the SSTable file rather than loading them from a persistent manifest.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-leveldb-version-set.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] versionstorageinfo-tracks-sstable-levels-and-key-ranges
+LevelDB/RocksDB's VersionStorageInfo maintains which SSTables exist at each level and their key ranges, providing the metadata needed for bottommost-level detection.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-leveled-compaction-tombstone-policy.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] setup-bottommost-scans-below-output-level
+Compaction::SetupBottomMostLevel() iterates levels from output_level_ + 1 to number_levels_ - 1 and checks each for files overlapping the compaction's key range via VersionStorageInfo; any overlap sets bottommost_level_ to false.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-leveled-compaction-tombstone-safety.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bottommost-false-negative-is-safe
+A false negative from SetupBottomMostLevel() (reporting non-bottommost when the compaction is actually bottommost) wastes space by preserving unnecessary tombstones but does not cause data corruption; a false positive causes data resurrection.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-leveled-compaction-tombstone-safety.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bottommost-enables-three-optimizations
+The bottommost_level_ flag gates tombstone dropping, merge operand collapsing, and sequence number zeroing during ProcessKeyValueCompaction, all of which are unsafe if the flag is wrong.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-leveled-compaction-tombstone-safety.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bottommost-level-enum-is-trigger-not-detection
+BottommostLevelCompaction (kSkip/kForce/etc.) controls whether to schedule bottommost compaction, while SetupBottomMostLevel() determines whether a given compaction is bottommost; they answer orthogonal questions.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-leveled-compaction-tombstone-safety.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] production-lcs-picks-least-overlap-to-minimize-write-amplification
+Production leveled compaction systems such as Cassandra and RocksDB pick the SSTable with the least overlap with the next level to minimize bytes rewritten per compaction and thereby reduce write amplification.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-leveled-compaction-write-amplification.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lcs-max-overlap-prioritizes-convergence-speed
+The teaching leveled-compaction implementation picks the SSTable with the most next-level overlap to resolve the largest cluster of key-range conflicts in a single compaction round, prioritizing convergence speed over write amplification.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-leveled-compaction-write-amplification.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] write-amplification-pressure-requires-sustained-write-load
+The SSTable selection heuristic only materially affects write amplification under sustained write load with background compaction; in a batch-then-compact model the total bytes rewritten to reach a clean state is roughly the same regardless of selection order.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-leveled-compaction-write-amplification.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] stcs-min-threshold-controls-merge-trigger
+In size-tiered compaction, the min_threshold parameter controls how many similarly sized SSTables must accumulate before a merge is triggered; the test uses min_threshold=2.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-leveled-vs-size-tiered-compaction.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] stcs-low-write-high-space-amplification
+Size-tiered compaction has low write amplification and high space amplification because it merges similarly sized groups and allows multiple SSTables with overlapping key ranges to coexist.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-leveled-vs-size-tiered-compaction.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] leveled-high-write-low-space-amplification
+Leveled compaction has high write amplification and low space amplification because entries are rewritten repeatedly as they propagate through levels while non-overlapping key ranges within each level bound duplicate versions.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-leveled-vs-size-tiered-compaction.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] leveled-reads-check-one-sstable-per-level
+With leveled compaction, a point lookup needs to check at most one SSTable per level beyond L0 because key ranges within each level are non-overlapping.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-leveled-vs-size-tiered-compaction.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] event-store-append-notifies-after-persist
+EventStore.append() persists the event before dispatching it to all subscribers in _subscribers.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-live-projection-subscription-mechanism.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] base-projection-catch-up-is-manual-pull
+The base Projection class is pull-based: callers must invoke catch_up() manually to process events since the last known position.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-live-projection-subscription-mechanism.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-rotation-creates-numbered-segment-files
+WAL segment rotation creates numbered .wal files such as 000001.wal and 000002.wal when a segment exceeds max_file_size.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-log-compaction-vs-persistence.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-truncate-closes-active-fd-before-scan
+WriteAheadLog.truncate() flushes, fsyncs, closes the current file descriptor, and sets _fd to None before scanning segment files.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-log-compaction-vs-persistence.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-truncate-deletes-empty-segment-files
+During WAL truncation, any segment file with no surviving records is deleted entirely rather than rewritten.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-log-compaction-vs-persistence.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] base-offsets-initialized-to-zero-per-partition
+Topic initializes _base_offsets to [0] * num_partitions at partitioned_log.py:52.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-log-compaction-vs-retention.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] truncate-caps-count-to-log-length
+Topic.truncate computes actual = min(count, len(log)) before slicing the partition log.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-log-compaction-vs-retention.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] compaction-preserves-keyless-messages
+Topic.compact_partition keeps all keyless messages in addition to the latest message for each key.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-log-compaction-vs-retention.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] compact-partition-returns-removed-count
+Topic.compact_partition returns the number of messages removed by compaction.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-log-compaction-vs-retention.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] compact-empty-log-advances-base-by-old-length
+When compaction removes all messages and new_log is empty, _base_offsets[partition] is set to the previous base plus len(log).
+- Source: /home/forge/workspace/entries/2026/05/29/topic-log-compaction-vs-retention.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] truncation-preserves-contiguous-offsets-without-compaction
+Truncation removes only a contiguous prefix, so surviving offsets remain contiguous unless compaction previously created gaps.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-log-compaction-vs-retention.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-checkpoint-sequence-follows-preceding-mutations
+WriteAheadLog.checkpoint() obtains its sequence number after all preceding append() and append_batch() mutations, so a checkpoint returning N guarantees earlier mutations precede it.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-log-structured-checkpoint-coordination.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-truncate-keeps-records-above-cutoff
+truncate(up_to_seq) removes only records with seq_num <= up_to_seq; records with sequence numbers greater than the cutoff are preserved.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-log-structured-checkpoint-coordination.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] leveldb-manifest-logs-version-edits
+LevelDB records SSTable membership changes as VersionEdit entries appended to the MANIFEST.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-manifest-and-crash-recovery.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] leveldb-fsyncs-manifest-before-file-deletion
+LevelDB fsyncs a VersionEdit to the MANIFEST before deleting old SSTable files, providing crash-safe version transitions.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-manifest-and-crash-recovery.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] leveldb-current-file-points-to-active-manifest
+LevelDB uses a CURRENT file containing a single line that points to the active MANIFEST, enabling atomic switchover during MANIFEST rotation.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-manifest-and-crash-recovery.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sstable-metadata-level-field-not-persisted
+SSTableMetadata in sstable-and-compaction/sstable.py tracks a level field at line 39, but no metadata log persists it across crashes.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-manifest-and-crash-recovery.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-memtable-has-no-bloom-filter
+The LSM tree does not attach any bloom filter to its memtable; `lsm.py` contains no `bloom` or `BloomFilter` references.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-memtable-bloom-filter-lifecycle.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] cbf-membership-requires-all-counters-positive
+`CountingBloomFilter.__contains__` returns true only when every hashed counter position is greater than zero.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-memtable-bloom-filter-lifecycle.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-memtable-delete-writes-tombstone
+The LSM tree's delete operation writes a `TOMBSTONE` into the mutable memtable.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-memtable-bloom-filter-lifecycle.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-allocate-page-checks-free-list-first
+`PageManager.allocate_page()` checks the free list before extending the B-tree data file.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-merge-vs-lazy-free.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-free-page-links-singly-linked-list
+`PageManager.free_page(page_num)` links the freed page into a singly-linked free list stored in page headers.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-merge-vs-lazy-free.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-leaf-next-sibling-sentinel-ffffffff
+B-tree leaf nodes use the sentinel value `0xFFFFFFFF` (`NO_SIBLING`) to indicate no next sibling.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-merge-vs-lazy-free.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-delete-tests-absent
+The B-tree test suite contains no tests for delete, remove, or merge operations.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-merge-vs-lazy-free.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] merkle-verify-proof-is-static-method
+`verify_proof` is a static method that takes raw data and a `MerkleProof` and requires no `MerkleTree` instance.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-merkle-proof-security-model.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] merkle-verification-hashes-data-to-leaf-hash
+`verify_proof` first hashes the raw data with SHA-256 and rejects the proof if the result does not equal `proof.leaf_hash`.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-merkle-proof-security-model.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] merkle-verify-proof-is-iterative
+`verify_proof` recomputes the root by iterating over the proof siblings and hashing upward, with no recursion or tree search.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-merkle-proof-security-model.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-append-increments-seq-before-write
+In WAL `append()`, `_seq_num` is incremented before the record bytes are written to the current file.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-multi-file-replay-ordering.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-rotate-next-filename-increments-last-prefix
+WAL `_rotate()` computes the next filename by parsing the integer prefix of the last WAL file and adding one.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-multi-file-replay-ordering.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-rotation-follows-sync-step
+In WAL `append()`, `_maybe_rotate()` is called after `_do_sync()`, so rotation follows the sync step.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-multi-file-replay-ordering.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] tob-vulnerable-to-dueling-proposer-livelock
+The per-slot Paxos design is vulnerable to livelock when two nodes propose for the same slot simultaneously.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-multi-paxos-vs-single-decree.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] tob-start-proposal-sends-prepare-to-all-nodes
+`_start_proposal` sends `prepare` messages to every node, including the proposing node itself.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-multi-paxos-vs-single-decree.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] multi-paxos-reduces-round-trips-per-slot
+Multi-Paxos with a stable leader reduces steady-state consensus cost from two round trips per slot to one round trip per slot.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-multi-paxos-vs-single-decree.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] mvcc-read-returns-last-visible-version
+MVCCDatabase.read() iterates through a key's versions and returns the last version that _is_visible accepts.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-mvcc-snapshot-isolation.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] mvcc-version-list-per-key
+MVCCDatabase stores versions as a _versions dict mapping each key to a list of Version objects.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-mvcc-snapshot-isolation.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] mvcc-delete-stamps-deleted-by-on-visible-version
+A delete operation in MVCCDatabase does not remove data; it sets deleted_by on the existing visible Version.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-mvcc-snapshot-isolation.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] mvcc-snapshot-read-stable-across-concurrent-commit
+A transaction that has begun reading a key continues to read the same value after another transaction commits a write to that key.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-mvcc-snapshot-isolation.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-compact-removes-tombstones
+LSMTree.compact() merges all SSTables into one and removes tombstones during the merge.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-mvcc-version-lifetime.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] rocksdb-superversion-bundles-memtable-immutable-memtables-version
+In RocksDB, a SuperVersion bundles the current MemTable, the immutable MemTables awaiting flush, and the current Version containing the SSTable file set.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-mvcc-version-lifetime.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] superversion-refcount-delays-old-sstable-cleanup
+A RocksDB iterator increments its SuperVersion's reference count, and compaction can install a new SuperVersion while the old SuperVersion and its SSTables stay alive until the last iterator releases the reference.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-mvcc-version-lifetime.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] leveldb-version-is-immutable-file-list-with-refcount
+In LevelDB, a Version is an immutable list of SSTable files per level and carries a reference count.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-mvcc-version-snapshots.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] leveldb-versionset-holds-current-pointer
+A LevelDB VersionSet holds a current_ pointer to the latest Version.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-mvcc-version-snapshots.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] leveldb-reader-ref-unref-protects-sstable-files
+LevelDB readers call Ref() on the current Version at the start of a read or iterator and Unref() when finished, and the Version and its SSTable files can be deleted only when the count reaches zero.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-mvcc-version-snapshots.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] leveldb-compaction-installs-new-current-version
+LevelDB compaction creates a new Version with updated file lists and installs it as current_, leaving the old Version alive while readers hold references.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-mvcc-version-snapshots.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-compaction-auto-trigger-threshold
+LSMTree triggers compaction automatically when the number of SSTables reaches _compaction_threshold.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-mvcc-version-snapshots.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] python-bytes-never-page-aligned
+Python bytes objects carry a CPython object header before the payload, so the data pointer is not naturally aligned to 4096-byte boundaries.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-o-direct-aligned-io.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] o-direct-requires-three-alignments
+O_DIRECT I/O requires the memory buffer address, file offset, and transfer size to all be multiples of the device sector size, and violating any one produces EINVAL.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-o-direct-aligned-io.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] python-open-allocates-unaligned-buffers
+Python's io.BufferedWriter backing open(..., 'wb') uses an internal buffer allocated by CPython's general-purpose allocator, which guarantees word alignment but not page alignment.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-o-direct-aligned-io.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] mmap-returns-page-aligned-by-definition
+mmap() returns page-aligned memory because the kernel maps at virtual page boundaries, making it usable for O_DIRECT buffers.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-o-direct-aligned-io.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] o-direct-bypasses-page-cache
+O_DIRECT tells the kernel not to buffer the file's reads or writes in the page cache, transferring data directly between the application buffer and the storage device.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-o-direct-and-dio.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] storage-engines-use-flush-and-fsync-for-durability
+The B-Tree PageManager, WAL, Bitcask, and LSM implementations call flush() followed by os.fsync() to force writes to stable storage.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-o-direct-and-dio.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-supports-sync-batch-none-modes
+WriteAheadLog._do_sync supports per-write fsync ('sync'), batched fsync every N writes ('batch'), and no fsync ('none').
+- Source: /home/forge/workspace/entries/2026/05/29/topic-o-direct-and-dio.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] o-direct-exposes-sector-boundary-atomicity
+With O_DIRECT, a single sector-sized write is atomic from the storage device's perspective because writes go directly to the device in sector units.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-o-direct-and-dio.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] orset-remove-moves-tags-to-tombstones-and-deletes-element
+ORSet.remove() updates _tombstones with all active tags for the element and deletes the element from _elements.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-or-set-tombstone-growth.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] riak-causal-context-compresses-tombstones
+Riak uses a compact version vector (causal context) to implicitly tombstone tags at or below the vector's sequence entry, compressing an arbitrary number of tombstones into one integer per replica.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-or-set-tombstone-growth.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-tombstone-gc-not-applicable-to-crdts
+The LSM tree's compact() removes tombstones because it is single-node, whereas an ORSet cannot safely drop tombstones without distributed knowledge of what all replicas have observed.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-or-set-tombstone-growth.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] python-flush-only-reaches-page-cache
+Python file.flush() only pushes data into the OS page cache; os.fsync(fd) is required to force dirty pages to durable storage.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-os-fsync-durability.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-page-manager-defers-fsync-to-sync-close
+B-tree PageManager defers fsync to explicit sync() or close() calls; individual page writes end with flush() only.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-os-fsync-durability.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-tests-stress-page-size-128-max-keys-4
+The B-tree test suite configures BTree with page_size=128 and max_keys_per_page=4 to stress the tightest page boundary.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-page-overflow-and-size-limits.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] write-page-pads-short-pages
+PageManager.write_page pads data shorter than page_size to exactly page_size bytes.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-page-overflow-and-split-mechanics.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] posix-write-not-atomic-for-arbitrary-size
+POSIX write() is not atomic for arbitrarily sized buffers; the OS and disk can commit data in sector-sized chunks (typically 512B or 4KB).
+- Source: /home/forge/workspace/entries/2026/05/29/topic-partial-write-detection.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] torn-write-after-valid-prefix-detected-by-crc
+If a crash interrupts a multi-sector write after the record length prefix and early fields are committed, _read_record sees a complete record but a CRC mismatch catches the stale tail.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-partial-write-detection.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] phi-accrual-computes-phi-from-cdf-survival
+Phi accrual failure detection computes φ = -log10(1 - CDF(elapsed_time_since_last_heartbeat)), where CDF is the cumulative distribution of observed heartbeat inter-arrival times.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-phi-accrual-failure-detector.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] cassandra-phi-keeps-inter-arrival-window
+Cassandra's phi accrual detector keeps roughly the last 1000 heartbeat inter-arrival intervals per peer and fits them to an exponential or normal distribution.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-phi-accrual-failure-detector.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] phi-accrual-allows-per-caller-conviction-thresholds
+Phi accrual allows different callers to act at different φ conviction thresholds (for example gossip at φ > 8 and read repair at φ > 5), unlike the fixed-threshold model's single t_suspect.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-phi-accrual-failure-detector.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] posix-fsync-fdatasync-metadata-scope
+POSIX fsync flushes file data and all file metadata, while fdatasync flushes file data and only the metadata needed to retrieve the data.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-posix-durability-guarantees.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] new-file-durability-requires-parent-directory-fsync
+Making a newly created filename durable requires an fsync on the parent directory file descriptor in addition to fsync on the file, because the directory entry is parent-directory metadata.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-posix-durability-guarantees.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] ext4-auto-da-alloc-limits-to-rename-replace
+ext4's auto_da_alloc feature mitigates missing directory fsync for replace-via-rename patterns but does not help for new file creation.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-posix-durability-guarantees.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] postgres-nbtree-half-dead-flag-enables-recovery
+If a crash occurs between PostgreSQL's half-dead marking and sibling unlink phases, the durable half-dead flag lets recovery identify and finish the page deletion.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-postgres-nbtree-half-dead-state-machine.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] postgres-nbtree-half-dead-page-preserves-content-and-is-skippable
+PostgreSQL's half-dead phase preserves the page's content while removing the parent downlink, so a scan following a sibling link can detect the half-dead flag and skip it.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-postgres-nbtree-half-dead-state-machine.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] postgres-nbtree-phase2-deletion-often-run-by-vacuum
+PostgreSQL's second page-deletion phase is often run by VACUUM rather than by the original deleter.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-postgres-nbtree-half-dead-state-machine.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] postgres-nbtree-uses-right-links-and-high-keys
+PostgreSQL nbtree uses right-link pointers and high keys on pages so readers can descend without holding parent latches and detect concurrent splits.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-postgres-nbtree-readme.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] postgres-nbtree-incomplete-split-repaired-cooperatively
+PostgreSQL nbtree repairs an incomplete split cooperatively: a later inserter that encounters the incomplete split finishes it before proceeding.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-postgres-nbtree-readme.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-split-propagates-mid-key-return
+In btree.py, _insert_into propagates splits upward by returning (mid_key, new_page_num) for the parent to insert, rather than using Lehman-Yao detect-and-finish.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-postgres-nbtree-readme.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] postgres-nbtree-pagedel-and-unlink-are-separate-wal-operations
+PostgreSQL's _bt_pagedel marks a page half-dead in one WAL-logged operation, and _bt_unlink_halfdead_page removes it from the sibling chain in a separate WAL-logged operation.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-postgres-nbtree-vacuum.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-fix-plan-scopes-out-merge-redistribute
+b-tree-storage-engine/fix-plan.md Bug 5 scopes the page-freeing fix to freeing empty leaves and removing parent pointers, explicitly leaving full merge/redistribute out of scope.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-postgres-nbtree-vacuum.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-allocate-page-pop-free-list-or-append
+PageManager.allocate_page reuses pages by popping from the free list and falls back to appending new pages when the free list is empty.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-postgres-nbtree-vacuum.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] gitignore-is-minimal
+.gitignore contains only three entries (__pycache__/, *.pyc, .pytest_cache/) with no test-related exclusions.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-pytest-configuration.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] tester-test-files-not-discovered
+Files named tester_test_*.py are not collected by pytest's default test_*.py / *_test.py globs because they start with 'tester_' and do not end with '_test.py'.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-pytest-default-collection.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-range-scan-uses-search-to-find-start-leaf
+The B-tree range scan's first phase uses `_search` to descend from the root through internal nodes to the leaf containing `start_key`.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-range-scan-implementation.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-range-scan-walks-leaf-chain-via-next-sibling
+The B-tree range scan's second phase walks the leaf chain by reading `next_sibling` from each leaf and calling `PageManager.read_page(next_sibling)` until the sentinel or an out-of-range key is reached.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-range-scan-implementation.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] leaf-page-format-sibling-after-header
+Every leaf page stores a 4-byte `next_sibling` page number immediately after the 3-byte page header (type + num_keys), before any key-value entries.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-range-scan-implementation.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-sibling-chain-gives-o1-leaf-traversal
+The B-tree sibling chain gives O(1) leaf-to-leaf traversal, making range scans proportional to the number of results rather than the tree height.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-range-scan-implementation.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] leveldb-log-format-uses-32kb-block-alignment
+LevelDB's log format divides the file into fixed-size 32KB blocks, with each record carrying its own checksum, length, and type header.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-record-boundary-recovery.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] leveldb-record-header-checksum-length-type
+A LevelDB log record header consists of a 4-byte checksum, a 2-byte length, and a 1-byte type field.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-record-boundary-recovery.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] leveldb-log-type-field-handles-spanning-records
+LevelDB's record type field uses FIRST, MIDDLE, LAST, and FULL values to handle records that span block boundaries.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-record-boundary-recovery.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] leveldb-log-resyncs-to-next-block-after-corruption
+In LevelDB's block-aligned log format, corruption can be handled by skipping to the next 32KB block boundary and resuming scanning, losing at most about 32KB of data.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-record-boundary-recovery.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-format-has-no-magic-sentinel
+The WAL format starts with `record_length | crc | seq_num | op_type | key_len` and does not prepend a magic number or sentinel to every record.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-record-boundary-recovery.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-format-has-no-magic-sentinel
+The Bitcask format begins with `crc32 | key_size | value_size` and does not prepend a magic number or sentinel to every record.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-record-boundary-recovery.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] renewal-preserves-token-identity
+`LockService.renew` extends the TTL without incrementing the counter or issuing a new token, so the lock holder's ordering position relative to future acquirers is unchanged.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-redlock-controversy.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] unfenced-server-exists-as-negative-example
+`UnfencedResourceServer` deliberately omits token validation to demonstrate that without fencing, a stale client can silently corrupt shared state.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-redlock-controversy.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] redlock-lacks-fencing-token
+Redlock provides TTL-based mutual exclusion but does not provide a fencing token or server-side stale-write rejection mechanism.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-redlock-controversy.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] fencing-moves-safety-to-storage-server
+Fencing tokens move the safety guarantee from the time-dependent lock to the storage server, which uses a monotonic token comparison that is not time-dependent.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-redlock-controversy.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-record-dataclass-has-no-old-value-field
+The `WALRecord` dataclass stores `seq_num`, `op_type`, `key`, `value`, and `checksum`, with no field for the previous value of the key.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-redo-vs-undo-logging.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-replay-blindly-reinserts-wal-pairs
+The LSM tree's `_replay_wal` iterates over WAL replay and re-inserts every key-value pair into the memtable without consulting old values.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-redo-vs-undo-logging.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] append-only-engines-eliminate-need-for-undo
+Append-only storage engines never overwrite existing data on disk, eliminating the core problem undo logging solves: restoring overwritten pages.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-redo-vs-undo-logging.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-lacks-page-lsns-and-active-transaction-table
+This WAL implementation lacks before-images, page LSNs, and an active transaction table, so it cannot undo partial transactions or detect whether a replayed operation was already applied.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-redo-vs-undo-logging.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] undo-logging-requires-dirty-pages-before-commit
+Undo logging forces dirty data pages to reach disk before the commit record so that a crash never leaves committed-but-unwritten data.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-redo-vs-undo-logging.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] aries-logs-before-and-after-images-plus-lsns
+ARIES-style recovery logs both before-images and after-images and stamps an LSN (Log Sequence Number) on every data page.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-redo-vs-undo-logging.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] erlang-bitcask-defers-segment-deletion-via-refcount
+In Erlang Bitcask, old segment files stay on disk until the last reader's reference count drops to zero, and compaction swaps the keydir atomically.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-reference-counted-file-handles.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] log-structured-bitcask-fresh-handle-per-get
+`log-structured-hash-table/bitcask.py:get()` opens a fresh file handle with `with open(...)` on every read, bypassing the `_file_handles` cache entirely.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-reference-counted-file-handles.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] log-structured-bitcask-handle-cache-only-during-recovery
+In `log-structured-hash-table/bitcask.py`, the `_file_handles` cache is only used during startup recovery (`_scan_segment`), not for serving reads.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-reference-counted-file-handles.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] python-bitcask-lacks-atomic-keydir-swap
+Both Python Bitcask implementations mutate the keydir dict directly in place with no atomic swap or generation concept, unlike Erlang Bitcask's ETS table swap.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-reference-counted-file-handles.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] posix-rename-is-atomic
+POSIX `os.rename()` updates directory entries in a single atomic operation so concurrent readers see either the old name or the new name, never a torn state.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-rename-durability-guarantees.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-rotation-lacks-directory-fsync
+`write-ahead-log/wal.py:_rotate` creates a new WAL file and closes the old one without fsyncing the WAL directory, so the new file's directory entry is not crash-durable.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-rename-durability-guarantees.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-compaction-rename-same-directory-single-fsync
+In both Bitcask implementations the compaction rename's source and destination are in the same data directory, so a single directory fsync would suffice for durability.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-rename-durability-guarantees.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] seen-check-precedes-conflict-resolution
+`apply_remote_change` performs the `_seen` idempotency check before conflict resolution, after extracting the change fields.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-ring-topology-propagation.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] record-seen-called-on-accepted-remote-changes
+`_record_seen` is called for accepted remote changes as well as local `put` and `delete`, so each forwarded change is processed at most once per node.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-ring-topology-propagation.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] requeue-without-seen-causes-infinite-loop
+Without `_seen` idempotency, re-enqueueing accepted remote changes into `_pending` causes an infinite propagation loop in a ring topology.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-ring-topology-propagation.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] ring-sends-only-to-successor
+In `Topology.RING`, each node sends its pending changes only to its successor at `(i+1) % len(_node_order)` during a sync round.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-ring-vs-all-to-all-propagation-delay.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] gossip-convergence-test-bound-log2n
+The gossip protocol test asserts convergence within `5 * log2(N) + 5` rounds for clusters up to 64 nodes.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-ring-vs-all-to-all-propagation-delay.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sync-return-counts-apply-remote-change-calls
+`MultiLeaderCluster.sync()` returns the number of `apply_remote_change` calls, including idempotent skips, rather than the number of accepted changes.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-ring-vs-all-to-all-propagation-delay.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] custom-merge-synthetic-timestamp-max-plus-one
+`CUSTOM_MERGE` conflict resolution creates a synthetic timestamp equal to `max(local_ts, remote_ts) + 1` and a canonical origin equal to `max(local_origin, remote_node)`.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-ring-vs-all-to-all-propagation-delay.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] all-to-all-sync-cost-quadratic
+`ALL_TO_ALL` topology delivers pending changes to every other node in one round, giving O(N²) change deliveries per sync round.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-ring-vs-all-to-all-propagation-delay.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-compaction-triggers-on-sstable-count-threshold
+`LSMTree.compact()` is triggered when `len(self._sstables) >= self._compaction_threshold`.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-rocksdb-bottommost-compaction.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] rocksdb-bottommost-level-compaction-controls-deepest-level
+RocksDB's `BottommostLevelCompaction` enum controls when the engine performs expensive compaction of the deepest level for space reclamation.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-rocksdb-bottommost-compaction.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] rocksdb-is-bottommost-level-flag-enables-tombstone-removal
+RocksDB's `CompactionJob::is_bottommost_level` flag indicates that a compaction job is at the bottom level and can safely drop tombstones.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-rocksdb-bottommost-compaction.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] no-rocksdb-bottommost-level-enum
+The codebase contains no `BottommostLevelCompaction` enum or equivalent RocksDB-style bottommost-level policy enum.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-rocksdb-bottommost-level-enum.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-compact-unconditionally-removes-tombstones
+`LSMTree.compact()` unconditionally strips tombstones during merge, with no policy control to skip space reclamation.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-rocksdb-bottommost-level-enum.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] codebase-lacks-compaction-filters
+Neither compaction module implements RocksDB-style compaction filters, user-defined callbacks that transform or drop entries during compaction.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-rocksdb-bottommost-level-enum.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] kforceoptimized-skips-non-shrinking-files
+RocksDB's `kForceOptimized` mode skips bottommost files that contain no tombstones or overwrites to avoid rewriting data that will not shrink.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-rocksdb-bottommost-level-enum.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] compaction-requires-full-read-for-update
+Without a merge operator, any read-modify-write workload must perform a full read path before writing, negating the LSM tree's write amplification advantage.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-rocksdb-merge-operator.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] partial-merge-avoids-cross-level-reads
+RocksDB's PartialMerge enables compaction to collapse merge operands without accessing the base value in deeper levels.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-rocksdb-merge-operator.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] rocksdb-mergeoperator-defines-fullmerge-and-partialmerge
+RocksDB's MergeOperator interface defines FullMerge (called with a base value) and PartialMerge (called without a base value).
+- Source: /home/forge/workspace/entries/2026/05/29/topic-rocksdb-merge-operator.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] rocksdb-merge-writes-deltas-without-reading
+RocksDB's Merge(key, operand) writes a delta without reading the existing value, unlike Put(key, new_value).
+- Source: /home/forge/workspace/entries/2026/05/29/topic-rocksdb-merge-operator.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] record-length-corruption-cascades-to-crc-failure
+Corruption of the WAL record_length field cascades into a CRC mismatch because it changes which bytes _read_record consumes, making explicit CRC coverage unnecessary.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-seq-num-integrity-gap.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] seq-num-is-semantic-not-framing
+The WAL seq_num field is a semantic field, not a framing field; a corrupted seq_num produces a structurally valid record that passes all integrity checks the WAL performs.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-seq-num-integrity-gap.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-seq-num-drives-truncate-and-replay-filtering
+The WAL seq_num drives truncate (keeps records with seq_num > up_to_seq) and replay filtering (skips records with seq_num <= after_seq).
+- Source: /home/forge/workspace/entries/2026/05/29/topic-seq-num-integrity-gap.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] seq-num-deflation-causes-truncate-data-loss
+A deflated seq_num can cause truncate to incorrectly discard committed records, silently losing data.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-seq-num-integrity-gap.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-wal-lacks-fsync
+The LSM tree's WAL append calls only self._fd.flush() and never os.fsync(), so it is not crash-safe.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-shadow-paging-or-steal-no-force.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sstable-writer-finish-lacks-fsync
+SSTableWriter.finish() calls close() without any preceding fsync(), so SSTable data may remain in the page cache.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-shadow-paging-or-steal-no-force.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] no-directory-fsync-in-codebase
+No module in the codebase fsyncs a directory file descriptor; the pattern os.open(dir, os.O_RDONLY) + os.fsync(dir_fd) appears nowhere.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-shadow-paging-or-steal-no-force.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] leaf-chain-enables-range-scan-cost
+The leaf sibling chain allows a range scan to descend once to the first matching leaf (h page reads) and then walk horizontally, costing O(h + L) page reads for N results spanning L leaves.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-sibling-pointer-maintenance.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] leaf-split-rewire-costs-one-extra-page-write
+During a leaf split, rewiring sibling pointers costs one extra page write per split.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-sibling-pointer-maintenance.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] page-manager-allocate-page-unprotected
+PageManager.allocate_page performs an unprotected read-modify-write on the metadata page; two concurrent callers would allocate the same page number.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-sibling-pointer-maintenance.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] no-sibling-sentinel-value
+The sentinel NO_SIBLING = 0xFFFFFFFF marks the rightmost leaf in the B-tree.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-sibling-pointer-maintenance.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] leveled-nonoverlap-bounds-missing-key-probes
+In leveled compaction with non-overlapping ranges within each level, a missing-key lookup checks at most one SSTable per level, making worst-case cost O(L) in the number of levels.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-size-tiered-vs-leveled-read-amplification.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bloom-filter-short-circuits-missing-key-probes
+Bloom filters can short-circuit missing-key lookups by skipping SSTables whose key ranges contain the key but whose Bloom filter returns false.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-size-tiered-vs-leveled-read-amplification.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sstable-sparse-index-bounds-per-table-cost
+Both SSTable implementations use a sparse index with binary search to bound the per-SSTable lookup cost, but this does not reduce the number of SSTables that must be consulted.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-size-tiered-vs-leveled-read-amplification.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sstable-metadata-has-min-max-keys
+SSTableMetadata contains min_key and max_key fields that enable range checks before any I/O.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-size-tiered-vs-leveled-read-amplification.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] tumbling-aggregator-assigns-each-result-to-one-window
+TumblingWindowAggregator assigns each JoinResult to exactly one non-overlapping time bucket via floor division on join_timestamp, so no result is counted twice
+- Source: /home/forge/workspace/entries/2026/05/29/topic-sliding-vs-tumbling-windows.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] reads-never-consult-hint-nodes
+HintedHandoffStore.get only queries nodes returned by get_preferred_nodes, so data stored only as hints on substitute nodes is invisible to readers until handoff completes
+- Source: /home/forge/workspace/entries/2026/05/29/topic-sloppy-quorum-tradeoffs.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] no-persistence-api-exists
+A grep for `persist|serialize|save|dump|load|restore` across the project returns zero matches
+- Source: /home/forge/workspace/entries/2026/05/29/topic-snapshot-persistence.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] event-log-persists-but-snapshots-do-not
+EventStore persists events to a JSONL file via _persist_event, but has no mechanism to persist or reload snapshots from disk
+- Source: /home/forge/workspace/entries/2026/05/29/topic-snapshot-storage-format.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] mvcc-writes-versions-eagerly
+MVCCDatabase writes versions immediately into the shared `_versions` dict, tagged with the creating transaction's ID, before the transaction commits.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-snapshot-vs-ssi-tradeoffs.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] mvcc-store-contains-mixed-commit-states
+Because MVCCDatabase writes versions eagerly before commit, its `_versions` store can contain versions from committed, uncommitted, and aborted transactions simultaneously.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-snapshot-vs-ssi-tradeoffs.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] ssi-write-skew-detection-uses-commit-timestamp-greater-than-start
+SSIDatabase write skew detection identifies concurrent transactions by checking `commit_timestamp > tx.start_timestamp`.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-snapshot-vs-ssi-tradeoffs.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-crash-after-right-page-log-leaves-orphan-right-page
+If a crash occurs after the new right page is WAL-logged but before the modified left page is WAL-logged, recovery produces a state where the left page still points to its old sibling and the right page is orphaned (unreachable from the sibling chain).
+- Source: /home/forge/workspace/entries/2026/05/29/topic-split-and-sibling-update-atomicity.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-no-sibling-sentinel-is-0xffffffff
+The rightmost leaf uses the sentinel value `NO_SIBLING = 0xFFFFFFFF` to mark the end of the sibling chain.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-split-during-insert.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-leaf-page-format-starts-with-type-num-keys-next-sibling
+The serialized leaf page format begins with a 1-byte page type, 2-byte key count, and 4-byte next_sibling pointer, followed by entries.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-split-during-insert.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-root-split-grows-height
+When the root splits, `put` creates a new root page with the promoted key and two children (old root and new page), and increments the tree height by 1.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-split-propagation.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sqlite-fsyncs-directories-after-file-ops
+SQLite's Unix VFS calls fsync on the parent directory file descriptor after file creation, rename, and journal/WAL lifecycle events.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-sqlite-durability-model.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sqlite-fcntl-sync-abstracts-platform-differences
+SQLITE_FCNTL_SYNC is part of SQLite's VFS abstraction that lets sync policy use fsync, fdatasync, or F_FULLFSYNC depending on the platform.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-sqlite-durability-model.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sqlite-uses-write-temp-fsync-rename-fsync-dir-protocol
+SQLite, PostgreSQL, and RocksDB follow a four-step file replacement protocol: write a temporary file, fsync the temporary file, rename it to the final name, then fsync the parent directory.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-sqlite-durability-model.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sqlite-fsyncs-new-file-dir-before-journal-invalidation
+SQLite ensures a new file's directory entry is fsynced before invalidating the journal or WAL, so the new file is durable before old recovery data is discarded.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-sqlite-durability-model.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-sstable-uses-bisect-right-to-select-sparse-block
+The lsm.py SSTable point lookup uses bisect.bisect_right(keys, key) - 1 on sparse-index keys to choose the candidate block.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-sstable-block-format.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-sstable-scan-bounded-by-next-index-or-footer
+In lsm.py, a block scan is bounded by the next sparse-index offset, or by the footer start when the selected block is the last one.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-sstable-block-format.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sstable-zero-footer-count-causes-all-keys-missing
+When the SSTable trailer's count field decodes to 0, load_index() leaves the sparse index empty and get() returns (False, None) for every key.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-sstable-footer-integrity.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sstable-footer-start-past-eof-causes-struct-error
+In lsm.py load_index(), a corrupted footer_start beyond EOF makes f.seek() succeed, but subsequent reads return empty bytes and struct.unpack raises struct.error.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-sstable-footer-integrity.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sstable-corrupted-timestamp-can-select-wrong-merge-entry
+A bit-flip in an SSTable timestamp decodes as a valid float with no checksum, which can cause merge_sstables to pick the wrong entry when resolving by highest timestamp.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-sstable-magic-number-vs-crc.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sstable-merge-tombstone-removal-defaults-off
+merge_sstables has a remove_tombstones parameter that defaults to False, so tombstone removal is explicitly opt-in.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-sstable-tombstone-gc-safety.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] multi-leader-tombstone-carries-timestamp-and-origin
+Multi-leader replication stores each tombstone tuple with the value, remote timestamp, remote node, and is_tombstone flag.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-sstable-tombstone-gc-safety.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] stcs-compaction-is-count-triggered
+Size-tiered compaction in `log-structured-merge-tree/lsm.py` triggers when `len(self._sstables) >= self._compaction_threshold`, based on SSTable count rather than SSTable size or level overflow.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-stcs-vs-lcs-tradeoffs.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lcs-compaction-triggered-by-l0-count-or-level-size
+Leveled compaction triggers when Level 0 has at least `l0_trigger` SSTables or when any level exceeds its size budget.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-stcs-vs-lcs-tradeoffs.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lcs-write-amplification-via-cascade-rewrites
+Leveled compaction can rewrite SSTables already existing in the next level when a level overflows, causing write amplification through cascading rewrites across levels.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-stcs-vs-lcs-tradeoffs.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] cassandra-defaults-to-stcs
+Cassandra uses size-tiered compaction as its default compaction strategy.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-stcs-vs-lcs-tradeoffs.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] rocksdb-defaults-to-leveled-compaction
+RocksDB defaults to leveled compaction.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-stcs-vs-lcs-tradeoffs.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] rocksdb-superversion-wraps-memtable-and-sstable-list
+RocksDB's `SuperVersion` wraps the current memtable, immutable memtables, and current SSTable list into a single versioned snapshot.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-superversion-refcount-implementation.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] superversion-refcount-defers-sstable-deletion
+In the `SuperVersion` pattern, old SSTable files are deleted only when the last reader using that version releases its reference.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-superversion-refcount-implementation.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-lacks-superversion-and-context-manager
+The LSM module has zero references to `SuperVersion` or `super_version` and no `__enter__`/`__exit__` definitions.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-superversion-refcount-implementation.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-range-scan-iterates-sstables-forward
+`LSMTree.range_scan()` iterates `self._sstables` in forward order at line 280.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-superversion-refcount-implementation.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] gossip-timeouts-configurable-with-defaults
+`GossipProtocol.__init__` accepts configurable `t_suspect=5`, `t_dead=10`, and `t_cleanup=20` timeout parameters.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-swim-protocol.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] gossip-round-is-bidirectional-exchange
+Each gossip round performs a bidirectional exchange in which both nodes send their full membership lists to each other.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-swim-protocol.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] gossip-lacks-piggyback-dissemination
+The gossip implementation has no piggyback dissemination, and grep for `piggyback` or `disseminat` returns zero results.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-swim-protocol.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] dev-tests-longer-than-tester-files
+Developer `test_*.py` files are consistently longer than tester files, for example 207 vs 125 lines for bloom-filter and roughly 300 vs 200 lines for b-tree.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-test-coverage-gaps.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] tester-tests-print-passed-markers
+Tester test files end each test with `print('test_xxx PASSED')`, making silence a secondary failure signal in addition to pytest's exit code.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-test-coverage-gaps.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] tester-covers-full-dynamo-lifecycle-integration
+`leaderless-replication/test_dynamo_tester.py:test_spec_example_full` exercises the entire Dynamo lifecycle including write, read, node failure, degraded quorum write, recovery, read repair, quorum failure, and anti-entropy in a single test.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-test-coverage-gaps.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-dev-tests-cover-wal-crash-recovery
+`b-tree-storage-engine/test_btree.py` includes developer-only tests for WAL crash recovery at line 119, uncommitted WAL entries at line 144, and delete freeing empty leaves at line 171.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-test-coverage-gaps.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] code-expert-tool-state-only-topics-json
+The `.code-expert/` directory contains only `topics.json`; it has no templates, specs, or generator configuration.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-tester-generation-pipeline.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] code-expert-workflow-steps-sequence
+The documented code-expert workflow consists of the steps scan, explore, explain, propose beliefs, review, and derive.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-tester-generation-pipeline.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bloom-tester-omits-edge-case-tests
+`bloom-filter/tester_test_bloom_filter.py` omits edge-case tests present in `test_bloom_filter.py`, including `test_duplicate_add`, `test_union_incompatible`, and `test_counting_double_add_remove`.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-tester-generation-pipeline.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] assert-abort-is-failure-signal
+In `tester_test_*.py` files, a test failure is signaled by an `assert` traceback that halts execution before the corresponding `PASSED` print statement.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-tester-runner-system.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-tester-main-block-prints-all-tests-passed
+`b-tree-storage-engine/tester_test_btree.py` has a `__main__` block that calls every test function sequentially and ends with `print("\nAll tests PASSED")`.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-tester-runner-system.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-tester-requires-no-test-framework
+`b-tree-storage-engine/tester_test_btree.py` requires only Python, `tempfile`, and the `btree` module; it does not require pytest or any test framework.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-tester-vs-pytest-test-duality.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] topics-json-references-tester-generation
+`.code-expert/topics.json` line 1987 contains a topic asking how the code-expert workflow generates `tester_test_*.py` files from specs.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-tester-runner-system.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] tester-test-files-colocated
+Every `tester_test_*.py` file lives in the same directory as the module it tests, not in a centralized `tests/` directory.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-tester-test-file-locations.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] tester-test-195-functions-63-classes
+The repository contains 195 `def test_*` functions and 63 test classes spread across all `tester_test_*.py` files.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-tester-test-file-locations.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] tester-test-files-are-runnable-test-suites
+Each `tester_test_*.py` file contains runnable `def test_*` functions that assert behavior, not harness or infrastructure code.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-tester-test-file-locations.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] tester-tests-have-spec-aligned-docstrings
+`tester_test_*.py` test functions include docstrings that mirror spec requirements (e.g., `test_determinism` has the docstring `"Same key always maps to same node."`), unlike `test_*.py` functions which generally lack such docstrings.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-tester-test-pattern.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] tester-label-denotes-qa-validation-role
+Filenames such as `leaderless-replication/test_dynamo_tester.py` and `unbundled-database/test_tester_validation.py` use docstrings that explicitly label them as QA/tester-stage validation artifacts.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-tester-test-pattern.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] tester-test-btree-manual-error-handling
+`tester_test_btree.py` tests error conditions with manual `try`/`except`, while `test_btree.py` uses `pytest.raises`.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-tester-vs-pytest-test-duality.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] tester-test-btree-single-fat-test
+`tester_test_btree.py:test_basic_put_get` is a single 37-line function that exercises put, get, contains, split, update, delete, min/max, and close, whereas `test_btree.py` splits these operations across separate test functions.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-tester-vs-pytest-test-duality.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] tester-main-block-appears-in-13-modules
+The `if __name__ == '__main__':` block pattern appears in `tester_test_*.py` files across 13 modules.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-tester-vs-pytest-test-duality.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] pytest-files-rely-on-pytest-runner
+The `test_*.py` files import pytest and use bare `assert` statements, relying on pytest for discovery, execution, and reporting.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-tester-vs-test-convention.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] pytest-files-have-no-main-guard
+The `test_*.py` files contain no `if __name__` blocks, so they are designed exclusively to run via pytest.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-tester-vs-test-convention.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] tester-files-count-thirteen-main-blocks
+The repo contains 13 `if __name__ == "__main__":` blocks in `tester_test_*.py` files.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-tester-vs-test-convention.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] 3pc-inserts-precommit-phase
+Three-Phase Commit inserts a pre-commit phase between the vote and the final commit decision.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-three-phase-commit.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] 3pc-precommit-implies-all-voted-yes
+A 3PC participant in the pre-commit state knows that all participants voted YES, allowing it to commit safely if the coordinator fails.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-three-phase-commit.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] 3pc-prepared-without-precommit-can-abort
+A 3PC participant that voted YES but has not received PreCommit can safely abort if the coordinator fails.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-three-phase-commit.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] 3pc-requires-bounded-network-delays
+Three-Phase Commit's timeout-based resolution requires bounded network delays to distinguish a dead coordinator from a slow message.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-three-phase-commit.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] 3pc-trades-extra-round-trip-for-nonblocking
+3PC eliminates the 2PC blocking window at the cost of an extra round trip for the pre-commit phase.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-three-phase-commit.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsht-tombstone-costs-20-value-bytes
+In `log-structured-hash-table/bitcask.py`, a tombstone record sets `value_size` to 20 (the sentinel length), costing 20 extra bytes per delete before compaction.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-tombstone-encoding.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hash-index-tombstone-costs-zero-value-bytes
+In `hash-index-storage/bitcask.py`, a tombstone record sets `value_size` to 0, so it adds no value bytes to the record.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-tombstone-encoding.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsht-tombstone-crc-covers-sentinel
+In `log-structured-hash-table/bitcask.py`, the CRC for a tombstone record covers the key plus the 20-byte tombstone sentinel.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-tombstone-encoding.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hash-index-tombstone-crc-covers-key-only
+In `hash-index-storage/bitcask.py`, the CRC for a tombstone record covers the key only because the value length is zero.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-tombstone-encoding.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsht-tombstone-detection-reads-value
+In `log-structured-hash-table/bitcask.py`, tombstone detection during `_scan_segment` requires reading and comparing the full value bytes against the sentinel.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-tombstone-encoding.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hash-index-tombstone-detection-uses-size
+In `hash-index-storage/bitcask.py`, tombstone detection checks the `value_size` field equal to 0 without reading value bytes.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-tombstone-encoding.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] gc-grace-seconds-default-10-days
+Cassandra's `gc_grace_seconds` defaults to 864,000 seconds (10 days), the window during which anti-entropy must propagate a tombstone to all replicas before compaction may drop it.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-tombstone-gc-and-repair-window.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] riak-delete-modes-three
+Riak offers three delete modes: `keep` (retain tombstones indefinitely), `timeout` (default 3 seconds), and `immediate` (remove after all vnode acknowledgments).
+- Source: /home/forge/workspace/entries/2026/05/29/topic-tombstone-gc-and-repair-window.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sstable-compaction-never-removes-tombstones
+The SSTable `merge_sstables` function accepts `remove_tombstones=False` and the `CompactionManager` never sets it to true, so partial compactions retain tombstones.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-tombstone-gc-and-repair-window.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] tombstone-lifetime-space-safety-tradeoff
+Longer tombstone lifetimes waste storage but tolerate longer node outages; shorter lifetimes save space but risk data resurrection.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-tombstone-gc-and-repair-window.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] gc-grace-shorter-than-downtime-resurrects-data
+If a node is offline longer than `gc_grace_seconds`, the tombstone can be purged before that node receives it, and the node's stale live value can resurrect via repair.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-tombstone-gc-and-repair-window.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsht-recovery-path-divergence
+`_recover` selects between `_load_hint_file` (no tombstone handling) and `_scan_segment` (with tombstone handling) based on hint file existence, so the same segment can produce different index state.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-tombstone-handling-in-hint-files.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsht-hint-path-surfaces-tombstone-bytes
+If hint files exist for both a put and a later delete of the same key, `_load_hint_file` adds the tombstone offset and `get()` returns the raw tombstone sentinel bytes because it lacks a tombstone check.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-tombstone-handling-in-hint-files.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hash-index-hint-load-lacks-tombstone-check
+`hash-index-storage/bitcask.py`'s `_load_hint_file` also unconditionally adds every hint entry to the index, with no tombstone check.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-tombstone-handling-in-hint-files.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] tombstone-encoded-in-value-not-header
+Neither `hash-index-storage/bitcask.py` nor `log-structured-hash-table/bitcask.py` uses a header flag for tombstones; deletion status is encoded in the value payload instead (empty string vs. magic byte sentinel).
+- Source: /home/forge/workspace/entries/2026/05/29/topic-tombstone-semantics.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] gossip-convergence-bound-is-5-log2-n-plus-5
+The test `test_convergence_speed_olog_n` asserts gossip converges within `5 * math.log2(n_nodes) + 5` rounds, empirically validated for N = 8, 16, 32, 64.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-topology-propagation-bounds.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] vnode-count-scales-with-weight
+A node's actual virtual-node count is `int(self.num_vnodes * weight)` at `consistent_hashing.py:31`, so weighted nodes get proportionally more ring positions.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-virtual-node-count-tuning.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-log-write-forces-fsync
+WAL.log_write appends to the WAL file and calls both flush() and os.fsync() to ensure durability.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-wal-atomicity-gap.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] allocate-page-crash-leaks-page
+If a crash occurs after allocate_page advances next_free but before the caller writes data to the allocated page via WAL, the page is permanently leaked.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-wal-atomicity-gap.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] allocate-page-crash-corrupts-free-list
+If a crash occurs after allocate_page updates free_head but before the reused page is written with valid B-tree data, the page is orphaned with stale free-list node data.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-wal-atomicity-gap.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] free-page-two-non-atomic-writes
+PageManager.free_page performs two non-atomic direct writes (the freed page's data, then metadata) with no WAL logging and no fsync.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-wal-atomicity-gap.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] replay-filters-by-seq-and-op-type-only
+replay() applies only a sequence number filter (skip records with seq_num <= after_seq) and an op-type filter (keep only PUT/DELETE records), returning all PUT/DELETE records regardless of whether a matching COMMIT record exists.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-wal-batch-atomicity-gap.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] test-wal-basic-lacks-crash-mid-batch-test
+test_basic in test_wal.py verifies that replay() returns the correct count of PUT/DELETE records but includes no test for crash-mid-batch recovery.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-wal-batch-atomicity-gap.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] large-batch-crash-leaves-partial-batch
+If a batch is large enough or the OS flushes page-cache pages selectively, a crash can leave the batch's PUT records on disk without the COMMIT record, causing replay to return partial batch records.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-wal-batch-atomicity-gap.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-flush-is-checkpoint
+In the LSM tree, the memtable flush serves as the checkpoint: it freezes the memtable, writes it to an SSTable, and truncates the WAL.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-wal-checkpoint-protocol.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-checkpoint-writes-op-checkpoint-record
+The standalone WAL's checkpoint() method writes an OP_CHECKPOINT record (opcode value 4) with an empty payload into the log stream.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-wal-checkpoint-protocol.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-read-path-validates-crc
+_read_record recomputes CRC32 on every record read and raises ValueError on mismatch, so corrupted records are not silently accepted as long as length fields parse.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-wal-checksum-framing.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] test-wal-corruption-verifies-only-first-record-survives
+test_corruption in test_wal.py corrupts the last 5 bytes of a WAL file and verifies that only the uncorrupted first record survives replay.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-wal-checksum-framing.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-crc-input-excludes-seq-num
+The CRC32 input is op_type_byte + key + value; seq_num is not checksummed, so a bit-flip in the sequence number is undetectable.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-wal-checksum-framing.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] truncate-fsyncs-before-rewrite
+truncate() flushes and fsyncs the current WAL file descriptor and closes it before iterating over WAL files to keep only records with seq_num > up_to_seq.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-wal-commit-protocol.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] crash-between-data-sync-and-truncate-safe
+If a crash occurs after the data file is synced but before the WAL is truncated, recovery replays already-applied operations; this is safe as long as WAL replay is idempotent.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-wal-commit-protocol.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] checkpoint-is-just-marker
+checkpoint() writes an OP_CHECKPOINT record and forces a sync, but it does not trigger any data flush or WAL truncation on its own; a caller must coordinate those steps.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-wal-commit-protocol.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-iterate-replay-lock-scope
+Both iterate() and replay() in write-ahead-log/wal.py hold self._lock only during fd.flush() and release it before the lock-free file reads performed by _read_all_records().
+- Source: /home/forge/workspace/entries/2026/05/29/topic-wal-concurrency-safety.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-flush-not-fsync-before-iteration
+iterate() and replay() call fd.flush() but not os.fsync() before reading, so buffered writes reach the OS page cache but are not guaranteed durable before iteration.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-wal-concurrency-safety.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-crc-excludes-length-and-seqnum
+In write-ahead-log/wal.py, the CRC covers only op_type + key + value, not the record length or sequence number, so corruption in those header fields does not produce a clean CRC failure.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-wal-corruption-models.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-file-ordering-invariant
+WAL files are zero-padded numerically named and _wal_files returns them sorted, so replay and _recover_seq_num process records in write order across rotations.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-wal-crash-recovery-semantics.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-wal-truncate-not-atomic
+The LSM WAL truncate() closes the descriptor, reopens with wb mode to empty the file, closes it, and reopens with ab mode; a crash between these steps can leave a valid empty WAL with no open append handle.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-wal-crash-safety-gap.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] page-manager-sync-calls-flush-and-fsync
+In `btree.py`, `PageManager.sync()` calls `flush()` followed by `os.fsync()` to ensure data pages are durable.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-wal-crash-safety-ordering.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-recovery-follows-same-sync-truncate-ordering
+The B-tree WAL's `recover` method follows the same sync-then-truncate ordering as `commit`: it replays entries, fsyncs the data file, then truncates and fsyncs the WAL.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-wal-crash-safety-ordering.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-has-three-sync-modes
+The standalone WAL supports three sync modes: `sync`, `batch`, and `none`.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-wal-crash-safety-ordering.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] codebase-never-uses-fdatasync
+The codebase never uses `fdatasync()`; all durability syncs use `os.fsync()`.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-wal-fsync-durability.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-rotate-does-not-fsync-directory
+The WAL's `_rotate` method fsyncs the old WAL file but does not fsync the directory entry for the newly created file.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-wal-fsync-durability.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-sync-mode-none-skips-flush-and-fsync
+`WriteAheadLog` with `sync_mode='none'` skips both `flush()` and `os.fsync()` in `_do_sync`.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-wal-fsync-durability.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] test-sync-modes-does-not-verify-durability
+The `test_sync_modes` test in `test_wal.py` only checks that the WAL does not crash for each sync mode; it does not verify durability semantics.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-wal-fsync-durability.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-defines-four-operation-types
+The standalone WAL defines four operation types: OP_PUT (1), OP_DELETE (2), OP_COMMIT (3), and OP_CHECKPOINT (4).
+- Source: /home/forge/workspace/entries/2026/05/29/topic-wal-operation-boundaries.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-wal-entry-header-format
+The B-tree WAL entry format is: sequence number (4 bytes), page number (4 bytes), data length (4 bytes), page data, and a 4-byte checksum.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-wal-operation-boundaries.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-wal-has-no-commit-marker-in-wal
+The B-tree WAL does not contain a commit marker; its correctness relies on truncating the WAL only after syncing all data pages to the data file.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-wal-operation-boundaries.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-record-format-layout
+The WAL v1 record layout is: 4-byte record_length, 4-byte CRC, 8-byte seq_num, 1-byte op_type, 4-byte key_len, key bytes, 4-byte val_len, and value bytes.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-wal-record-format-evolution.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sstable-validates-magic-before-read
+The SSTable reader validates the 4-byte magic (`b'SSTB'`) before parsing any data.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-wal-record-format-evolution.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] bitcask-header-format-is-fixed
+The Bitcask store uses a fixed header format `<dII` with no CRC or version field.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-wal-record-format-evolution.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-wal-uses-bare-length-prefixed-writes
+The LSM WAL writes records as bare length-prefixed key-value pairs with no tags or type information.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-wal-record-format-evolution.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-iterate-returns-all-record-types
+The WAL's `iterate()` method returns all record types (PUT, DELETE, COMMIT, CHECKPOINT), while `replay()` filters out COMMIT and CHECKPOINT.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-wal-recovery-consumer.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-test-suite-lacks-partial-batch-crash-test
+The WAL test suite does not include a test for a crash during `append_batch` (partial write without a COMMIT record).
+- Source: /home/forge/workspace/entries/2026/05/29/topic-wal-recovery-consumer.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-tail-corruption-safe
+Tail corruption from partial writes is safely handled because `_read_record` returns `None` on short reads, and no valid records can follow a torn write at EOF.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-wal-recovery-semantics.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] auto-compact-triggers-on-frozen-count
+The log-structured Bitcask triggers compaction when the number of frozen non-active segments reaches or exceeds `auto_compact_threshold` (`log-structured-hash-table/bitcask.py:160-162`).
+- Source: /home/forge/workspace/entries/2026/05/29/topic-wal-segment-sizing-tradeoffs.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] smaller-segments-reduce-truncation-rewrite-cost
+Smaller `max_file_size` segments reduce WAL truncation cost because more old segments can be deleted wholesale and the partial segment straddling the truncation boundary is smaller to rewrite.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-wal-segment-sizing-tradeoffs.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] hint-files-do-not-reduce-segment-open-count
+Hint files in both Bitcask variants reduce bytes read during index rebuild but do not reduce the number of files that must be opened, because there is one hint file per data segment.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-wal-segment-sizing-tradeoffs.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-open-latest-three-step-non-atomic
+`_open_latest` performs directory listing via `_wal_files()`, then `os.path.getsize()` on the last file, then `open(..., 'ab')`, with no atomicity guarantee across the three steps.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-wal-size-check-toctou.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-open-latest-external-delete-crashes
+If an external process deletes the last WAL file between `_wal_files()` and `os.path.getsize()` in `_open_latest`, `getsize` raises `FileNotFoundError` and crashes the constructor.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-wal-size-check-toctou.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-recover-seq-num-shares-toctou-shape
+`_recover_seq_num` iterates `_wal_files()` and opens each WAL file during initialization, giving it the same list-then-open TOCTOU shape as `_open_latest`.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-wal-size-check-toctou.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-batch-sync-count-default-100
+`WriteAheadLog` defaults `batch_sync_count` to 100 (`wal.py:66`).
+- Source: /home/forge/workspace/entries/2026/05/29/topic-wal-sync-modes.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-batch-counter-reset
+In batch mode, the WAL write counter resets to 0 after each fsync, so the vulnerability window is between 0 and `batch_sync_count - 1` records.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-wal-sync-modes.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-none-mode-no-sync
+When `sync_mode` is neither 'sync' nor 'batch', `_do_sync` performs no flush or fsync, so durability depends on OS page cache writeback.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-wal-sync-modes.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lmdb-uses-dual-meta-pages-for-atomic-root-swap
+LMDB maintains two copies of the root meta page and writes the new root to the inactive meta page before fsync, making the root pointer swap atomic.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-wal-vs-shadow-paging.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] sqlite-rollback-journal-copies-original-pages
+SQLite's legacy rollback journal copies original pages to the journal before modifying the database file; crash recovery restores the database from those pre-modification pages.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-wal-vs-shadow-paging.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] shadow-paging-recovery-constant-time
+Shadow paging recovery is constant-time because it only needs to select the valid root page, whereas WAL recovery time is proportional to log length since the last checkpoint.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-wal-vs-shadow-paging.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] watermark-monotonic-advance
+The StreamJoinProcessor watermark is monotonically non-decreasing: it is updated by max(self._watermark, event.timestamp), and advance_time rejects timestamps at or below the current watermark.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-watermark-vs-processing-time.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] miss-emission-requires-watermark-expiration
+Outer-join miss results are emitted only by _expire_events after the watermark advances past the window boundary; unmatched events remain buffered until expiration.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-watermark-vs-processing-time.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] allowed-lateness-increases-buffer-memory-and-latency
+Wider allowed_lateness values increase buffer memory usage and delay result finalization because events remain eligible for matching longer below the watermark.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-watermark-vs-processing-time.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-commit-point-is-data-file-fsync
+In the B-tree WAL, the commit point is the data file fsync via page_manager.sync(), not a COMMIT record in the WAL.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-write-ahead-logging-fsync-ordering.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-wal-commit-resets-sequence-counter
+After truncating the WAL, WAL.commit() resets _seq to 0.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-write-ahead-logging-fsync-ordering.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-wal-recovery-redoes-then-truncates
+WAL.recover() redoes valid page images into the data file, syncs the data file, and then truncates the WAL.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-write-ahead-logging-fsync-ordering.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-page-write-always-full-page-size
+PageManager.write_page() always writes exactly page_size bytes (4096 default), padding with zeroes regardless of payload size.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-write-amplification-measurement.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-page-split-requires-at-least-three-page-writes
+A B-tree leaf split requires at least three full page writes: the two leaves and the parent.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-write-amplification-measurement.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-tree-structure-change-rewrites-full-metadata-page
+_write_meta() rewrites the full metadata page whenever tree structure changes, including key count, root pointer, and free list.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-write-amplification-measurement.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-update-amplification-does-not-compound
+B-tree updates overwrite leaf pages in place, so write amplification does not compound with subsequent updates to the same key, unlike LSM compaction.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-write-amplification-measurement.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-rotate-bypasses-do-sync
+File rotation at wal.py:115 calls os.fsync directly without going through _do_sync, so _write_count is not reset on rotation.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-write-count-reset-semantics.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-truncate-bypasses-do-sync-counter-reset
+truncate calls os.fsync at wal.py:184 outside _do_sync, so _write_count is not reset by truncation.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-write-count-reset-semantics.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-sync-mode-none-skips-fsync-without-force
+When sync_mode is none and force is false, _do_sync performs no fsync.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-write-count-reset-semantics.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-wal-missing-fsync
+The LSM tree WAL calls flush() but never os.fsync(), so it does not guarantee durability across power failures.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-write-ordering-and-barriers.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] codebase-uses-fsync-not-fdatasync
+All sync call sites in the codebase use os.fsync(); os.fdatasync() is never used.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-write-ordering-and-barriers.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-wal-fsync-before-data-write
+The B-tree WAL calls fsync() on each WAL entry before the corresponding data page is written to the data file, enforcing write-ahead ordering.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-write-ordering-and-barriers.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] flush-without-fsync-leaves-data-in-page-cache
+flush() only moves data from a Python buffer into the kernel page cache; without fsync() the data is not guaranteed durable across power failure.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-write-ordering-and-barriers.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-truncate-rewrites-in-place-with-wb
+`write-ahead-log/wal.py:truncate` opens the WAL path with `open(path, "wb")`, truncating existing content before writing the filtered records.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-write-to-temp-then-rename-pattern.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] atomic-rename-requires-directory-fsync
+The write-temp/fsync/rename pattern requires an fsync on the parent directory after rename for the rename metadata to persist across a crash.
+- Source: /home/forge/workspace/entries/2026/05/29/topic-write-to-temp-then-rename-pattern.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] tob-test-suite-contains-14-tests
+`test_total_order_broadcast.py` contains 14 test functions covering delivery, fault tolerance, consensus internals, linearizable register operations, and ordering invariants.
+- Source: /home/forge/workspace/entries/2026/05/29/total-order-broadcast-test_total_order_broadcast.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] tob-tests-create-fresh-3-node-cluster
+Each TOB test constructs a fresh `TOBCluster(3)` with no shared fixtures or setup.
+- Source: /home/forge/workspace/entries/2026/05/29/total-order-broadcast-test_total_order_broadcast.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] tob-test-uses-closure-factory-for-callbacks
+Test 14 uses a `make_cb(node_id)` closure factory so each delivery callback captures a distinct node ID.
+- Source: /home/forge/workspace/entries/2026/05/29/total-order-broadcast-test_total_order_broadcast.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] tob-proposal-number-encoded-round-n-plus-nodeid
+`_make_proposal_number(round_num)` generates globally unique proposal numbers as `round * N + node_id`.
+- Source: /home/forge/workspace/entries/2026/05/29/total-order-broadcast-total_order_broadcast.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] tob-route-messages-recursion-depth-limit-500
+`TOBCluster._route_messages` has a recursion depth limit of 500 to prevent stack overflow during contention.
+- Source: /home/forge/workspace/entries/2026/05/29/total-order-broadcast-total_order_broadcast.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] consensus-prepare-promises-if-greater
+`ConsensusInstance.prepare(proposal_number, proposer_id)` returns a promise only if `proposal_number > self.promised`.
+- Source: /home/forge/workspace/entries/2026/05/29/total-order-broadcast-total_order_broadcast.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] consensus-accept-requires-geq-promised
+`ConsensusInstance.accept(proposal_number, value, proposer_id)` accepts only if `proposal_number >= self.promised`.
+- Source: /home/forge/workspace/entries/2026/05/29/total-order-broadcast-total_order_broadcast.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] linearizable-cas-checks-at-delivery-time
+`LinearizableRegister.compare_and_set` checks `current == expected` at delivery time in the total order, not at submission time.
+- Source: /home/forge/workspace/entries/2026/05/29/total-order-broadcast-total_order_broadcast.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] tob-run-until-delivered-returns-false-on-max-rounds
+`TOBCluster.run_until_delivered(expected_count, max_rounds)` returns `False` when `max_rounds` is exhausted.
+- Source: /home/forge/workspace/entries/2026/05/29/total-order-broadcast-total_order_broadcast.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] 2pc-test-suite-contains-15-tests
+`test_2pc.py` contains 15 standalone test functions.
+- Source: /home/forge/workspace/entries/2026/05/29/two-phase-commit-test_2pc.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] 2pc-tests-inject-failures-via-availability-flag
+2PC tests force abort paths by calling `set_available(False)` on participants rather than simulating network partitions.
+- Source: /home/forge/workspace/entries/2026/05/29/two-phase-commit-test_2pc.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] 2pc-lock-conflict-test-injects-manual-lock
+`test_lock_conflict` calls `p.prepare("manual-tx", ...)` directly on a participant to simulate a held lock before running a full system transaction.
+- Source: /home/forge/workspace/entries/2026/05/29/two-phase-commit-test_2pc.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] 2pc-concurrent-key-test-is-sequential
+`test_concurrent_different_keys` runs two transactions sequentially on different keys; it does not execute them concurrently.
+- Source: /home/forge/workspace/entries/2026/05/29/two-phase-commit-test_2pc.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] 2pc-coordinator-recovery-test-manually-builds-log
+`test_coordinator_recovery` manually drives the protocol halfway and constructs log state rather than interrupting execution to simulate a crash.
+- Source: /home/forge/workspace/entries/2026/05/29/two-phase-commit-test_2pc.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] 2pc-transaction-ids-monotonic
+`Coordinator.begin_transaction()` allocates monotonic transaction IDs `tx-001`, `tx-002`, ... via `itertools.count`.
+- Source: /home/forge/workspace/entries/2026/05/29/two-phase-commit-two_phase_commit.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] 2pc-prepare-stashes-operations-in-pending
+`Participant.prepare()` stashes the transaction's operations in `_pending` after acquiring locks, before voting `"yes"`.
+- Source: /home/forge/workspace/entries/2026/05/29/two-phase-commit-two_phase_commit.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] participant-recover-returns-in-doubt-transactions
+`Participant.recover()` scans its log and returns transaction IDs stuck in the `"prepared"` state as in-doubt transactions.
+- Source: /home/forge/workspace/entries/2026/05/29/two-phase-commit-two_phase_commit.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] 2pc-phase2-unavailable-participants-skipped
+During Phase 2, the coordinator silently skips unavailable participants and does not retry or block.
+- Source: /home/forge/workspace/entries/2026/05/29/two-phase-commit-two_phase_commit.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] 2pc-log-is-append-only
+Both the coordinator and participants append state transitions to `self.log`; log entries are never modified.
+- Source: /home/forge/workspace/entries/2026/05/29/two-phase-commit-two_phase_commit.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] unbundled-catch-up-false-starts-empty
+A derived system added with catch_up=False starts empty and processes only future writes, not existing data.
+- Source: /home/forge/workspace/entries/2026/05/29/unbundled-database-test_tester_validation.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] unbundled-nested-dict-values-roundtrip
+Nested dict values written to UnbundledDatabase records survive write/read without corruption.
+- Source: /home/forge/workspace/entries/2026/05/29/unbundled-database-test_tester_validation.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] unbundled-fulltext-search-all-empty-returns-empty-list
+FullTextSearch.search_all([]) returns an empty list rather than raising an error.
+- Source: /home/forge/workspace/entries/2026/05/29/unbundled-database-test_tester_validation.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] unbundled-get-missing-key-returns-none
+UnbundledDatabase.get() returns None for a missing key rather than raising KeyError.
+- Source: /home/forge/workspace/entries/2026/05/29/unbundled-database-test_unbundled_database.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] unbundled-delete-nonexistent-returns-none-no-log
+UnbundledDatabase.delete() on a nonexistent key is a silent no-op that returns None and creates no WAL entry or CDC event.
+- Source: /home/forge/workspace/entries/2026/05/29/unbundled-database-test_unbundled_database.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] unbundled-storage-scan-filters-by-prefix
+StorageEngine.scan(prefix) filters keys by the given prefix.
+- Source: /home/forge/workspace/entries/2026/05/29/unbundled-database-test_unbundled_database.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] unbundled-wal-truncate-updates-earliest-lsn
+WriteAheadLog.truncate_before(lsn) updates earliest_lsn after removing older entries.
+- Source: /home/forge/workspace/entries/2026/05/29/unbundled-database-test_unbundled_database.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] unbundled-materialized-view-unknown-group-returns-zero
+Querying a MaterializedView for an unknown group key returns 0.
+- Source: /home/forge/workspace/entries/2026/05/29/unbundled-database-tester_test_unbundled_database.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] unbundled-secondary-index-empty-query-returns-empty-list
+Querying an empty SecondaryIndex returns an empty list rather than an error.
+- Source: /home/forge/workspace/entries/2026/05/29/unbundled-database-tester_test_unbundled_database.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] unbundled-tester-test-prefix-golden-suite
+Files prefixed tester_test_ follow the repo convention for the specification-defining test suite.
+- Source: /home/forge/workspace/entries/2026/05/29/unbundled-database-tester_test_unbundled_database.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] unbundled-wal-truncate-returns-removed-count
+WriteAheadLog.truncate_before(lsn) returns the number of entries removed.
+- Source: /home/forge/workspace/entries/2026/05/29/unbundled-database-unbundled_database-truncate_before.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] unbundled-wal-truncate-past-latest-empties-log
+Passing a cutoff greater than latest_lsn to truncate_before removes all entries, leaving the WAL empty.
+- Source: /home/forge/workspace/entries/2026/05/29/unbundled-database-unbundled_database-truncate_before.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] unbundled-wal-truncate-at-or-before-earliest-removes-none
+Passing a cutoff less than or equal to earliest_lsn to truncate_before removes zero entries.
+- Source: /home/forge/workspace/entries/2026/05/29/unbundled-database-unbundled_database-truncate_before.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] unbundled-wal-truncate-is-linear-scan
+truncate_before rebuilds _entries via a full list comprehension, making it O(n) in the number of WAL entries.
+- Source: /home/forge/workspace/entries/2026/05/29/unbundled-database-unbundled_database-truncate_before.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] unbundled-materialized-view-clamps-counts-at-zero
+MaterializedView clamps counts to zero with max(0, ...) to prevent negative counts.
+- Source: /home/forge/workspace/entries/2026/05/29/unbundled-database-unbundled_database.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] unbundled-catchup-directly-sets-private-position
+CDCStream.snapshot_and_stream() directly assigns to the consumer's _position attribute to position a late-joining derived system.
+- Source: /home/forge/workspace/entries/2026/05/29/unbundled-database-unbundled_database.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] unbundled-storage-engine-tracks-current-lsn
+StorageEngine tracks its own current_lsn indicating how far it has applied WAL entries.
+- Source: /home/forge/workspace/entries/2026/05/29/unbundled-database-unbundled_database.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] gitignore-covers-python-only
+The `.gitignore` exclusively targets Python runtime and test artifacts; no IDE, OS, or packaging patterns are present.
+- Source: /home/forge/workspace/entries/2026/05/29/unknown.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] gitignore-applies-repo-wide
+All three `.gitignore` patterns are unprefixed, so they match in every subdirectory of the repository.
+- Source: /home/forge/workspace/entries/2026/05/29/unknown.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] pyc-pattern-is-redundant-on-py3
+The `*.pyc` glob is redundant with `__pycache__/` on Python 3 because Python 3 places all `.pyc` files inside `__pycache__/`.
+- Source: /home/forge/workspace/entries/2026/05/29/unknown.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] gitignore-trailing-slash-matches-directories-only
+The trailing slash in `__pycache__/` and `.pytest_cache/` means only directories with those names are ignored, not files.
+- Source: /home/forge/workspace/entries/2026/05/29/unknown.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] reconcile-dominates-all-siblings
+After `VersionedKVStore.reconcile`, the returned vector clock dominates every input sibling clock.
+- Source: /home/forge/workspace/entries/2026/05/29/vector-clocks-test_vector_clock.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] vector-clock-tests-have-no-error-path-tests
+`test_vector_clock.py` contains no `pytest.raises` blocks and does not test invalid-input or error paths.
+- Source: /home/forge/workspace/entries/2026/05/29/vector-clocks-test_vector_clock.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] vc-prune-does-not-validate-max-nodes
+`VectorClock.prune` does not validate `max_nodes`; passing 0 or a negative value returns an empty clock, and passing a non-integer raises `TypeError` from slicing.
+- Source: /home/forge/workspace/entries/2026/05/29/vector-clocks-vector_clock-prune.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] vc-prune-copies-when-within-limit
+If `max_nodes` is greater than or equal to the clock length, `prune` returns a copied `VectorClock` without performing the sort.
+- Source: /home/forge/workspace/entries/2026/05/29/vector-clocks-vector_clock-prune.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] versioned-kv-store-get-missing-key-returns-empty-list
+`VersionedKVStore.get` returns an empty list for a missing key rather than raising an exception.
+- Source: /home/forge/workspace/entries/2026/05/29/vector-clocks-vector_clock.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] versioned-kv-store-history-log-is-observability-only
+`_HistoryEntry` records every store mutation with action types such as `write`, `sibling_created`, and `reconciled`, but the store's correctness does not depend on this history.
+- Source: /home/forge/workspace/entries/2026/05/29/vector-clocks-vector_clock.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] receive-replica-drops-dominated-incoming-versions
+`VersionedKVStore._receive_replica` silently drops an incoming version if that version is dominated by any surviving local version.
+- Source: /home/forge/workspace/entries/2026/05/29/vector-clocks-vector_clock.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-do-sync-flushes-then-fsyncs
+`_do_sync` calls `self._fd.flush()` followed by `os.fsync()` to push data from Python's buffer to the OS and then to disk.
+- Source: /home/forge/workspace/entries/2026/05/29/write-ahead-log-wal-_do_sync.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-do-sync-propagates-oserror
+`_do_sync` catches no exceptions; an `OSError` from `flush()` or `os.fsync()` propagates to the caller.
+- Source: /home/forge/workspace/entries/2026/05/29/write-ahead-log-wal-_do_sync.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-batch-mode-resets-write-count-after-threshold-fsync
+In batch mode, when `_write_count` reaches `_batch_sync_count`, `_do_sync` performs the fsync and resets `_write_count` to 0.
+- Source: /home/forge/workspace/entries/2026/05/29/write-ahead-log-wal-_do_sync.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-max-file-size-default-10mb
+The WAL's `_max_file_size` rotation threshold defaults to 10 MB.
+- Source: /home/forge/workspace/entries/2026/05/29/write-ahead-log-wal-_maybe_rotate.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] maybe-rotate-noops-when-fd-none
+`_maybe_rotate` returns without action if `self._fd` is `None`, such as after `close()` or during `truncate()`.
+- Source: /home/forge/workspace/entries/2026/05/29/write-ahead-log-wal-_maybe_rotate.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] maybe-rotate-assumes-append-mode
+`_maybe_rotate` assumes `self._fd` is opened in append-binary mode, because `tell()` only reflects true file size under that mode.
+- Source: /home/forge/workspace/entries/2026/05/29/write-ahead-log-wal-_maybe_rotate.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] maybe-rotate-propagates-errors
+`_maybe_rotate` has no explicit error handling; exceptions from `tell()` or `_rotate()` propagate to the caller.
+- Source: /home/forge/workspace/entries/2026/05/29/write-ahead-log-wal-_maybe_rotate.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-open-latest-postcondition
+After `_open_latest` returns, `self._fd` is a valid open file descriptor in binary-append mode and `self._current_file` is its path.
+- Source: /home/forge/workspace/entries/2026/05/29/write-ahead-log-wal-_open_latest.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-open-latest-called-from-init-and-truncate
+`_open_latest` is called only from `__init__` and `truncate`.
+- Source: /home/forge/workspace/entries/2026/05/29/write-ahead-log-wal-_open_latest.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] open-latest-propagates-fs-errors
+`_open_latest` does not catch filesystem errors from `os.path.getsize`, `open`, or `_rotate`; they propagate and fail WAL construction or truncation.
+- Source: /home/forge/workspace/entries/2026/05/29/write-ahead-log-wal-_open_latest.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] open-latest-has-toctou-window
+`_open_latest` has a TOCTOU window between `_wal_files()` and `os.path.getsize()` if another process deletes the latest file.
+- Source: /home/forge/workspace/entries/2026/05/29/write-ahead-log-wal-_open_latest.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] open-latest-assumes-positive-max-file-size
+`_open_latest` assumes `_max_file_size` is positive; a zero or negative value would cause every call to fall through to `_rotate()`.
+- Source: /home/forge/workspace/entries/2026/05/29/write-ahead-log-wal-_open_latest.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] read-all-records-yields-in-write-order
+`_read_all_records` yields records in file order from `_wal_files()` and then byte-offset order within each file, matching write order.
+- Source: /home/forge/workspace/entries/2026/05/29/write-ahead-log-wal-_read_all_records.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] read-all-records-is-lazy-generator
+`_read_all_records` returns a lazy `Iterator[WALRecord]` generator rather than materializing all records.
+- Source: /home/forge/workspace/entries/2026/05/29/write-ahead-log-wal-_read_all_records.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] read-all-records-yields-all-operation-types
+`_read_all_records` yields all WAL record types (PUT, DELETE, COMMIT, CHECKPOINT); filtering is the caller's responsibility.
+- Source: /home/forge/workspace/entries/2026/05/29/write-ahead-log-wal-_read_all_records.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] read-all-records-requires-caller-flush
+`_read_all_records` does not flush the write file descriptor; both `replay` and `iterate` must call `self._fd.flush()` before iterating.
+- Source: /home/forge/workspace/entries/2026/05/29/write-ahead-log-wal-_read_all_records.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] read-all-records-no-internal-lock
+`_read_all_records` does not acquire `self._lock`; thread safety during iteration is the caller's responsibility.
+- Source: /home/forge/workspace/entries/2026/05/29/write-ahead-log-wal-_read_all_records.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] read-all-records-propagates-os-errors
+`_read_all_records` does not catch filesystem `OSError` from opening or reading files; such errors propagate to the caller.
+- Source: /home/forge/workspace/entries/2026/05/29/write-ahead-log-wal-_read_all_records.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] recover-seq-num-called-once-in-init
+`_recover_seq_num` is called exactly once during `WriteAheadLog.__init__`, before any new writes occur.
+- Source: /home/forge/workspace/entries/2026/05/29/write-ahead-log-wal-_recover_seq_num.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] recover-seq-num-zero-means-empty
+`_recover_seq_num` returns 0 when no valid WAL records exist, so the next appended record receives sequence number 1.
+- Source: /home/forge/workspace/entries/2026/05/29/write-ahead-log-wal-_recover_seq_num.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] recover-seq-num-propagates-os-errors
+`_recover_seq_num` does not catch `OSError` from opening or reading WAL files; filesystem errors propagate and abort initialization.
+- Source: /home/forge/workspace/entries/2026/05/29/write-ahead-log-wal-_recover_seq_num.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] recover-seq-num-is-read-only
+`_recover_seq_num` performs no writes or state mutations; it is a pure filesystem scan returning an integer.
+- Source: /home/forge/workspace/entries/2026/05/29/write-ahead-log-wal-_recover_seq_num.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-first-new-record-uses-max-plus-one
+`__init__` sets `self._seq_num` to the recovered maximum, and `append` increments `_seq_num` before writing, so the first new record uses `max_seq + 1`.
+- Source: /home/forge/workspace/entries/2026/05/29/write-ahead-log-wal-_recover_seq_num.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] rotate-propagates-errors
+`_rotate` does not catch exceptions from `os.fsync` or `open`; failures propagate to the caller.
+- Source: /home/forge/workspace/entries/2026/05/29/write-ahead-log-wal-_rotate.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] rotate-assumes-numeric-wal-filenames
+`_rotate` assumes every `.wal` file in the directory follows the `NNNNNN.wal` naming convention; a file like `notes.wal` causes `int(...)` to raise `ValueError`.
+- Source: /home/forge/workspace/entries/2026/05/29/write-ahead-log-wal-_rotate.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] rotate-assumes-fd-open
+`_rotate` assumes a non-`None` `self._fd` is still open; it does not check `fd.closed` before calling `flush()`.
+- Source: /home/forge/workspace/entries/2026/05/29/write-ahead-log-wal-_rotate.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] rotate-called-from-open-latest-and-maybe-rotate
+`_rotate` is called from `_open_latest` at startup or when the latest file is at capacity, and from `_maybe_rotate` after writes exceed the size threshold.
+- Source: /home/forge/workspace/entries/2026/05/29/write-ahead-log-wal-_rotate.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-append-sequence-gap-free
+append increments the sequence number by exactly 1 per call, so sequence numbers are contiguous with no gaps (excluding batch operations which consume multiple).
+- Source: /home/forge/workspace/entries/2026/05/29/write-ahead-log-wal-append.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-rotation-on-size
+After every append, the WAL checks whether the current file exceeds max_file_size (default 10 MB) and transparently rotates to a new numbered file if so.
+- Source: /home/forge/workspace/entries/2026/05/29/write-ahead-log-wal-append.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-append-requires-open-fd
+Calling append after close() raises AttributeError because self._fd is None.
+- Source: /home/forge/workspace/entries/2026/05/29/write-ahead-log-wal-append.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-append-seq-increment-before-sync-failure
+If _do_sync() raises an exception after a successful write, the sequence number has already been incremented, so the caller receives an exception but the sequence counter is advanced.
+- Source: /home/forge/workspace/entries/2026/05/29/write-ahead-log-wal-append.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] checkpoint-requires-prior-durability-of-primary-storage
+The caller is responsible for ensuring the primary storage is durable before calling checkpoint(); the WAL itself does not enforce this ordering.
+- Source: /home/forge/workspace/entries/2026/05/29/write-ahead-log-wal-checkpoint.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] checkpoint-seq-increment-before-sync-failure
+If _do_sync() raises an OSError during checkpoint, _seq_num has already been incremented, leaving a gap in the sequence.
+- Source: /home/forge/workspace/entries/2026/05/29/write-ahead-log-wal-checkpoint.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] snapshot-discards-writer-identity
+_snapshot discards the writer transaction ID returned by _visible_value; causal dependency tracking is handled by callers like read and read_predicate, not by _snapshot itself.
+- Source: /home/forge/workspace/entries/2026/05/29/write-skew-detection-ssi_database-_snapshot.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] snapshot-linear-scan-complexity
+_snapshot has O(K × V) time complexity, where K is the number of distinct keys and V is the average number of versions per key, because _visible_value does a linear scan over all versions for each key.
+- Source: /home/forge/workspace/entries/2026/05/29/write-skew-detection-ssi_database-_snapshot.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] snapshot-empty-for-nonpositive-timestamp
+If snapshot_ts is 0 or lower than any committed version, _snapshot returns an empty dict.
+- Source: /home/forge/workspace/entries/2026/05/29/write-skew-detection-ssi_database-_snapshot.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] read-predicate-adds-matched-keys-to-read-set
+read_predicate adds every key that matches the predicate to tx._read_set, so standard read-write conflict detection also covers predicate-read keys.
+- Source: /home/forge/workspace/entries/2026/05/29/write-skew-detection-ssi_database-read_predicate.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] read-predicate-uses-start-timestamp
+read_predicate calls _snapshot(tx.start_timestamp) to build the base view before merging the transaction's own buffered writes and removing its pending deletes.
+- Source: /home/forge/workspace/entries/2026/05/29/write-skew-detection-ssi_database-read_predicate.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] ssi-commit-scans-committed-txns
+The commit method checks for conflicts against committed transactions by scanning the _committed_txns append-only log for transactions that are concurrent with the committing transaction.
+- Source: /home/forge/workspace/entries/2026/05/29/write-skew-detection-ssi_database.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] ssi-constraints-checked-at-commit
+SSIDatabase maintains a _constraints collection of named invariant functions that are checked against a hypothetical post-commit snapshot during commit validation.
+- Source: /home/forge/workspace/entries/2026/05/29/write-skew-detection-ssi_database.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] ssi-conflict-priority-order
+When multiple conflict types are present, _conflict_reason reports them in priority order: write-write > phantom > read-write > constraint.
+- Source: /home/forge/workspace/entries/2026/05/29/write-skew-detection-ssi_database.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] ssi-committed-transactions-immutable
+Once a transaction is appended to _committed_txns, its state is never modified.
+- Source: /home/forge/workspace/entries/2026/05/29/write-skew-detection-ssi_database.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] fencing-token-client-retains-expired-held-tokens
+In fencing-tokens/fencing_tokens.py, Client._held_tokens is not cleared when a lock expires, so the client can retain and reuse a token after another client acquires the lock.
+- Source: /home/forge/workspace/entries/2026/06/06/belief-driven-bug-fixes.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] multi-leader-custom-merge-accepts-none-merge-fn
+MultiLeaderCluster accepts strategy CUSTOM_MERGE with merge_fn=None at construction time, deferring the error until the first conflict occurs.
+- Source: /home/forge/workspace/entries/2026/06/06/belief-driven-bug-fixes.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] btree-page-size-not-persisted-in-data-file
+The B-tree page size is not persisted in the data file, so reopening the database with a different page_size value silently corrupts page reads.
+- Source: /home/forge/workspace/entries/2026/06/06/belief-driven-bug-fixes.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] delete-before-rename-retraction-collapsed-31-derived-beliefs
+Retracting the delete-before-rename-ordering gating belief caused 31 derived beliefs to go OUT, including the depth-7 system-converges-on-permanent-dark-failure belief.
+- Source: /home/forge/workspace/entries/2026/06/06/belief-driven-bug-fixes.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] ddia-belief-network-contains-1405-beliefs
+The ddia belief network contains 1,405 beliefs: 1,224 premises and 181 derived beliefs across 37 DDIA reference implementations.
+- Source: /home/forge/workspace/entries/2026/06/06/lessons-from-the-belief-network.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] fourteen-bugs-fixed-across-nine-implementations
+Belief-driven analysis was used to fix 14 bugs across 9 implementations.
+- Source: /home/forge/workspace/entries/2026/06/06/lessons-from-the-belief-network.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] max-belief-network-depth-reduced-from-7-to-4
+After two rounds of belief-driven fixes, the maximum belief network depth was reduced from 7 to 4.
+- Source: /home/forge/workspace/entries/2026/06/06/lessons-from-the-belief-network.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] event-store-persist-event-fsyncs-json-write
+In event-sourcing-store/event_store.py, _persist_event() calls flush() and os.fsync() on the file descriptor after writing the event JSON.
+- Source: /home/forge/workspace/entries/2026/06/06/round-3-belief-driven-fixes.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-rotate-fsyncs-directory-after-new-segment
+In write-ahead-log/wal.py, _rotate() fsyncs the directory after creating a new WAL segment file.
+- Source: /home/forge/workspace/entries/2026/06/06/round-3-belief-driven-fixes.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-flush-writes-sstable-before-clearing-memtable
+In log-structured-merge-tree/lsm.py, _flush() writes the SSTable first, then truncates the WAL, then clears the memtable.
+- Source: /home/forge/workspace/entries/2026/06/06/round-3-belief-driven-fixes.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] wal-truncate-uses-temp-fsync-rename-and-directory-fsync
+The standalone WAL truncate() writes a temp file, fsyncs it, atomically renames it over the original, and fsyncs the directory.
+- Source: /home/forge/workspace/entries/2026/06/06/round-3-belief-driven-fixes.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] consistent-hashing-ring-uses-threading-lock-with-public-private-split
+The consistent hashing ring guards add_node, remove_node, get_node, and get_nodes with a threading.Lock using a public/private method split.
+- Source: /home/forge/workspace/entries/2026/06/06/round-3-belief-driven-fixes.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] mvcc-database-uses-rlock-for-reentrant-commit-and-scan
+The MVCC database uses threading.RLock because _commit() calls _abort() and _scan() calls read() reentrantly while holding the lock.
+- Source: /home/forge/workspace/entries/2026/06/06/round-3-belief-driven-fixes.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] lsm-wal-records-have-four-byte-crc32-prefix
+The LSM tree WAL adds a 4-byte CRC32 prefix per record, and replay stops on CRC mismatch.
+- Source: /home/forge/workspace/entries/2026/06/06/round-3-belief-driven-fixes.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
+
+### [ACCEPT] avro-schema-registry-register-checks-backward-compatibility
+The Avro schema registry register() method checks backward compatibility against the latest schema version under the same subject before accepting a new schema.
+- Source: /home/forge/workspace/entries/2026/06/06/round-3-belief-driven-fixes.md
+- Source URL: none
+- Model: openai:rits/deepseek-ai/DeepSeek-V4.1-Flash-1017
 
