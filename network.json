@@ -3,7 +3,7 @@
     "schema_version": "1.0",
     "project_name": "reasons",
     "created_at": "2026-05-28T22:04:49+00:00",
-    "updated_at": "2026-11-20T05:00:21+00:00",
+    "updated_at": "2026-11-21T05:00:16+00:00",
     "node_count": 3572,
     "generator": "reasonsforge/0.74.0"
   },
